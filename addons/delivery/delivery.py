@@ -67,6 +67,7 @@ class delivery_carrier(osv.osv):
         'product_id': fields.many2one('product.product', 'Delivery Product', required=True),
         'grids_id': fields.one2many('delivery.grid', 'carrier_id', 'Delivery Grids'),
         'price' : fields.function(get_price, string='Price'),
+        'delivery_delay':fields.float("Delivery Delay"),
         'active': fields.boolean('Active', help="If the active field is set to False, it will allow you to hide the delivery carrier without removing it."),
         'normal_price': fields.float('Normal Price', help="Keep empty if the pricing depends on the advanced pricing per destination"),
         'free_if_more_than': fields.boolean('Free If Order Total Amount Is More Than', help="If the order is more expensive than a certain amount, the customer can benefit from a free shipping"),
@@ -78,6 +79,7 @@ class delivery_carrier(osv.osv):
     _defaults = {
         'active': 1,
         'free_if_more_than': False,
+        'delivery_delay':1.0,
     }
 
     def grid_get(self, cr, uid, ids, contact_id, context=None):

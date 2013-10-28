@@ -162,11 +162,17 @@ class stock_return_picking(osv.osv_memory):
         returned_lines = 0
         
 #        Create new picking for returned products
-
+        print 44*'_'
+        print 'create returns'
         seq_obj_name = 'stock.picking'
         new_type = 'internal'
+        return_id=False
         if pick.type =='out':
             new_type = 'in'
+            cr.execute("select id from stock_location where name='Returns'")
+            return_ids=cr.fetchall()
+            if len(return_ids)==1:
+                return_id=return_ids[0][0]
             seq_obj_name = 'stock.picking.in'
         elif pick.type =='in':
             new_type = 'out'
@@ -193,18 +199,21 @@ class stock_return_picking(osv.osv_memory):
             returned_qty = move.product_qty
             for rec in move.move_history_ids2:
                 returned_qty -= rec.product_qty
-
             if returned_qty != new_qty:
                 set_invoice_state_to_none = False
             if new_qty:
                 returned_lines += 1
+                if return_id:
+                    ret_id=return_id
+                else:
+                    ret_id=move.location_id.id
                 new_move=move_obj.copy(cr, uid, move.id, {
                                             'product_qty': new_qty,
                                             'product_uos_qty': uom_obj._compute_qty(cr, uid, move.product_uom.id, new_qty, move.product_uos.id),
                                             'picking_id': new_picking, 
                                             'state': 'draft',
                                             'location_id': new_location, 
-                                            'location_dest_id': move.location_id.id,
+                                            'location_dest_id': ret_id,
                                             'date': date_cur,
                 })
                 move_obj.write(cr, uid, [move.id], {'move_history_ids2':[(4,new_move)]}, context=context)

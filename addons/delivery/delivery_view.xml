@@ -11,6 +11,7 @@
                     <field name="name"/>
                     <field name="partner_id"/>
                     <field name="price" invisible="'order_id' not in context"/>
+		    <field name="delivery_delay"/>
                 </tree>
             </field>
         </record>
@@ -30,6 +31,7 @@
                         <group name="general">
                             <field name="partner_id"/>
                             <field name="product_id"/>
+			    <field name="delivery_delay"/>
                         </group>
                         <group>
                         <field name="active"/>
@@ -303,9 +305,9 @@
                         <label for="carrier_id"/>
                         <div>
                             <field name="carrier_id" context="{'order_id':active_id or False}" class="oe_inline"/>
-                            <button name="delivery_set" string="Add in Quote" type="object"
+<!--                            <button name="delivery_set" string="Add in Quote" type="object"
                                 class="oe_edit_only"
-                                attrs="{'invisible':['|',('carrier_id','=',False),('state','not in',('draft','sent'))]}"/>
+                                attrs="{'invisible':['|',('carrier_id','=',False),('state','not in',('draft','sent'))]}"/>  -->
                             <br/>
                             <label string="If you don't 'Add in Quote', the exact price will be computed when invoicing based on delivery order(s)."
                                 class="oe_edit_only"

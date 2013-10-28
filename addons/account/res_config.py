@@ -63,9 +63,9 @@ class account_config_settings(osv.osv_memory):
         'complete_tax_set': fields.boolean('Complete set of taxes', help='This boolean helps you to choose if you want to propose to the user to encode the sales and purchase rates or use the usual m2o fields. This last choice assumes that the set of tax defined for the chosen template is complete'),
 
         'has_fiscal_year': fields.boolean('Company has a fiscal year'),
-        'date_start': fields.date('Start date', required=True),
-        'date_stop': fields.date('End date', required=True),
-        'period': fields.selection([('month', 'Monthly'), ('3months','3 Monthly')], 'Periods', required=True),
+        'date_start': fields.date('Start date'),
+        'date_stop': fields.date('End date'),
+        'period': fields.selection([('month', 'Monthly'), ('3months','3 Monthly')], 'Periods'),
 
         'sale_journal_id': fields.many2one('account.journal', 'Sale journal'),
         'sale_sequence_prefix': fields.related('sale_journal_id', 'sequence_id', 'prefix', type='char', string='Invoice sequence'),
