@@ -373,7 +373,7 @@ class sale_order(osv.osv):
                                 self.pool.get('procurement.order').write(cr, uid, [proc_id], {'product_qty': mov.product_qty, 'product_uos_qty': mov.product_uos_qty})
         return True
 
-    def _get_date_planned_keep_orig(self, cr, uid, order, line, start_date, context=None):
+    def _get_date_planned(self, cr, uid, order, line, start_date, context=None):
         start_date = self.date_to_datetime(cr, uid, start_date, context)
         date_planned = datetime.strptime(start_date, DEFAULT_SERVER_DATETIME_FORMAT) + relativedelta(days=line.delay or 0.0)
         date_planned = (date_planned - timedelta(days=order.company_id.security_lead)).strftime(DEFAULT_SERVER_DATETIME_FORMAT)
