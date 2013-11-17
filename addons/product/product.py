@@ -584,7 +584,20 @@ class product_product(osv.osv):
         'seller_delay': fields.function(_calc_seller, type='integer', string='Supplier Lead Time', multi="seller_info", help="This is the average delay in days between the purchase order confirmation and the reception of goods for this product and for the default supplier. It is used by the scheduler to order requests based on reordering delays."),
         'seller_qty': fields.function(_calc_seller, type='float', string='Supplier Quantity', multi="seller_info", help="This is minimum quantity to purchase from Main Supplier."),
         'seller_id': fields.function(_calc_seller, type='many2one', relation="res.partner", string='Main Supplier', help="Main Supplier who has highest priority in Supplier List.", multi="seller_info"),
-    }
+        'in_opera':fields.boolean("In Opera"),
+        'in_magento':fields.boolean("In Magento"),
+        'magento_price': fields.float('MagentoPrice', digits_compute=dp.get_precision('Product Price')),
+        'magento_rrp': fields.float('MagentoRRP', digits_compute=dp.get_precision('Product Price')),
+        'opera_cost': fields.float('OperaCost', digits_compute=dp.get_precision('Product Price')),
+        'opera_sell': fields.float('OperaSell', digits_compute=dp.get_precision('Product Price')),
+        'retail': fields.float('Retail', digits_compute=dp.get_precision('Product Price')),
+        #'trade': fields.float('Trade', digits_compute=dp.get_precision('Product Price')), trade=sell_price
+        'contract': fields.float('Contract', digits_compute=dp.get_precision('Product Price')),
+        'magento_name':fields.char("MagentoName",size=444),
+        'opera_name':fields.char("OperaName",size=444),
+        'stock_level': fields.float('StockLevel', digits_compute=dp.get_precision('Product Price')),
+        
+        }
     def unlink(self, cr, uid, ids, context=None):
         unlink_ids = []
         unlink_product_tmpl_ids = []

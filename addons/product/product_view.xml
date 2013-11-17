@@ -82,6 +82,10 @@
                                         <field name="type"/>
                                         <field name="uom_id" on_change="onchange_uom(uom_id,uom_po_id)" groups="product.group_uom"/>
                                         <field name="list_price"/>
+					<field name="magento_price"/>
+					<field name="magento_rrp"/>
+					<field name="retail"/>
+					<field name="contract"/>
                                     </group>
                                     <group>
                                         <field name="default_code"/>
