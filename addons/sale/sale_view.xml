@@ -100,6 +100,7 @@
                     <field name="user_id"/>
                     <field name="amount_total" sum="Total Tax Included"/>
                     <field name="state"/>
+		    <field name="shop_id"/>
                 </tree>
             </field>
         </record>
