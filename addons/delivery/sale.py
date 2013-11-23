@@ -73,10 +73,28 @@ class sale_order(osv.osv):
                 'type': 'make_to_stock'
             })
         #remove the value of the carrier_id field on the sale order
-        return self.write(cr, uid, ids, {'carrier_id': False}, context=context)
+        #return self.write(cr, uid, ids, {'carrier_id': False}, context=context)
         #return {'type': 'ir.actions.act_window_close'} action reload?
 
 sale_order()
+
+class stock_picking(osv.osv):
+    _inherit = 'stock.picking'
+    _columns = {
+        'pjb_carrier_id': fields.related('sale_id', 'carrier_id', string='Delivery',type="many2one",relation='delivery.carrier'),
+        
+
+    }
+stock_picking()
+
+
+class stock_picking_out(osv.osv):
+    _inherit = 'stock.picking.out'
+    _columns = {
+        'pjb_carrier_id': fields.related('sale_id', 'carrier_id', string='Delivery',type="many2one",relation='delivery.carrier'),
+
+    }
+stock_picking_out()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

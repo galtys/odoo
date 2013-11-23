@@ -228,7 +228,7 @@
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
                 <field name="min_date" position="after">
-                    <field name="carrier_id"/>
+                    <field name="pjb_carrier_id"/>
                     <field name="carrier_tracking_ref"/>
                     <field name="number_of_packages"/>
                 </field>
@@ -305,9 +305,9 @@
                         <label for="carrier_id"/>
                         <div>
                             <field name="carrier_id" context="{'order_id':active_id or False}" class="oe_inline"/>
-<!--                            <button name="delivery_set" string="Add in Quote" type="object"
+                            <button name="delivery_set" string="Add in Quote" type="object"
                                 class="oe_edit_only"
-                                attrs="{'invisible':['|',('carrier_id','=',False),('state','not in',('draft','sent'))]}"/>  -->
+                                attrs="{'invisible':['|',('carrier_id','=',False),('state','not in',('draft','sent'))]}"/> 
                             <br/>
                             <label string="If you don't 'Add in Quote', the exact price will be computed when invoicing based on delivery order(s)."
                                 class="oe_edit_only"
@@ -341,5 +341,19 @@
                </field>
             </field>
         </record>
+
+        <record id="view_picking_out_tree_pjb" model="ir.ui.view">
+            <field name="name">stock.picking.out.tree.pjb</field>
+            <field name="model">stock.picking.out</field>
+	    <field name="inherit_id" ref="stock.view_picking_out_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree/field[@name='state']" position="after">
+		  <field name="pjb_carrier_id"/>
+                </xpath>
+
+            </field>
+        </record>
+
+
     </data>
 </openerp>

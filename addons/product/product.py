@@ -590,12 +590,17 @@ class product_product(osv.osv):
         'magento_rrp': fields.float('MagentoRRP', digits_compute=dp.get_precision('Product Price')),
         'opera_cost': fields.float('OperaCost', digits_compute=dp.get_precision('Product Price')),
         'opera_sell': fields.float('OperaSell', digits_compute=dp.get_precision('Product Price')),
-        'retail': fields.float('Retail', digits_compute=dp.get_precision('Product Price')),
-        #'trade': fields.float('Trade', digits_compute=dp.get_precision('Product Price')), trade=sell_price
-        'contract': fields.float('Contract', digits_compute=dp.get_precision('Product Price')),
+
+        'retail': fields.float('Retail', digits_compute=dp.get_precision('Retail Price')),
+        'trade': fields.float('Trade', digits_compute=dp.get_precision('Trade Price')),
+        'contract': fields.float('Contract', digits_compute=dp.get_precision('Contract Price')),
         'magento_name':fields.char("MagentoName",size=444),
         'opera_name':fields.char("OperaName",size=444),
         'stock_level': fields.float('StockLevel', digits_compute=dp.get_precision('Product Price')),
+        'delivery': fields.float('Delivery', digits_compute=dp.get_precision('Product Price')),
+        'W': fields.char('Width', size=20),
+        'D': fields.char('Depth', size=20),
+        'H': fields.char('Height',size=20),
         
         }
     def unlink(self, cr, uid, ids, context=None):

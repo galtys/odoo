@@ -24,7 +24,7 @@
                     <group name="shop">
                         <group>
                             <field name="payment_default_id"/>
-                            <field domain="[('type','=','sale')]" required="True" name="pricelist_id" groups="product.group_sale_pricelist"/>
+                            <field domain="[('type','in',['sale','trade','retail','contract'])]" required="True" name="pricelist_id" groups="product.group_sale_pricelist"/>
                         </group>
                         <group>
                             <field name="project_id" groups="analytic.group_analytic_accounting"/>
@@ -163,7 +163,7 @@
                             <field name="date_order"/>
                             <field name="shop_id" groups="base.group_no_one" on_change="onchange_shop_id(shop_id, context)" widget="selection"/>
                             <field name="client_order_ref"/>
-                            <field domain="[('type','=','sale')]" name="pricelist_id" groups="product.group_sale_pricelist" on_change="onchange_pricelist_id(pricelist_id,order_line)"/>
+                            <field domain="[('type','in',['sale','trade','retail','contract'])]" name="pricelist_id" groups="product.group_sale_pricelist" on_change="onchange_pricelist_id(pricelist_id,order_line)"/>
                             <field name="currency_id" invisible="1"/>
                         </group>
                     </group>

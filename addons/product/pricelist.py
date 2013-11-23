@@ -95,7 +95,8 @@ class product_pricelist(osv.osv):
 
     _name = "product.pricelist"
     _description = "Pricelist"
-    _order = 'name'
+    #_order = 'name'
+    _order = 'id'
     _columns = {
         'name': fields.char('Pricelist Name',size=64, required=True, translate=True),
         'active': fields.boolean('Active', help="If unchecked, it will allow you to hide the pricelist without removing it."),
