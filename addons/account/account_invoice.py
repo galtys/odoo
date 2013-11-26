@@ -265,6 +265,7 @@ class account_invoice(osv.osv):
             help="If you use payment terms, the due date will be computed automatically at the generation "\
                 "of accounting entries. The payment term may compute several due dates, for example 50% now and 50% in one month, but if you want to force a due date, make sure that the payment term is not set on the invoice. If you keep the payment term and the due date empty, it means direct payment."),
         'partner_id': fields.many2one('res.partner', 'Partner', change_default=True, readonly=True, required=True, states={'draft':[('readonly',False)]}, track_visibility='always'),
+        'partner_shipping_id': fields.many2one('res.partner', 'Delivery Address', readonly=True, help="Delivery address."),
         'payment_term': fields.many2one('account.payment.term', 'Payment Terms',readonly=True, states={'draft':[('readonly',False)]},
             help="If you use payment terms, the due date will be computed automatically at the generation "\
                 "of accounting entries. If you keep the payment term and the due date empty, it means direct payment. "\
