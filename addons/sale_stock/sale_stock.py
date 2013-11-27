@@ -376,6 +376,11 @@ class sale_order(osv.osv):
     def _get_date_planned(self, cr, uid, order, line, start_date, context=None):
         start_date = self.date_to_datetime(cr, uid, start_date, context)
         date_planned = datetime.strptime(start_date, DEFAULT_SERVER_DATETIME_FORMAT) + relativedelta(days=line.delay or 0.0)
+        if date_planned.weekday()==5:
+            date_planned += relativedelta(days=2 or 0.0)        
+        elif date_planned.weekday()==6:
+            date_planned += relativedelta(days=1 or 0.0)
+
         date_planned = (date_planned - timedelta(days=order.company_id.security_lead)).strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         return date_planned
 

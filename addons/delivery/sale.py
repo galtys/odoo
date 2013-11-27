@@ -23,11 +23,27 @@ import time
 from openerp.osv import fields,osv
 from openerp.tools.translate import _
 
+class sale_order_line(osv.osv):
+    _inherit = 'sale.order.line'
+    _columns = {
+        'delivery_line':fields.boolean("Delivery Line"),
+        }
+    def copy(self, cr, uid, id, default=None, context=None):
+        if not default:
+            default = {}
+        default.update({
+                'delivery_line':False,
+        })
+        return super(sale_order_line, self).copy(cr, uid, id, default, context=context)
+
+sale_order_line()
+
 # Overloaded sale_order to manage carriers :
 class sale_order(osv.osv):
     _inherit = 'sale.order'
     _columns = {
         'carrier_id':fields.many2one("delivery.carrier", "Delivery Method", help="Complete this field if you plan to invoice the shipping based on picking."),
+        'delivery_invoiced':fields.boolean("Delivery Invoiced"),
     }
 
     def onchange_partner_id(self, cr, uid, ids, part, context=None):
@@ -39,8 +55,10 @@ class sale_order(osv.osv):
 
     def _prepare_order_picking(self, cr, uid, order, context=None):
         result = super(sale_order, self)._prepare_order_picking(cr, uid, order, context=context)
+        print "prepare order picking carrier", result
         result.update(carrier_id=order.carrier_id.id)
         return result
+
 
     def delivery_set(self, cr, uid, ids, context=None):
         order_obj = self.pool.get('sale.order')
@@ -62,21 +80,33 @@ class sale_order(osv.osv):
             fpos = order.fiscal_position or False
             taxes_ids = acc_fp_obj.map_tax(cr, uid, fpos, taxes)
             #create the sale order line
-            line_obj.create(cr, uid, {
-                'order_id': order.id,
-                'name': grid.carrier_id.name,
-                'product_uom_qty': 1,
-                'product_uom': grid.carrier_id.product_id.uom_id.id,
-                'product_id': grid.carrier_id.product_id.id,
-                'price_unit': grid_obj.get_price(cr, uid, grid.id, order, time.strftime('%Y-%m-%d'), context),
-                'tax_id': [(6,0,taxes_ids)],
-                'type': 'make_to_stock'
-            })
+            #product = ir_model_data.get_object(cr, uid, 'product', 'product_product_consultant')
+            delivery_lines = [l for l in order.order_line if l.delivery_line]
+            vals = {
+                    'order_id': order.id,
+                    'name': grid.carrier_id.name,
+                    'product_uom_qty': 1,
+                    'product_uom': grid.carrier_id.product_id.uom_id.id,
+                    'product_id': grid.carrier_id.product_id.id,
+                    'price_unit': grid_obj.get_price(cr, uid, grid.id, order, time.strftime('%Y-%m-%d'), context),
+                    'tax_id': [(6,0,taxes_ids)],
+                    'type': 'make_to_stock',
+                    'delivery_line':True,
+                }
+            print vals
+            if len(delivery_lines)==0:
+                line_obj.create(cr, uid, vals)
+            elif len(delivery_lines)==1:
+                vals.pop('order_id')
+                delivery_lines[0].write( vals)
+            else:
+                pass
         #remove the value of the carrier_id field on the sale order
         #return self.write(cr, uid, ids, {'carrier_id': False}, context=context)
         #return {'type': 'ir.actions.act_window_close'} action reload?
 
 sale_order()
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 
 class stock_picking(osv.osv):
     _inherit = 'stock.picking'
@@ -95,6 +125,3 @@ class stock_picking_out(osv.osv):
 
     }
 stock_picking_out()
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
-
