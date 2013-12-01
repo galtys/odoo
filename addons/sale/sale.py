@@ -87,18 +87,22 @@ class sale_order(osv.osv):
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
         cur_obj = self.pool.get('res.currency')
         res = {}
+        totprice=0.0
         for order in self.browse(cr, uid, ids, context=context):
             res[order.id] = {
                 'amount_untaxed': 0.0,
                 'amount_tax': 0.0,
                 'amount_total': 0.0,
+                'discount':0.0,
             }
             val = val1 = 0.0
             cur = order.pricelist_id.currency_id
             for line in order.order_line:
                 val1 += line.price_subtotal
                 val += self._amount_line_tax(cr, uid, line, context=context)
+                totprice += line.product_uom_qty * line.price_unit
             res[order.id]['amount_tax'] = cur_obj.round(cr, uid, cur, val)
+            res[order.id]['discount'] = cur_obj.round(cr, uid, cur, 100-100*val1/totprice)
             res[order.id]['amount_untaxed'] = cur_obj.round(cr, uid, cur, val1)
             res[order.id]['amount_total'] = res[order.id]['amount_untaxed'] + res[order.id]['amount_tax']
         return res
@@ -244,6 +248,8 @@ class sale_order(osv.osv):
                 'sale.order': (lambda self, cr, uid, ids, c={}: ids, ['order_line'], 10),
                 'sale.order.line': (_get_order, ['price_unit', 'tax_id', 'discount', 'product_uom_qty'], 10),
             },
+            multi='sums', help="The total amount."),
+        'discount': fields.function(_amount_all, digits_compute=dp.get_precision('Account'), string='Discount',
             multi='sums', help="The total amount."),
 
         'invoice_quantity': fields.selection([('order', 'Ordered Quantities')], 'Invoice on', help="The sales order will automatically create the invoice proposition (draft invoice).", required=True, readonly=True, states={'draft': [('readonly', False)]}),

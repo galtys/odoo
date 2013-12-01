@@ -3596,12 +3596,12 @@ class wizard_multi_charts_accounts(osv.osv_memory):
                 else:
                     current_num += 1
             # Create the default debit/credit accounts for this bank journal
-            vals = self._prepare_bank_account(cr, uid, line, new_code, acc_template_ref, ref_acc_bank, company_id, context=context)
-            default_account_id  = obj_acc.create(cr, uid, vals, context=context)
+            #vals = self._prepare_bank_account(cr, uid, line, new_code, acc_template_ref, ref_acc_bank, company_id, context=context)
+            #default_account_id  = obj_acc.create(cr, uid, vals, context=context)
 
             #create the bank journal
-            vals_journal = self._prepare_bank_journal(cr, uid, line, current_num, default_account_id, company_id, context=context)
-            obj_journal.create(cr, uid, vals_journal)
+            #vals_journal = self._prepare_bank_journal(cr, uid, line, current_num, default_account_id, company_id, context=context)
+            #obj_journal.create(cr, uid, vals_journal)
             current_num += 1
         return True
 

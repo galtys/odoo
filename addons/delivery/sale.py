@@ -57,6 +57,7 @@ class sale_order(osv.osv):
         result = super(sale_order, self)._prepare_order_picking(cr, uid, order, context=context)
         print "prepare order picking carrier", result
         result.update(carrier_id=order.carrier_id.id)
+        result.update(delivery_partner_id=order.carrier_id.partner_id.id)
         return result
 
 
@@ -66,6 +67,9 @@ class sale_order(osv.osv):
         grid_obj = self.pool.get('delivery.grid')
         carrier_obj = self.pool.get('delivery.carrier')
         acc_fp_obj = self.pool.get('account.fiscal.position')
+        cr.execute("select res_id,name from ir_model_data where model='delivery.carrier'")
+        carrier_map=dict( [x for x in cr.fetchall()] )
+
         for order in self.browse(cr, uid, ids, context=context):
             grid_id = carrier_obj.grid_get(cr, uid, [order.carrier_id.id], order.partner_shipping_id.id)
             if not grid_id:
@@ -82,13 +86,52 @@ class sale_order(osv.osv):
             #create the sale order line
             #product = ir_model_data.get_object(cr, uid, 'product', 'product_product_consultant')
             delivery_lines = [l for l in order.order_line if l.delivery_line]
+            grid_price = grid_obj.get_price(cr, uid, grid.id, order, time.strftime('%Y-%m-%d'), context)           
+            carrier_ref=carrier_map[order.carrier_id.id]
+            if carrier_ref in ["standard72"]:
+                if order.amount_untaxed > 1000.00:
+                    grid_price=0
+            elif carrier_ref in ["express48","express24","saturday"]:
+                if order.amount_untaxed < 1000.00:
+                    grid_price+=40
+                elif order.amount_untaxed > 1000.00:
+                    grid_price=40
+                elif order.amount_untaxed > 3000.00:
+                    grid_price=0
+            elif carrier_ref in ["special"]:
+                if order.amount_untaxed < 1000.00:
+                    grid_price+=70
+                elif order.amount_untaxed > 1000.00:
+                    grid_price=95
+                elif order.amount_untaxed > 2000.00:
+                    grid_price=125
+            elif carrier_ref in ["bespoke"]:
+                pass
+            elif carrier_ref in ["home_delivery"]:
+                if order.amount_untaxed > 750.00:
+                    grid_price=0
+            elif carrier_ref in ["parcelforce_carrier"]:
+                pass
+            elif carrier_ref in ["trade_delivery"]:
+                grid_price=65
+                if order.amount_untaxed > 1500.00:
+                    grid_price=0                
+            elif carrier_ref in ["trade_home_delivery"]:
+                grid_price=120
+                if order.amount_untaxed > 1500.00:
+                    grid_price=55
+            elif carrier_ref in ["contract_delivery"]:
+                grid_price=65
+                if order.amount_untaxed > 1600.00:
+                    grid_price=0
+
             vals = {
                     'order_id': order.id,
                     'name': grid.carrier_id.name,
                     'product_uom_qty': 1,
                     'product_uom': grid.carrier_id.product_id.uom_id.id,
                     'product_id': grid.carrier_id.product_id.id,
-                    'price_unit': grid_obj.get_price(cr, uid, grid.id, order, time.strftime('%Y-%m-%d'), context),
+                    'price_unit': grid_price,
                     'tax_id': [(6,0,taxes_ids)],
                     'type': 'make_to_stock',
                     'delivery_line':True,
@@ -111,9 +154,8 @@ sale_order()
 class stock_picking(osv.osv):
     _inherit = 'stock.picking'
     _columns = {
-        'pjb_carrier_id': fields.related('sale_id', 'carrier_id', string='Delivery',type="many2one",relation='delivery.carrier'),
-        
-
+        'pjb_carrier_id': fields.related('sale_id', 'carrier_id', string='Delivery',type="many2one",relation='delivery.carrier'),   
+        'delivery_partner_id':fields.many2one("res.partner", "Delivery Partner"),
     }
 stock_picking()
 
@@ -122,6 +164,7 @@ class stock_picking_out(osv.osv):
     _inherit = 'stock.picking.out'
     _columns = {
         'pjb_carrier_id': fields.related('sale_id', 'carrier_id', string='Delivery',type="many2one",relation='delivery.carrier'),
+        'delivery_partner_id':fields.many2one("res.partner", "Delivery Partner"),
 
     }
 stock_picking_out()
