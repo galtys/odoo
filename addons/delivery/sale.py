@@ -156,6 +156,7 @@ class stock_picking(osv.osv):
     _columns = {
         'pjb_carrier_id': fields.related('sale_id', 'carrier_id', string='Delivery',type="many2one",relation='delivery.carrier'),   
         'delivery_partner_id':fields.many2one("res.partner", "Delivery Partner"),
+        'delivery_date': fields.date('Delivery Date',help="Delivery date given by carrier"),
     }
 stock_picking()
 
@@ -165,6 +166,6 @@ class stock_picking_out(osv.osv):
     _columns = {
         'pjb_carrier_id': fields.related('sale_id', 'carrier_id', string='Delivery',type="many2one",relation='delivery.carrier'),
         'delivery_partner_id':fields.many2one("res.partner", "Delivery Partner"),
-
+        'delivery_date': fields.date('Delivery Date',help="Delivery date given by carrier"),
     }
 stock_picking_out()

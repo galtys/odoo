@@ -229,6 +229,8 @@
                     <field name="carrier_id"/>
                     <field name="carrier_tracking_ref"/>
                     <field name="number_of_packages"/>
+		    <field name="delivery_partner_id"/>
+		    <field name="delivery_date"/>
                 </field>
                 <field name="company_id" position="before">
                     <field name="weight"/>
@@ -339,5 +341,21 @@
                </field>
             </field>
         </record>
+        <record id="view_picking_out_tree_delivery_partner_id" model="ir.ui.view">
+            <field name="name">stock.picking.out.tree.delivery_partner</field>
+            <field name="model">stock.picking.out</field>
+	    <field name="inherit_id" ref="stock.view_picking_out_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="/tree/field[@name='state']" position="after">
+		  <field name="delivery_partner_id"/>
+		  <field name="delivery_date"/>
+		  <field name="date_done"/>
+
+                </xpath>
+
+            </field>
+        </record>
+
+
     </data>
 </openerp>

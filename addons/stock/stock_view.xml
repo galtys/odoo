@@ -965,6 +965,26 @@
               </p>
             </field>
         </record>
+        <record id="action_picking_tree_today" model="ir.actions.act_window">
+            <field name="name">Shipped Today</field>
+            <field name="res_model">stock.picking.out</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="domain">[('type','=','out'),('state','=','done')]</field>
+            <field name="context">{'default_type': 'out', 'contact_display': 'partner_address'}</field>
+            <field name="search_view_id" ref="view_picking_out_search"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create a delivery order. 
+              </p><p>
+                This is the list of all delivery orders that have to be
+                prepared, according to your different sales orders and your
+                logistics rules.
+              </p>
+            </field>
+        </record>
+
         <record id="action_picking_tree_out_view1_waiting" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
             <field name="view_mode">tree</field>
@@ -984,6 +1004,7 @@
             <field name="act_window_id" ref="action_picking_tree"/>
         </record>
         <menuitem action="action_picking_tree" id="menu_action_picking_tree" parent="menu_stock_warehouse_mgmt" sequence="3"/>
+        <menuitem action="action_picking_tree_today" id="menu_action_picking_tree_today" parent="menu_stock_warehouse_mgmt" sequence="4"/>
 
         <!-- Incomming Shipments -->
         <record model="ir.ui.view" id="stock_picking_in_calendar">

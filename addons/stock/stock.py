@@ -627,6 +627,12 @@ class stock_picking(osv.osv):
             res[pick]['max_date'] = dt2
         return res
 
+    def _today(self, cr, uid, ids, field_name, arg, context=None):
+        res = {}
+        for id in ids:
+            res[id] = {'ship_today': True, 'shipped_today': True}
+        return res
+
     def create(self, cr, user, vals, context=None):
         if ('name' not in vals) or (vals.get('name')=='/'):
             seq_obj_name =  self._name
@@ -663,6 +669,11 @@ class stock_picking(osv.osv):
         ),
         'min_date': fields.function(get_min_max_date, fnct_inv=_set_minimum_date, multi="min_max_date",
                  store=True, type='datetime', string='Scheduled Time', select=1, help="Scheduled time for the shipment to be processed"),
+        'ship_today': fields.function(_today, multi="today",
+                 store=True, type='boolean', string='To be shipped today', select=1),
+        'shipped_today': fields.function(_today, multi="today",
+                 store=True, type='boolean', string='Shipped today', select=1),
+
         'date': fields.datetime('Creation Date', help="Creation date, usually the time of the order.", select=True, states={'done':[('readonly', True)], 'cancel':[('readonly',True)]}),
         'date_done': fields.datetime('Date of Transfer', help="Date of Completion", states={'done':[('readonly', True)], 'cancel':[('readonly',True)]}),
         'max_date': fields.function(get_min_max_date, fnct_inv=_set_maximum_date, multi="min_max_date",
@@ -1390,6 +1401,39 @@ class stock_picking(osv.osv):
         res = self.pool.get('ir.model.data').get_object_reference(cr, uid, 
             'stock', self._VIEW_LIST.get(type, 'view_picking_form'))            
         return res and res[1] or False
+    def action_shipping_send(self, cr, uid, ids, context=None):
+        '''
+        This function opens a window to compose an email, with the edi sale template message loaded by default
+        '''
+        assert len(ids) == 1, 'This option should only be used for a single id at a time.'
+        ir_model_data = self.pool.get('ir.model.data')
+        try:
+            template_id = ir_model_data.get_object_reference(cr, uid, 'sale', 'email_template_edi_sale')[1]
+        except ValueError:
+            template_id = False
+        try:
+             compose_form_id = ir_model_data.get_object_reference(cr, uid, 'mail', 'email_compose_message_wizard_form')[1]
+        except ValueError:
+            compose_form_id = False 
+        ctx = dict(context)
+        ctx.update({
+            'default_model': 'sale.order',
+            'default_res_id': ids[0],
+            'default_use_template': bool(template_id),
+            'default_template_id': template_id,
+            'default_composition_mode': 'comment',
+            'mark_so_as_sent': True
+        })
+        return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'mail.compose.message',
+            'views': [(compose_form_id, 'form')],
+            'view_id': compose_form_id,
+            'target': 'new',
+            'context': ctx,
+        }
 
 
 class stock_production_lot(osv.osv):
