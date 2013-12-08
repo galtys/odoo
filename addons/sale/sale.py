@@ -88,6 +88,7 @@ class sale_order(osv.osv):
         cur_obj = self.pool.get('res.currency')
         res = {}
         totprice=0.0
+        subtotal = 0.0
         for order in self.browse(cr, uid, ids, context=context):
             res[order.id] = {
                 'amount_untaxed': 0.0,
@@ -100,9 +101,13 @@ class sale_order(osv.osv):
             for line in order.order_line:
                 val1 += line.price_subtotal
                 val += self._amount_line_tax(cr, uid, line, context=context)
+                subtotal = val1+val
                 totprice += line.product_uom_qty * line.price_unit
             res[order.id]['amount_tax'] = cur_obj.round(cr, uid, cur, val)
-            res[order.id]['discount'] = cur_obj.round(cr, uid, cur, 100-100*val1/totprice)
+            if abs(totprice)>0:
+                res[order.id]['discount'] = cur_obj.round(cr, uid, cur, 100-100*subtotal/totprice)
+            else:
+                res[order.id]['discount']= 0
             res[order.id]['amount_untaxed'] = cur_obj.round(cr, uid, cur, val1)
             res[order.id]['amount_total'] = res[order.id]['amount_untaxed'] + res[order.id]['amount_tax']
         return res
@@ -188,7 +193,8 @@ class sale_order(osv.osv):
         shop_ids = self.pool.get('sale.shop').search(cr, uid, [('company_id','=',company_id)], context=context)
         if not shop_ids:
             raise osv.except_osv(_('Error!'), _('There is no default shop for the current user\'s company!'))
-        return shop_ids[0]
+        print 'default shop', shop_ids
+        return  shop_ids[0]
 
     _columns = {
         'name': fields.char('Order Reference', size=64, required=True,
@@ -264,7 +270,9 @@ class sale_order(osv.osv):
         'user_id': lambda obj, cr, uid, context: uid,
         'name': lambda obj, cr, uid, context: '/',
         'invoice_quantity': 'order',
+        #'shop_id' : False,
         'shop_id': _get_default_shop,
+        #'shop_id':  _get_default_shop,
         'partner_invoice_id': lambda self, cr, uid, context: context.get('partner_id', False) and self.pool.get('res.partner').address_get(cr, uid, [context['partner_id']], ['invoice'])['invoice'],
         'partner_shipping_id': lambda self, cr, uid, context: context.get('partner_id', False) and self.pool.get('res.partner').address_get(cr, uid, [context['partner_id']], ['delivery'])['delivery'],
     }
