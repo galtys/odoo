@@ -192,6 +192,24 @@ class mrp_bom(osv.osv):
                 else:
                     res[line.id] = 'order'
         return res
+    def _qty_theoretical(self, cr, uid, ids, field_name, arg, context=None):
+        res = {}
+        ([{'product_uos_qty': False, 'name': u'Brighton Lounge Armchair (no cushions)', 'product_uom': 1, 'product_qty': 1.0, 'product_uos': False, 'product_id': 189}, {'product_uos_qty': False, 'name': u'Grey Standard Cushions for Brighton Lounge Armchair', 'product_uom': 1, 'product_qty': 1.0, 'product_uos': False, 'product_id': 72}], [])
+
+
+        for bom in self.browse(cr, uid, ids, context=context):
+            prod,ret =  self._bom_explode(cr, uid, bom, 1)
+            qtys=[]
+            for x in prod:
+                p=self.pool.get('product.product').browse(cr, uid, x['product_id'])
+                if x['product_qty']>0:
+                    q = p.qty_available/x['product_qty']
+                else:
+                    q=0
+                qtys.append(q)
+            res[bom.id] = min(qtys)/bom.product_qty
+
+        return res
 
     _columns = {
         'name': fields.char('Name', size=64),
@@ -207,6 +225,7 @@ class mrp_bom(osv.osv):
         'sequence': fields.integer('Sequence', help="Gives the sequence order when displaying a list of bills of material."),
         'position': fields.char('Internal Reference', size=64, help="Reference to a position in an external plan."),
         'product_id': fields.many2one('product.product', 'Product', required=True),
+        'qty_theoretical': fields.function(_qty_theoretical, string='Qty Theoretical',type='float', digits_compute=dp.get_precision('Product Unit of Measure')),
         'product_uos_qty': fields.float('Product UOS Qty'),
         'product_uos': fields.many2one('product.uom', 'Product UOS', help="Product UOS (Unit of Sale) is the unit of measurement for the invoicing and promotion of stock."),
         'product_qty': fields.float('Product Quantity', required=True, digits_compute=dp.get_precision('Product Unit of Measure')),
@@ -322,6 +341,7 @@ class mrp_bom(osv.osv):
         @return: result: List of dictionaries containing product details.
                  result2: List of dictionaries containing Work Center details.
         """
+        print [cr, uid, bom, factor]
         routing_obj = self.pool.get('mrp.routing')
         factor = factor / (bom.product_efficiency or 1.0)
         max_rounding = max(bom.product_rounding, bom.product_uom.rounding)
