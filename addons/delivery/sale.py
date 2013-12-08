@@ -58,6 +58,7 @@ class sale_order(osv.osv):
         print "prepare order picking carrier", result
         result.update(carrier_id=order.carrier_id.id)
         result.update(delivery_partner_id=order.carrier_id.partner_id.id)
+        result.update( {'delivery_notes':order.delivery_notes} )
         return result
 
 
@@ -89,27 +90,31 @@ class sale_order(osv.osv):
             grid_price = grid_obj.get_price(cr, uid, grid.id, order, time.strftime('%Y-%m-%d'), context)           
             carrier_ref=carrier_map[order.carrier_id.id]
             if carrier_ref in ["standard72"]:
-                if order.amount_untaxed > 1000.00:
+                if order.amount_total > 1000.00:
                     grid_price=0
             elif carrier_ref in ["express48","express24","saturday"]:
-                if order.amount_untaxed < 1000.00:
+                if order.amount_total < 1000.00:
                     grid_price+=40
-                elif order.amount_untaxed > 1000.00:
+                elif order.amount_total > 1000.00:
                     grid_price=40
-                elif order.amount_untaxed > 3000.00:
-                    grid_price=0
             elif carrier_ref in ["special"]:
-                if order.amount_untaxed < 1000.00:
+                if order.amount_total < 1000.00:
                     grid_price+=70
-                elif order.amount_untaxed > 1000.00:
-                    grid_price=95
-                elif order.amount_untaxed > 2000.00:
-                    grid_price=125
-            elif carrier_ref in ["bespoke"]:
-                pass
-            elif carrier_ref in ["home_delivery"]:
-                if order.amount_untaxed > 750.00:
+                elif order.amount_total > 3000.00:
                     grid_price=0
+                elif order.amount_total > 2000.00:
+                    grid_price=125
+                elif order.amount_total > 1000.00:
+                    grid_price=95
+                
+            elif carrier_ref in ["bespoke"]:
+                if order.amount_total > 1000.0:
+                    grid_price=0
+            elif carrier_ref in ["home_delivery"]:
+                if order.amount_total > 750.00:
+                    grid_price=0
+            elif carrier_ref in ["collection"]:
+                grid_price=0
             elif carrier_ref in ["parcelforce_carrier"]:
                 pass
             elif carrier_ref in ["trade_delivery"]:
