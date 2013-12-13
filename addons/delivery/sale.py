@@ -88,7 +88,7 @@ class sale_order(osv.osv):
             #product = ir_model_data.get_object(cr, uid, 'product', 'product_product_consultant')
             delivery_lines = [l for l in order.order_line if l.delivery_line]
             grid_price = grid_obj.get_price(cr, uid, grid.id, order, time.strftime('%Y-%m-%d'), context)           
-            carrier_ref=carrier_map[order.carrier_id.id]
+            carrier_ref=carrier_map.get(order.carrier_id.id)
             if carrier_ref in ["standard72"]:
                 if order.amount_total > 1000.00:
                     grid_price=0
