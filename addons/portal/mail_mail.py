@@ -30,7 +30,7 @@ class mail_mail(osv.Model):
     """ Update of mail_mail class, to add the signin URL to notifications. """
     _inherit = 'mail.mail'
 
-    def send_get_mail_body(self, cr, uid, mail, partner=None, context=None):
+    def send_get_mail_body_not_use(self, cr, uid, mail, partner=None, context=None):
         """ add a signin link inside the body of a mail.mail
             :param mail: mail.mail browse_record
             :param partner: browse_record of the specific recipient partner

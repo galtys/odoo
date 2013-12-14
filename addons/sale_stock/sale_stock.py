@@ -141,7 +141,7 @@ class sale_order(osv.osv):
             help="""On demand: A draft invoice can be created from the sales order when needed. \nOn delivery order: A draft invoice can be created from the delivery order when the products have been delivered. \nBefore delivery: A draft invoice is created from the sales order and must be paid before the products can be delivered."""),
         'picking_ids': fields.one2many('stock.picking.out', 'sale_id', 'Related Picking', readonly=True, help="This is a list of delivery orders that has been generated for this sales order."),
         'shipped': fields.boolean('Delivered', readonly=True, help="It indicates that the sales order has been delivered. This field is updated only after the scheduler(s) have been launched."),
-        'picked_rate': fields.function(_picked_rate, string='Picked', type='float'),
+        'picked_rate': fields.function(_picked_rate, string='% Delivered', type='float'),
         'invoice_quantity': fields.selection([('order', 'Ordered Quantities'), ('procurement', 'Shipped Quantities')], 'Invoice on', 
                                              help="The sales order will automatically create the invoice proposition (draft invoice).\
                                               You have to choose  if you want your invoice based on ordered ", required=True, readonly=True, states={'draft': [('readonly', False)]}),
@@ -153,6 +153,48 @@ class sale_order(osv.osv):
          }
 
     # Form filling
+    def _pjb_check_pricelist_type(self, cr, uid, ids, context=None):
+        for so in self.browse(cr, uid, ids):
+            print 'check so', so.shop_id.pricelist_id.type, so.pricelist_id.type
+            if so.shop_id.pricelist_id.type != so.pricelist_id.type:
+                return False
+        return True
+    def _pjb_check_fiscal_position_empty(self, cr, uid, ids, context=None):
+        for so in self.browse(cr, uid, ids):
+            if not so.fiscal_position :
+                if so.pricelist_id.type != 'retail':
+                    return False
+        return True
+    def _pjb_check_fiscal_position_partner(self, cr, uid, ids, context=None):
+        for so in self.browse(cr, uid, ids):
+            if so.partner_id.property_account_position.name != so.fiscal_position.name:
+                return False
+        return True
+
+    def _pjb_check_fiscal_position_pricelist(self, cr, uid, ids, context=None):
+        for so in self.browse(cr, uid, ids):
+            if not so.fiscal_position:
+                return True
+            if 'EXVAT' in so.pricelist_id.name:
+                if 'EXVAT' not in so.fiscal_position.note:
+                    return False
+            if 'EXVAT' in so.fiscal_position.note:
+                if 'EXVAT' not in so.pricelist_id.name:
+                    return False
+        return True
+    def _pjb_check_order_policy_manual(self, cr, uid, ids, context=None):
+        for so in self.browse(cr, uid, ids):
+            if so.order_policy != 'manual':
+                return False
+        return True
+    _constraints = [
+        (_pjb_check_pricelist_type, 'Pricelist type on shop on must equal to pricelist type on order (i.e. Retail Shop - Retail Pricelist)', []),
+        (_pjb_check_fiscal_position_empty, 'Only UK Retail Sale Orders can have fiscal position empty.', []),
+        (_pjb_check_fiscal_position_partner, 'Fiscal position on order must equal partner fiscal position.', []),
+        (_pjb_check_fiscal_position_pricelist, 'EXVAT Fiscal positions (0%VAT or 20EXVAT CODES) must be used with EXVAT Pricelists.', []),        
+        (_pjb_check_order_policy_manual, '"Create Invoice" must be "On Demand".', []),
+   ]
+
     def unlink(self, cr, uid, ids, context=None):
         sale_orders = self.read(cr, uid, ids, ['state'], context=context)
         unlink_ids = []

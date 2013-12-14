@@ -207,7 +207,10 @@ class mrp_bom(osv.osv):
                 else:
                     q=0
                 qtys.append(q)
-            res[bom.id] = min(qtys)/bom.product_qty
+            if qtys:
+                res[bom.id] = min(qtys)/bom.product_qty
+            else:
+                res[bom.id]=0
 
         return res
 

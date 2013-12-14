@@ -58,6 +58,7 @@ class sale_order(osv.osv):
 
     def onchange_shop_id(self, cr, uid, ids, shop_id, context=None):
         v = {}
+        print 'onchange_shop_id', ids,shop_id,context
         if shop_id:
             shop = self.pool.get('sale.shop').browse(cr, uid, shop_id, context=context)
             if shop.project_id.id:
@@ -193,8 +194,9 @@ class sale_order(osv.osv):
         shop_ids = self.pool.get('sale.shop').search(cr, uid, [('company_id','=',company_id)], context=context)
         if not shop_ids:
             raise osv.except_osv(_('Error!'), _('There is no default shop for the current user\'s company!'))
+        print 44*"_"
         print 'default shop', shop_ids
-        return  shop_ids[0]
+        return  shop_ids[4]
 
     _columns = {
         'name': fields.char('Order Reference', size=64, required=True,
@@ -230,7 +232,7 @@ class sale_order(osv.osv):
 
         'order_line': fields.one2many('sale.order.line', 'order_id', 'Order Lines', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]}),
         'invoice_ids': fields.many2many('account.invoice', 'sale_order_invoice_rel', 'order_id', 'invoice_id', 'Invoices', readonly=True, help="This is the list of invoices that have been generated for this sales order. The same sales order may have been invoiced in several times (by line for example)."),
-        'invoiced_rate': fields.function(_invoiced_rate, string='Invoiced Ratio', type='float'),
+       'invoiced_rate': fields.function(_invoiced_rate, string='% Invoiced', type='float'),
         'invoiced': fields.function(_invoiced, string='Paid',
             fnct_search=_invoiced_search, type='boolean', help="It indicates that an invoice has been paid."),
         'invoice_exists': fields.function(_invoice_exists, string='Invoiced',
@@ -263,6 +265,7 @@ class sale_order(osv.osv):
         'fiscal_position': fields.many2one('account.fiscal.position', 'Fiscal Position'),
         'company_id': fields.related('shop_id','company_id',type='many2one',relation='res.company',string='Company',store=True,readonly=True)
     }
+
     _defaults = {
         'date_order': fields.date.context_today,
         'order_policy': 'manual',
@@ -271,7 +274,7 @@ class sale_order(osv.osv):
         'name': lambda obj, cr, uid, context: '/',
         'invoice_quantity': 'order',
         #'shop_id' : False,
-        'shop_id': _get_default_shop,
+        #'shop_id': lambda x,cr,uid,ctx: [5],#_get_default_shop,
         #'shop_id':  _get_default_shop,
         'partner_invoice_id': lambda self, cr, uid, context: context.get('partner_id', False) and self.pool.get('res.partner').address_get(cr, uid, [context['partner_id']], ['invoice'])['invoice'],
         'partner_shipping_id': lambda self, cr, uid, context: context.get('partner_id', False) and self.pool.get('res.partner').address_get(cr, uid, [context['partner_id']], ['delivery'])['delivery'],
@@ -344,10 +347,28 @@ class sale_order(osv.osv):
         if pricelist:
             val['pricelist_id'] = pricelist
         return {'value': val}
+    def pjb_validate(self, cr, uid, vals):
+        print 'create sale order', vals, #property_account_position, #property_product_pricelist
+        if not vals['pricelist_id']:            
+            raise osv.except_osv(_('Error!'), _('No pricelist'))
+        shop=self.pool.get('sale.shop').browse(cr, uid, vals['shop_id'])
+        pricelist=self.pool.get('product.pricelist').browse(cr, uid, vals['pricelist_id'])
+        if shop.pricelist_id.type != pricelist.type:
+            raise osv.except_osv(_('Error!'), _('Pricelist type on partner must equal to pricelist type on order (i.e. Retail - Retail)'))
+        print vals['shop_id'], vals['fiscal_position'], vals['pricelist_id'], vals['partner_id']
+
+    def write(self, cr, uid, ids, vals, context=None):
+        #for so in self.browse(cr, uid, ids):
+         #   print 'write so', so.shop_id.pricelist_id.type, so.pricelist_id.type
+          #  if so.shop_id.pricelist_id.type != so.pricelist_id.type:
+           #     raise osv.except_osv(_('Error!'), _('Pricelist type on shop on must equal to pricelist type on order (i.e. Retail Shop - Retail Pricelist)'))
+        return super(sale_order, self).write(cr, uid, ids, vals, context=context)
 
     def create(self, cr, uid, vals, context=None):
         if vals.get('name','/')=='/':
             vals['name'] = self.pool.get('ir.sequence').get(cr, uid, 'sale.order') or '/'
+        #raise osv.except_osv(_('Error!'), _('There is no default shop for the current user\'s company!'))
+        #self.pjb_validate(cr, uid, vals)
         return super(sale_order, self).create(cr, uid, vals, context=context)
 
     def button_dummy(self, cr, uid, ids, context=None):
@@ -588,6 +609,9 @@ class sale_order(osv.osv):
         return True
 
     def action_button_confirm(self, cr, uid, ids, context=None):
+        for so in self.browse(cr, uid, ids):
+            if (so.amount_total > (so.partner_id.debit-so.partner_id.credit)) and so.pricelist_id.type=='retail':
+                raise osv.except_osv(_('Error!'),_('Current balance on partner account (%0.2f) does not exeed total order amount (%0.2f). For retail customers, payment must be received in advance.'%(so.partner_id.debit-so.partner_id.credit, so.amount_total )   ))
         assert len(ids) == 1, 'This option should only be used for a single id at a time.'
         wf_service = netsvc.LocalService('workflow')
         wf_service.trg_validate(uid, 'sale.order', ids[0], 'order_confirm', cr)

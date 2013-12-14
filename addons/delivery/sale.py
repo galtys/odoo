@@ -129,7 +129,8 @@ class sale_order(osv.osv):
                 grid_price=65
                 if order.amount_untaxed > 1600.00:
                     grid_price=0
-
+            if order.carrier_id.name in ["XDP Collection"]:
+                grid_price=0
             vals = {
                     'order_id': order.id,
                     'name': grid.carrier_id.name,

@@ -104,6 +104,19 @@
                 </data>
            </field>
         </record>
+        <record id="view_order_tree_inherit_add_rates" model="ir.ui.view">
+            <field name="name">sale.order.tree.add_rates</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+	      <data>
+	      <field name="state" position="after">
+		<field name="invoiced_rate"/>
+		<field name="picked_rate"/>
+	      </field>
+	      </data>
+            </field>
+        </record>
 
         <record id="view_res_partner_tree_type" model="ir.ui.view">
             <field name="name">res.partner.tree.inherit.type</field>
@@ -137,6 +150,9 @@
             <field name="arch" type="xml">
                 <xpath expr="/tree/field[@name='state']" position="after">
 		  <field name="shop_id"/>
+                </xpath>
+                <xpath expr="/tree/field[@name='min_date']" position="after">
+		  <field name="requested_date"/>
                 </xpath>
 
             </field>

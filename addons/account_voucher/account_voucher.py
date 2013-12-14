@@ -182,9 +182,12 @@ class account_voucher(osv.osv):
         return context.get('partner_id', False)
 
     def _get_reference(self, cr, uid, context=None):
+        import time
         if context is None: context = {}
-        return context.get('reference', False)
-
+        #if 'reference' in context:
+        #    return context.get('reference', False)
+        #else:
+        return time.strftime("%d%m")
     def _get_narration(self, cr, uid, context=None):
         if context is None: context = {}
         return context.get('narration', False)
