@@ -27,6 +27,7 @@ from openerp import netsvc
 from openerp.tools.translate import _
 import pytz
 from openerp import SUPERUSER_ID
+import time
 
 class sale_shop(osv.osv):
     _inherit = "sale.shop"
@@ -153,6 +154,16 @@ class sale_order(osv.osv):
          }
 
     # Form filling
+    def _is_older(self, date_order):
+        #today_tuple=tuple( map(int,time.strftime("%Y-%m-%d").split('-')) )
+        today_tuple=(2013,12,13)
+        from datetime import date
+        today=date(*today_tuple)
+        x=tuple( map(int, date_order.split('-') ) )
+        #order=date.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
+        order = date(*x)
+        return order < today
+        
     def _pjb_check_pricelist_type(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
             print 'check so', so.shop_id.pricelist_id.type, so.pricelist_id.type
@@ -161,12 +172,16 @@ class sale_order(osv.osv):
         return True
     def _pjb_check_fiscal_position_empty(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
+            if self._is_older(so.date_order):
+                return True
             if not so.fiscal_position :
                 if so.pricelist_id.type != 'retail':
                     return False
         return True
     def _pjb_check_fiscal_position_partner(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
+            if self._is_older(so.date_order):
+                return True
             if so.partner_id.property_account_position.name != so.fiscal_position.name:
                 return False
         return True
@@ -184,6 +199,8 @@ class sale_order(osv.osv):
         return True
     def _pjb_check_order_policy_manual(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
+            if self._is_older(so.date_order):
+                return True
             if so.order_policy != 'manual':
                 return False
         return True
