@@ -54,16 +54,11 @@
     <initialize>
       <paraStyle name="all" alignment="justify"/>
     </initialize>
-    <paraStyle name="P1" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="P2" fontName="Helvetica-Bold" fontSize="18.0" leading="22" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="P3" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="P4" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="P5" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="P6" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="P7" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="P8" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="P9" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT"/>
-    <paraStyle name="P10" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT"/>
+    <paraStyle name="P1" fontName="Helvetica-Bold" fontSize="18.0" leading="22" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P2" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P3" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P4" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT"/>
+    <paraStyle name="P5" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="Standard" fontName="Helvetica"/>
     <paraStyle name="Heading" fontName="Helvetica" fontSize="14.0" leading="17" spaceBefore="12.0" spaceAfter="6.0"/>
     <paraStyle name="Text body" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
@@ -137,9 +132,9 @@
           <para style="terp_default_9">
             <font color="white"> </font>
           </para>
-          <para style="terp_default_9">Tel. : [[ (picking.partner_id.phone) or removeParentNode('para') ]]</para>
-          <para style="terp_default_9">Fax : [[ (picking.partner_id.fax) or removeParentNode('para') ]]</para>
-          <para style="terp_default_9">VAT : [[ (picking.partner_id.vat) or removeParentNode('para') ]]</para>
+          <para style="terp_default_9">Tel: [[ (picking.partner_id.phone) or removeParentNode('para') ]]</para>
+          <para style="terp_default_9">Fax: [[ (picking.partner_id.fax) or removeParentNode('para') ]]</para>
+          <para style="terp_default_9">VAT: [[ (picking.partner_id.vat) or removeParentNode('para') ]]</para>
           <para style="terp_default_9">E: [[ picking.partner_id and picking.partner_id.email or removeParentNode('para') ]]</para>
         </td>
       </tr>
@@ -171,7 +166,7 @@
         </td>
       </tr>
     </blockTable>
-    <para style="P3">
+    <para style="P2">
       <font color="white"> </font>
     </para>
     <para style="terp_header">
@@ -180,9 +175,9 @@
     <blockTable colWidths="540.0" style="Table_Title_String">
       <tr>
         <td>
-          <para style="P2">DELIVERY SLIP [[ (picking.type == 'out' or removeParentNode('para')) and '' ]] </para>
-          <para style="P2">Incoming Shipment [[ (picking.type == 'in' or removeParentNode('para')) and '' ]] </para>
-          <para style="P2">Internal Shipment [[ (picking.type == 'internal' or removeParentNode('para')) and '' ]] </para>
+          <para style="P1">DELIVERY SLIP [[ (picking.type == 'out' or removeParentNode('para')) and '' ]] </para>
+          <para style="P1">Incoming Shipment [[ (picking.type == 'in' or removeParentNode('para')) and '' ]] </para>
+          <para style="P1">Internal Shipment [[ (picking.type == 'internal' or removeParentNode('para')) and '' ]] </para>
         </td>
       </tr>
     </blockTable>
@@ -198,7 +193,7 @@
           <para style="terp_default_9">[[picking.name]]</para>
         </td>
         <td>
-          <para style="P10">
+          <para style="P4">
             <font color="white"> </font>
           </para>
         </td>
@@ -217,7 +212,7 @@
           <para style="terp_default_9">[[picking.origin]]</para>
         </td>
         <td>
-          <para style="P10">
+          <para style="P4">
             <font color="white"> </font>
           </para>
         </td>
@@ -236,7 +231,7 @@
           <para style="terp_default_9">[[picking.sale_id.client_order_ref]] </para>
         </td>
         <td>
-          <para style="P10">
+          <para style="P4">
             <font color="white"> </font>
           </para>
         </td>
@@ -249,12 +244,10 @@
       </tr>
       <tr>
         <td>
-          <para style="P8">COMMENTS:</para>
+          <para style="P3">COMMENTS:</para>
         </td>
         <td>
-          <para style="terp_default_9">
-            <font face="Helvetica">[[picking.delivery_notes]]</font>
-          </para>
+          <para style="P5">[[picking.delivery_notes]]</para>
         </td>
       </tr>
     </blockTable>
