@@ -29,7 +29,7 @@ from openerp.osv import fields, osv, orm
 from openerp.tools.translate import _
 from openerp import netsvc
 from openerp import tools
-from openerp.tools import float_compare, DEFAULT_SERVER_DATETIME_FORMAT
+from openerp.tools import float_compare, DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMAT
 import openerp.addons.decimal_precision as dp
 import logging
 _logger = logging.getLogger(__name__)
@@ -602,6 +602,16 @@ class stock_picking(osv.osv):
                 sql_str += " and (date_expected='" + pick.min_date + "')"
             cr.execute(sql_str)
         return True
+    def _set_minimum_date_today(self, cr, uid, ids, name, value, arg, context=None):
+        """ Calculates planned date if it is less than 'value'.
+        @param name: Name of field
+        @param value: Value of field
+        @param arg: User defined argument
+        @return: True or False
+        """
+        import today
+        today=time.strftime("%Y-%m-%d")
+        return self._set_minimum_date(self, cr, uid, ids, name, today, arg, context=context)
 
     def get_min_max_date(self, cr, uid, ids, field_name, arg, context=None):
         """ Finds minimum and maximum dates for picking.
@@ -629,8 +639,13 @@ class stock_picking(osv.osv):
 
     def _today(self, cr, uid, ids, field_name, arg, context=None):
         res = {}
+        import datetime,time
+        #today=datetime.datetime.strptime(time.strftime("%Y-%m-%d"), DEFAULT_SERVER_DATE_FORMAT)
+        #today=datetime.datetime.strptime(, DEFAULT_SERVER_DATE_FORMAT)
+        today=time.strftime("%Y-%m-%d")
+        #order=date.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
         for id in ids:
-            res[id] = {'ship_today': True, 'shipped_today': True}
+            res[id] = {'ship_today': True, 'shipped_today': True, 'today': today, 'older_than_today':True}                       
         return res
 
     def create(self, cr, user, vals, context=None):
@@ -639,6 +654,26 @@ class stock_picking(osv.osv):
             vals['name'] = self.pool.get('ir.sequence').get(cr, user, seq_obj_name)
         new_id = super(stock_picking, self).create(cr, user, vals, context)
         return new_id
+    def _convert_to_date(self,d):
+        import datetime
+        return 
+    def _today_search(self, cursor, user, obj, name, args, context=None):
+        #if not len(args):
+        #print [ args], '_today_search'
+        import datetime,time
+        
+        #ids=self.search(cursor,user, [('state','not in',['done','cancel'])])
+        cursor.execute("select id from stock_picking where type='out' and state not in ('done','cancel')")
+        ids=[x[0] for x in cursor.fetchall()]
+        print 'state not in done or cancel', ids
+        today=time.strftime("%Y-%m-%d 23:59:59")
+        out=[]
+        for p in self.browse(cursor, user, ids):
+            print p.min_date,today
+            if datetime.datetime.strptime(p.min_date, DEFAULT_SERVER_DATETIME_FORMAT) <= datetime.datetime.strptime(today, DEFAULT_SERVER_DATETIME_FORMAT):
+                out.append(p.id)
+        print out
+        return [('id', 'in', out)]
 
     _columns = {
         'name': fields.char('Reference', size=64, select=True, states={'done':[('readonly', True)], 'cancel':[('readonly',True)]}),
@@ -669,10 +704,15 @@ class stock_picking(osv.osv):
         ),
         'min_date': fields.function(get_min_max_date, fnct_inv=_set_minimum_date, multi="min_max_date",
                  store=True, type='datetime', string='Scheduled Time', select=1, help="Scheduled time for the shipment to be processed"),
-        'ship_today': fields.function(_today, multi="today",
-                 store=True, type='boolean', string='To be shipped today', select=1),
+        'ship_today': fields.function(_today, multi="today", #delete this
+                                       type='boolean', string='To be shipped today'),
+        'older_than_today': fields.function(_today, multi="today", fnct_search=_today_search,select=True,
+                                       type='boolean', string='Outstanding Today'),
+
         'shipped_today': fields.function(_today, multi="today",
-                 store=True, type='boolean', string='Shipped today', select=1),
+                                         type='boolean', string='Shipped today'),
+        'today': fields.function(_today, multi="today",
+                                  type='datetime', string='Today'),
 
         'date': fields.datetime('Creation Date', help="Creation date, usually the time of the order.", select=True, states={'done':[('readonly', True)], 'cancel':[('readonly',True)]}),
         'date_done': fields.datetime('Date of Transfer', help="Date of Completion", states={'done':[('readonly', True)], 'cancel':[('readonly',True)]}),

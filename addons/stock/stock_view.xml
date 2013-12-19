@@ -806,6 +806,8 @@
                 <search string="Internal Picking List">
                     <field name="name" string="Internal Picking List" filter_domain="['|',('name','ilike', self),('origin','ilike',self)]"/>
                     <filter icon="terp-check" name="available" string="Ready" domain="[('state','=','assigned')]" help="Assigned Internal Moves"/>
+
+
                     <filter icon="terp-camera_test" name="confirmed" string="Waiting" domain="[('state','=','confirmed')]" help="Confirmed Internal Moves"/>
                     <filter icon="terp-dialog-close" name="done" string="Done" domain="[('state','=','done')]" help="Pickings already processed"/>
                     <field name="partner_id" filter_domain="[('partner_id','child_of',self)]"/>
@@ -928,6 +930,7 @@
                 <search string="Picking list">
                     <field name="name" string="Picking List" filter_domain="['|',('name','ilike', self),('origin','ilike',self)]"/>
                     <filter icon="terp-check" name="available" string="Ready" domain="[('state','=','assigned')]" help="Assigned Delivery Orders"/>
+                    <filter icon="terp-check" name="older_than_today" string="Outstanding Today" domain="[('older_than_today','=',True)]" help="Outstanding Today"/>
                     <filter icon="terp-camera_test" name="confirmed" string="Waiting" domain="[('state','=','confirmed')]" help="Confirmed Delivery Orders"/>
                     <filter icon="terp-dialog-close" name="done" string="Done" domain="[('state','=','done')]" help="Delivery orders already processed"/>
                     <separator/>
