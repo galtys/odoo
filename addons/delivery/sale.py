@@ -162,7 +162,10 @@ class stock_picking(osv.osv):
     def _delivery_date(self,cr, uid, ids, *a, **kw):
         res={}
         for d in self.browse(cr, uid, ids):
-            res[d.id]="%s/%s/%s"%tuple([x for x in reversed(d.delivery_date.split('-'))])
+            if d.delivery_date:
+                res[d.id]="%s/%s/%s"%tuple([x for x in reversed(d.delivery_date.split('-'))])
+            else:
+                res[d.id]=''
         return res
     _columns = {
         'pjb_carrier_id': fields.related('sale_id', 'carrier_id', string='Delivery',type="many2one",relation='delivery.carrier'),   
@@ -178,7 +181,10 @@ class stock_picking_out(osv.osv):
     def _delivery_date(self,cr, uid, ids, *a, **kw):
         res={}
         for d in self.browse(cr, uid, ids):
-            res[d.id]="%s/%s/%s"%tuple([x for x in reversed(d.delivery_date.split('-'))])
+            if d.delivery_date:
+                res[d.id]="%s/%s/%s"%tuple([x for x in reversed(d.delivery_date.split('-'))])
+            else:
+                res[d.id]=''
         return res
     _columns = {
         'pjb_carrier_id': fields.related('sale_id', 'carrier_id', string='Delivery',type="many2one",relation='delivery.carrier'),
