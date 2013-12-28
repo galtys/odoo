@@ -33,6 +33,8 @@ class picking(report_sxw.rml_parse):
         desc = move_line.product_id.name
         if move_line.product_id.default_code:
             desc = '[' + move_line.product_id.default_code + ']' + ' ' + desc
+        if move_line.product_id.default_code=='PART':
+            return move_line.name
         return desc
 
 for suffix in ['', '.in', '.out']:
