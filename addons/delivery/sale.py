@@ -159,19 +159,31 @@ sale_order()
 
 class stock_picking(osv.osv):
     _inherit = 'stock.picking'
+    def _delivery_date(self,cr, uid, ids, *a, **kw):
+        res={}
+        for d in self.browse(cr, uid, ids):
+            res[d.id]="%s/%s/%s"%tuple([x for x in reversed(d.delivery_date.split('-'))])
+        return res
     _columns = {
         'pjb_carrier_id': fields.related('sale_id', 'carrier_id', string='Delivery',type="many2one",relation='delivery.carrier'),   
         'delivery_partner_id':fields.many2one("res.partner", "Delivery Partner"),
         'delivery_date': fields.date('Delivery Date',help="Delivery date given by carrier"),
+        'delivery_date_f':fields.function(_delivery_date, type="char", string="Delivery Date Formatted"),
     }
 stock_picking()
 
 
 class stock_picking_out(osv.osv):
     _inherit = 'stock.picking.out'
+    def _delivery_date(self,cr, uid, ids, *a, **kw):
+        res={}
+        for d in self.browse(cr, uid, ids):
+            res[d.id]="%s/%s/%s"%tuple([x for x in reversed(d.delivery_date.split('-'))])
+        return res
     _columns = {
         'pjb_carrier_id': fields.related('sale_id', 'carrier_id', string='Delivery',type="many2one",relation='delivery.carrier'),
         'delivery_partner_id':fields.many2one("res.partner", "Delivery Partner"),
         'delivery_date': fields.date('Delivery Date',help="Delivery date given by carrier"),
+        'delivery_date_f':fields.function(_delivery_date, type="char", string="Delivery Date Formatted"),
     }
 stock_picking_out()
