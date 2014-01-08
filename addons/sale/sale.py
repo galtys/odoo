@@ -105,12 +105,13 @@ class sale_order(osv.osv):
                 subtotal = val1+val
                 totprice += line.product_uom_qty * line.price_unit
             res[order.id]['amount_tax'] = cur_obj.round(cr, uid, cur, val)
-            if abs(totprice)>0:
-                res[order.id]['discount'] = cur_obj.round(cr, uid, cur, 100-100*subtotal/totprice)
-            else:
-                res[order.id]['discount']= 0
             res[order.id]['amount_untaxed'] = cur_obj.round(cr, uid, cur, val1)
             res[order.id]['amount_total'] = res[order.id]['amount_untaxed'] + res[order.id]['amount_tax']
+            if abs(totprice)>0:
+                res[order.id]['discount'] = cur_obj.round(cr, uid, cur, 100-100*subtotal/res[order.id]['amount_total'])
+            else:
+                res[order.id]['discount']= 0
+
         return res
 
 
