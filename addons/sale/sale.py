@@ -102,13 +102,24 @@ class sale_order(osv.osv):
             for line in order.order_line:
                 val1 += line.price_subtotal
                 val += self._amount_line_tax(cr, uid, line, context=context)
-                subtotal = val1+val
+                if order.pricelist_id:
+                    if 'EXVAT' in order.pricelist_id.name:
+                        subtotal = val1
+                    else:
+                        subtotal = val1+val
+                else:
+                    subtotal = val1+val
                 totprice += line.product_uom_qty * line.price_unit
+                    
             res[order.id]['amount_tax'] = cur_obj.round(cr, uid, cur, val)
             res[order.id]['amount_untaxed'] = cur_obj.round(cr, uid, cur, val1)
             res[order.id]['amount_total'] = res[order.id]['amount_untaxed'] + res[order.id]['amount_tax']
             if abs(totprice)>0:
-                res[order.id]['discount'] = cur_obj.round(cr, uid, cur, 100-100*subtotal/res[order.id]['amount_total'])
+                if order.pricelist_id:
+                    if 'EXVAT' in order.pricelist_id.name:
+                        res[order.id]['discount'] = cur_obj.round(cr, uid, cur, 100-100*subtotal/totprice)
+                    else:
+                        res[order.id]['discount'] = cur_obj.round(cr, uid, cur, 100-100*subtotal/totprice)
             else:
                 res[order.id]['discount']= 0
 
