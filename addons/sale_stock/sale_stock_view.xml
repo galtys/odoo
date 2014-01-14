@@ -111,6 +111,7 @@
             <field name="arch" type="xml">
 	      <data>
 	      <field name="state" position="after">
+		<field name="client_order_ref"/>
 		<field name="invoiced_rate"/>
 		<field name="picked_rate"/>
 	      </field>
