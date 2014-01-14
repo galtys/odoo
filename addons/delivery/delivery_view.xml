@@ -231,6 +231,7 @@
                     <field name="number_of_packages"/>
 		    <field name="delivery_partner_id"/>
 		    <field name="delivery_date"/>
+		    <field name="sale_id"/>
                 </field>
                 <field name="company_id" position="before">
                     <field name="weight"/>
