@@ -55,15 +55,9 @@ class stock_picking(osv.osv):
         'carrier_id':fields.many2one("delivery.carrier","Carrier"),
         'volume': fields.float('Volume'),
         'weight': fields.function(_cal_weight, type='float', string='Weight', digits_compute= dp.get_precision('Stock Weight'), multi='_cal_weight',
-                  store={
-                 'stock.picking': (lambda self, cr, uid, ids, c={}: ids, ['move_lines'], 20),
-                 'stock.move': (_get_picking_line, ['product_id','product_qty','product_uom','product_uos_qty'], 20),
-                 }),
+                  store=False),
         'weight_net': fields.function(_cal_weight, type='float', string='Net Weight', digits_compute= dp.get_precision('Stock Weight'), multi='_cal_weight',
-                  store={
-                 'stock.picking': (lambda self, cr, uid, ids, c={}: ids, ['move_lines'], 20),
-                 'stock.move': (_get_picking_line, ['product_id','product_qty','product_uom','product_uos_qty'], 20),
-                 }),
+                  store=False),
         'carrier_tracking_ref': fields.char('Carrier Tracking Ref', size=32),
         'number_of_packages': fields.integer('Number of Packages'),
         'weight_uom_id': fields.many2one('product.uom', 'Unit of Measure', required=True,readonly="1",help="Unit of measurement for Weight",),
@@ -166,9 +160,7 @@ class stock_move(osv.osv):
 
     _columns = {
         'weight': fields.function(_cal_move_weight, type='float', string='Weight', digits_compute= dp.get_precision('Stock Weight'), multi='_cal_move_weight',
-                  store={
-                 'stock.move': (lambda self, cr, uid, ids, c=None: ids, ['product_id', 'product_qty', 'product_uom'], 20),
-                 }),
+                  store=False),
         'weight_net': fields.function(_cal_move_weight, type='float', string='Net weight', digits_compute= dp.get_precision('Stock Weight'), multi='_cal_move_weight',
                   store={
                  'stock.move': (lambda self, cr, uid, ids, c=None: ids, ['product_id', 'product_qty', 'product_uom'], 20),
@@ -200,15 +192,9 @@ class stock_picking_out(osv.osv):
         'carrier_id':fields.many2one("delivery.carrier","Carrier"),
         'volume': fields.float('Volume'),
         'weight': fields.function(_cal_weight, type='float', string='Weight', digits_compute= dp.get_precision('Stock Weight'), multi='_cal_weight',
-                  store={
-                 'stock.picking': (lambda self, cr, uid, ids, c={}: ids, ['move_lines'], 20),
-                 'stock.move': (_get_picking_line, ['product_id','product_qty','product_uom','product_uos_qty'], 20),
-                 }),
+                  store=False),
         'weight_net': fields.function(_cal_weight, type='float', string='Net Weight', digits_compute= dp.get_precision('Stock Weight'), multi='_cal_weight',
-                  store={
-                 'stock.picking': (lambda self, cr, uid, ids, c={}: ids, ['move_lines'], 20),
-                 'stock.move': (_get_picking_line, ['product_id','product_qty','product_uom','product_uos_qty'], 20),
-                 }),
+                  store=False),
         'carrier_tracking_ref': fields.char('Carrier Tracking Ref', size=32),
         'number_of_packages': fields.integer('Number of Packages'),
         }
@@ -230,10 +216,7 @@ class stock_picking_in(osv.osv):
                 'stock.move': (_get_picking_line, ['product_id','product_qty','product_uom','product_uos_qty'], 20),
                 }),
         'weight_net': fields.function(_cal_weight, type='float', string='Net Weight', digits_compute= dp.get_precision('Stock Weight'), multi='_cal_weight',
-                store={
-                'stock.picking': (lambda self, cr, uid, ids, c={}: ids, ['move_lines'], 20),
-                'stock.move': (_get_picking_line, ['product_id','product_qty','product_uom','product_uos_qty'], 20),
-                }),
+                store=False),
         }
 stock_picking_in()
 
