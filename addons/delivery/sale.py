@@ -56,8 +56,9 @@ class sale_order(osv.osv):
     def _prepare_order_picking(self, cr, uid, order, context=None):
         result = super(sale_order, self)._prepare_order_picking(cr, uid, order, context=context)
         print "prepare order picking carrier", result
-        result.update(carrier_id=order.carrier_id.id)
-        result.update(delivery_partner_id=order.carrier_id.partner_id.id)
+        if order.carrier_id:
+            result.update(carrier_id=order.carrier_id.id)
+            result.update(delivery_partner_id=order.carrier_id.partner_id.id)
         result.update( {'delivery_notes':order.delivery_notes} )
         return result
 
