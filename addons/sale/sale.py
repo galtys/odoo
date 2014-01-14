@@ -623,7 +623,7 @@ class sale_order(osv.osv):
 
     def action_button_confirm(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
-            if (so.amount_total > (so.partner_id.debit-so.partner_id.credit)) and so.pricelist_id.type=='retail':
+            if (so.amount_total > (so.partner_id.debit-so.partner_id.credit)) and so.pricelist_id.type=='retail' and ('Internet' not in so.shop_id.name):
                 raise osv.except_osv(_('Error!'),_('Current balance on partner account (%0.2f) does not exeed total order amount (%0.2f). For retail customers, payment must be received in advance.'%(so.partner_id.debit-so.partner_id.credit, so.amount_total )   ))
         assert len(ids) == 1, 'This option should only be used for a single id at a time.'
         wf_service = netsvc.LocalService('workflow')
