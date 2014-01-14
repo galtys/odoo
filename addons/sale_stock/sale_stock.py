@@ -193,7 +193,7 @@ class sale_order(osv.osv):
             if 'EXVAT' in so.pricelist_id.name:
                 if 'EXVAT' not in so.fiscal_position.note:
                     return False
-            if 'EXVAT' in so.fiscal_position.note:
+            if so.fiscal_position and so.fiscal_position.note and ('EXVAT' in so.fiscal_position.note):
                 if 'EXVAT' not in so.pricelist_id.name:
                     return False
         return True
