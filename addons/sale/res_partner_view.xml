@@ -41,6 +41,7 @@
             </field>
         </record>
 
+
         <record id="res_partner_view_buttons" model="ir.ui.view">
             <field name="name">res.partner.view.buttons</field>
             <field name="model">res.partner</field>
@@ -52,6 +53,14 @@
                         string="Quotations and Sales"
                         attrs="{'invisible': [('customer', '=', False)]}"
                         groups="base.group_sale_salesman"/>
+		    <button name="%(account.act_account_invoice_partner_relation)d" type="action"
+			    string="Monthly Turnover"
+			    groups="base.group_sale_salesman"/>
+		    <button name="%(account.act_res_partner_2_account_invoice_opened)d" type="action"
+			    string="Invoices"
+			    groups="base.group_sale_salesman"/>
+
+		    
                 </xpath>
             </field>
         </record>
