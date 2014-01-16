@@ -129,10 +129,8 @@
           <para style="terp_default_Bold_9">Shipping address :</para>
           <para style="terp_default_9">[[ (picking.partner_id and picking.partner_id.title and picking.partner_id.title.name) or '' ]] [[ (picking.partner_id and picking.partner_id.name) or '' ]]</para>
           <para style="terp_default_9">[[ picking.partner_id and display_address(picking.partner_id) ]]</para>
-          <para style="terp_default_9">
-            <font color="white"> </font>
-          </para>
           <para style="terp_default_9">Tel: [[ (picking.partner_id.phone) or removeParentNode('para') ]]</para>
+          <para style="terp_default_9">M: [[ (picking.partner_id.mobile) or removeParentNode('para') ]]</para>
           <para style="terp_default_9">Fax: [[ (picking.partner_id.fax) or removeParentNode('para') ]]</para>
           <para style="terp_default_9">VAT: [[ (picking.partner_id.vat) or removeParentNode('para') ]]</para>
           <para style="terp_default_9">E: [[ picking.partner_id and picking.partner_id.email or removeParentNode('para') ]]</para>
