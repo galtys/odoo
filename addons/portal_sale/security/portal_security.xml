@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data noupdate="1">
+    <data noupdate="0">
 
         <record id="group_payment_options" model="res.groups">
             <field name="name">View Online Payment Options</field>
@@ -18,12 +18,13 @@ their documents through the portal.</field>
         <record id="portal_sale_order_user_rule" model="ir.rule">
             <field name="name">Portal Personal Quotations/Sales Orders</field>
             <field name="model_id" ref="sale.model_sale_order"/>
-            <field name="domain_force">[('message_follower_ids','in',[user.partner_id.id])]</field>
+	    <field name="active" eval="1"/>
+            <field name="domain_force">['|',('message_follower_ids','in',[user.partner_id.id]), ('user_id','in',[user.id]) ]</field>
             <field name="groups" eval="[(4, ref('portal.group_portal'))]"/>
             <field eval="1" name="perm_unlink"/>
             <field eval="1" name="perm_write"/>
             <field eval="1" name="perm_read"/>
-            <field eval="0" name="perm_create"/>
+            <field eval="1" name="perm_create"/>
         </record>
 
         <record id="portal_account_invoice_user_rule" model="ir.rule">
@@ -40,6 +41,14 @@ their documents through the portal.</field>
             <field eval="0" name="perm_read"/>
             <field name="groups" eval="[(4, ref('portal.group_portal'))]"/>
         </record>
-
+<!--
+        <record id="portal_products" model="ir.rule">
+            <field name="name">Portal Products</field>
+            <field name="model_id" ref="product.model_product_product"/>
+            <field name="domain_force">[('portal','=',True)]</field>
+            <field eval="0" name="perm_read"/>
+            <field name="groups" eval="[(4, ref('portal.group_portal'))]"/>
+        </record>
+-->
     </data>
 </openerp>

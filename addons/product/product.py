@@ -444,7 +444,12 @@ class product_product(osv.osv):
     _product_virtual_available = _get_product_available_func(('confirmed','waiting','assigned','done'), ('in', 'out'))
     _product_outgoing_qty = _get_product_available_func(('confirmed','waiting','assigned'), ('out',))
     _product_incoming_qty = _get_product_available_func(('confirmed','waiting','assigned'), ('in',))
-
+    def _product_portal_available(self, cr, uid, ids, *a,**kw):
+        res={}
+        for p in self.browse(cr, uid, ids):
+            m20p=round(p.qty_available * 0.8)
+            res[p.id]=m20p
+        return res
     def _product_lst_price(self, cr, uid, ids, name, arg, context=None):
         res = {}
         product_uom_obj = self.pool.get('product.uom')
@@ -491,7 +496,6 @@ class product_product(osv.osv):
                     (data['name'] or '') + (data['variants'] and (' - '+data['variants']) or '')
         return res
 
-
     def _get_main_product_supplier(self, cr, uid, product, context=None):
         """Determines the main (best) product supplier for ``product``,
         returning the corresponding ``supplierinfo`` record, or False
@@ -517,7 +521,6 @@ class product_product(osv.osv):
                 'seller_id': main_supplier and main_supplier.name.id or False
             }
         return result
-
 
     def _get_image(self, cr, uid, ids, name, args, context=None):
         result = dict.fromkeys(ids, False)
@@ -601,7 +604,8 @@ class product_product(osv.osv):
         'W': fields.char('Width', size=20),
         'D': fields.char('Depth', size=20),
         'H': fields.char('Height',size=20),
-        
+        'portal':fields.boolean('Available in Portal'),
+        'portal_available': fields.function(_product_portal_available, type='float', string='Portal Available'),
         }
     def unlink(self, cr, uid, ids, context=None):
         unlink_ids = []

@@ -9,12 +9,14 @@
             <field name="arch" type="xml">
                 <group name="sale_pay" position="after">
                     <group colspan="2" col="2">
-                        <separator string="Dates" colspan="2"/>
-                        <field name="requested_date"/>
+                        <separator string="Dates" colspan="2"/>                   
                         <field name="commitment_date"/>
                         <field name="effective_date"/>
                     </group>
                 </group>
+		<field name="date_order" position="after">
+		  <field name="requested_date"/>
+		</field>
             </field>
         </record>
 
