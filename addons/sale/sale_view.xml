@@ -167,6 +167,8 @@
                             <field name="client_order_ref"/>
                             <field domain="[('type','in',['sale','trade','retail','contract'])]" name="pricelist_id" groups="product.group_sale_pricelist" on_change="onchange_pricelist_id(pricelist_id,order_line)"/>
 			    <field name="bank" groups="base.group_sale_salesman"/>
+			    <field name="proforma" groups="base.group_sale_salesman"/>
+
                             <field name="currency_id" invisible="1"/>
                         </group>
                     </group>
