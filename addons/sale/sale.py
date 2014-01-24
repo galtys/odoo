@@ -84,7 +84,24 @@ class sale_order(osv.osv):
         for c in self.pool.get('account.tax').compute_all(cr, uid, line.tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line.product_uom_qty, line.product_id, line.order_id.partner_id)['taxes']:
             val += c.get('amount', 0.0)
         return val
-
+    def _bank_account(self, cr, uid, ids, field_name, arg, context=None):
+        out={}
+        for o in self.browse(cr, uid, ids, context=context):
+            res={}
+            res['bank_account']=''
+            res['bank_address']=''
+            res['title']=''
+            if o.bank:
+                res['bank_account']='Sort Code: %s, Bank Account: %s' % (o.bank.bank_bic, o.bank.acc_number)
+                res['bank_address']='Bank Address: '+ o.bank.bank.name+', '+o.bank.bank.street+', ' + o.bank.bank.zip+', '+o.bank.bank.city+', ' + o.bank.bank.country.name
+            if o.state in ['draft','sent'] and o.proforma:
+                res['title']='PROFORMA'
+            elif o.state in ['draft','sent'] and not o.proforma:
+                res['title']='QUOTE'
+            else:
+                res['title']='ORDER'
+            out[o.id]=res
+        return out
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
         cur_obj = self.pool.get('res.currency')
         res = {}
@@ -240,6 +257,9 @@ class sale_order(osv.osv):
             help="""This field controls how invoice and delivery operations are synchronized."""),
         'pricelist_id': fields.many2one('product.pricelist', 'Pricelist', required=True, readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]}, help="Pricelist for current sales order."),
         'bank':fields.many2one('res.partner.bank','Bank'),
+        'bank_account':fields.function(_bank_account, type='char', size=444, multi='bank'),
+        'bank_address':fields.function(_bank_account, type='char', size=444, multi='bank'),
+        'title':fields.function(_bank_account, type='char', size=444, multi='bank'),
         'proforma':fields.boolean('ProForma'),        
         'currency_id': fields.related('pricelist_id', 'currency_id', type="many2one", relation="res.currency", string="Currency", readonly=True, required=True),
         'project_id': fields.many2one('account.analytic.account', 'Contract / Analytic', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]}, help="The analytic account related to a sales order."),
