@@ -639,6 +639,9 @@ class product_product(osv.osv):
 
 
     _constraints = [(_check_ean_key, 'You provided an invalid "EAN13 Barcode" reference. You may use the "Internal Reference" field instead.', ['ean13'])]
+    _sql_constraints = [
+        ('skuuniq', 'unique(default_code, active)', 'SKU must be unique'),
+    ]
 
     def on_order(self, cr, uid, ids, orderline, quantity):
         pass
