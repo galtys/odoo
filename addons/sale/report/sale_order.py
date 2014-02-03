@@ -32,12 +32,15 @@ class order(report_sxw.rml_parse):
 
         })
 
-    def _show_discount(self, uid, context=None):
+    def _show_discount(self, uid, o=None, context=None):
         cr = self.cr
         try: 
             group_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'sale', 'group_discount_per_so_line')[1]
         except:
             return False
+        if o:
+            if (o.discount <0.001) :
+                return False
         return group_id in [x.id for x in self.pool.get('res.users').browse(cr, uid, uid, context=context).groups_id]
 
 report_sxw.report_sxw('report.sale.order', 'sale.order', 'addons/sale/report/sale_order.rml', parser=order, header="external")
