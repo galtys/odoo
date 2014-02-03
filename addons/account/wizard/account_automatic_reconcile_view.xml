@@ -57,7 +57,7 @@
                         <field name="unreconciled"/>
                     </group>
                     <footer>
-                        <button string="Close" class="oe_highlight" special="cancel"/>
+		      <button string="Open Reconciled" class="oe_highlight" type="object" name="open_reconciled"/>
                     </footer>
                 </form>
              </field>
