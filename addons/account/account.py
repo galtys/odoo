@@ -969,7 +969,10 @@ class account_period(osv.osv):
     _defaults = {
         'state': 'draft',
     }
-    _order = "date_start, special desc"
+    _order = "date_stop desc"
+    #_order = "id desc"
+    #_order = "date_start, special desc"
+
     _sql_constraints = [
         ('name_company_uniq', 'unique(name, company_id)', 'The name of the period must be unique per company!'),
     ]
