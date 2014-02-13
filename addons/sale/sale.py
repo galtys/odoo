@@ -435,6 +435,7 @@ class sale_order(osv.osv):
         invoice_vals = {
             'name': order.client_order_ref or '',
             'origin': order.name,
+            'shop_id': order.shop_id.id,
             'type': 'out_invoice',
             'reference': order.client_order_ref or order.name,
             'account_id': order.partner_id.property_account_receivable.id,
@@ -1072,7 +1073,10 @@ class mail_compose_message(osv.Model):
 
 class account_invoice(osv.Model):
     _inherit = 'account.invoice'
+    _columns = {
+        'shop_id': fields.many2one('sale.shop', 'Shop', readonly=True),
 
+        }
     def unlink(self, cr, uid, ids, context=None):
         """ Overwrite unlink method of account invoice to send a trigger to the sale workflow upon invoice deletion """
         invoice_ids = self.search(cr, uid, [('id', 'in', ids), ('state', 'in', ['draft', 'cancel'])], context=context)

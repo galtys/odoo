@@ -2,6 +2,18 @@
 <openerp>
 <data>
 
+    <record id="view_account_invoice_report_search_inherit_pjb" model="ir.ui.view">
+        <field name="name">account.invoice.report.search.inherit.pjb</field>
+	<field name="inherit" ref="account.view_account_invoice_report_search"/>
+        <field name="model">account.invoice.report</field>
+        <field name="arch" type="xml">
+	  <filter name="period" position="after">
+	    <filter string="Shop" name="shop_id" context="{'group_by':'shop_id'}" help="Group by Shop"/>
+	  </filter>
+        </field>
+    </record>
+
+
     <record id="view_order_product_tree" model="ir.ui.view">
         <field eval="1" name="priority"/>
         <field name="name">sale.report.tree</field>
