@@ -192,6 +192,7 @@ class account_invoice_refund(osv.osv_memory):
                             'date_invoice': date,
                             'state': 'draft',
                             'number': False,
+                            'shop_id':inv.shop_id.id,
                             'invoice_line': invoice_lines,
                             'tax_line': tax_lines,
                             'period_id': period,

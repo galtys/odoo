@@ -1229,7 +1229,8 @@ class account_invoice(osv.osv):
                 invoice_data[field] = invoice[field].id
             else:
                 invoice_data[field] = invoice[field] if invoice[field] else False
-
+        if invoice.shop_id:
+            invoice_data['shop_id']=invoice.shop_id.id
         invoice_lines = self._refund_cleanup_lines(cr, uid, invoice.invoice_line, context=context)
 
         tax_lines = filter(lambda l: l['manual'], invoice.tax_line)
