@@ -122,8 +122,10 @@ class third_party_ledger(report_sxw.rml_parse, common_report_header):
         else:
             RECONCILE_TAG = "AND l.reconcile_id IS NULL"
         self.cr.execute(
-            "SELECT l.id, l.date, j.code, acc.code as a_code, acc.name as a_name, l.ref, m.name as move_name, l.name, l.debit, l.credit, l.amount_currency,l.currency_id, c.symbol AS currency_code " \
+            "SELECT l.id, r.name as reconcile, l.date, j.code, acc.code as a_code, acc.name as a_name, l.ref, m.name as move_name, l.name, l.debit, l.credit, l.amount_currency,l.currency_id, c.symbol AS currency_code " \
             "FROM account_move_line l " \
+            "LEFT JOIN account_move_reconciel r "\
+                "ON (l.reconcile_id=r.id) "\
             "LEFT JOIN account_journal j " \
                 "ON (l.journal_id = j.id) " \
             "LEFT JOIN account_account acc " \
@@ -143,6 +145,7 @@ class third_party_ledger(report_sxw.rml_parse, common_report_header):
         for r in res:
             sum += r['debit'] - r['credit']
             r['progress'] = sum
+            #r['reconcile']='ABC'
             full_account.append(r)
         return full_account
 

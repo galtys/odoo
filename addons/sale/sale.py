@@ -1090,8 +1090,9 @@ class account_invoice(osv.Model):
     def write(self, cr, uid, ids, vals, context=None):
         for inv in self.browse(cr, uid, ids):
          #   print 'write so', so.shop_id.pricelist_id.type, so.pricelist_id.type
-            if not inv.shop_id.id:
-                raise osv.except_osv(_('Error!'), _('Shop must be defined'))
+            if inv.type in ('out_refund', 'out_invoice'):
+                if not inv.shop_id.id:
+                    raise osv.except_osv(_('Error!'), _('Shop must be defined'))
         return super(account_invoice, self).write(cr, uid, ids, vals, context=context)
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
