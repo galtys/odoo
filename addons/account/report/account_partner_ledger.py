@@ -124,7 +124,7 @@ class third_party_ledger(report_sxw.rml_parse, common_report_header):
         self.cr.execute(
             "SELECT l.id, r.name as reconcile, l.date, j.code, acc.code as a_code, acc.name as a_name, l.ref, m.name as move_name, l.name, l.debit, l.credit, l.amount_currency,l.currency_id, c.symbol AS currency_code " \
             "FROM account_move_line l " \
-            "LEFT JOIN account_move_reconciel r "\
+            "LEFT JOIN account_move_reconcile r "\
                 "ON (l.reconcile_id=r.id) "\
             "LEFT JOIN account_journal j " \
                 "ON (l.journal_id = j.id) " \
