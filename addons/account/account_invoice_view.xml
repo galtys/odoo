@@ -132,7 +132,7 @@
                     <field name="amount_untaxed" sum="Untaxed Amount"/>
                     <field name="amount_total" sum="Total Amount"/>
                     <field name="state"/>
-		    <field name="supplier_invoice_number"/>
+		    <field name="supplier_invoice_number" string="SuInNo"/>
                 </tree>
             </field>
         </record>
