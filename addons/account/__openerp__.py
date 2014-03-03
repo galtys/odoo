@@ -54,6 +54,7 @@ for a particular financial year and for preparation of vouchers there is a modul
         'security/account_security.xml',
         'security/ir.model.access.csv',
         'account_menuitem.xml',
+        'report/sale_report.xml',
         'report/account_invoice_report_view.xml',
         'report/account_entries_report_view.xml',
         'report/account_treasury_report_view.xml',

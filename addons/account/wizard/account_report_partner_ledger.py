@@ -55,6 +55,12 @@ class account_partner_ledger(osv.osv_memory):
             context = {}
         data = self.pre_print_report(cr, uid, ids, data, context=context)
         data['form'].update(self.read(cr, uid, ids, ['initial_balance', 'filter', 'page_split', 'amount_currency'])[0])
+        return {
+            'type': 'ir.actions.report.xml',
+            'report_name': 'partner.overdue.webkit',
+            'datas': data,
+            }
+        
         if data['form']['page_split']:
             return {
                 'type': 'ir.actions.report.xml',

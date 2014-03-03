@@ -59,7 +59,10 @@ class third_party_ledger(report_sxw.rml_parse, common_report_header):
     def set_context(self, objects, data, ids, report_type=None):
         obj_move = self.pool.get('account.move.line')
         obj_partner = self.pool.get('res.partner')
-        self.query = obj_move._query_get(self.cr, self.uid, obj='l', context=data['form'].get('used_context', {}))
+        ctx=data['form'].get('used_context', {})
+        if not self._get_fiscalyear(data):
+            ctx.update({'all_fiscalyear':True})
+        self.query = obj_move._query_get(self.cr, self.uid, obj='l', context=ctx)
         ctx2 = data['form'].get('used_context',{}).copy()
         self.initial_balance = data['form'].get('initial_balance', True)
         if self.initial_balance:
@@ -307,5 +310,8 @@ report_sxw.report_sxw('report.account.third_party_ledger', 'res.partner',
 report_sxw.report_sxw('report.account.third_party_ledger_other', 'res.partner',
         'addons/account/report/account_partner_ledger_other.rml',parser=third_party_ledger,
         header='internal')
+report_sxw.report_sxw('report.partner.overdue.webkit',
+                      'res.partner',
+                       parser=third_party_ledger)
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
