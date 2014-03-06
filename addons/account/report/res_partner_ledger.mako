@@ -109,6 +109,8 @@
 <body>
     <%page expression_filter="entity"/>
     <%
+    bal=0
+    curr_bal=0
     def carriage_returns(text):
         return text.replace('\n', '<br />')
 
@@ -135,32 +137,60 @@
         <tr>
             <td style="font-weight:bold;">Date</td>
             <td style="font-weight:bold;">JRNL</td>
-            <td style="font-weight:bold;">move_name</td>
             <td style="font-weight:bold;">Account</td>
-            <td style="font-weight:bold;">Ref</td>
+            <td style="font-weight:bold;">Move Name</td>
             <td style="font-weight:bold;">Name</td>
 	    <td style="font-weight:bold;">Reconcile</td>
-	    
             <td style="font-weight:bold;">Debit</td>
 	    <td style="font-weight:bold;">Credit</td>
 	    <td style="font-weight:bold;">Balance</td>
-
+	    %if display_currency:
+	       <td style="font-weight:bold;">Currency</td>
+            %endif
         </tr>
-    %for line in sorted(lines(p),key=lambda a:a['date'], reverse=True):
+    %for line in sorted(lines(p),key=lambda a:a['date']):
+	<%
+	bal=bal+line['debit']-line['credit']
+	rec=line.get('reconcile','')
+	curr_bal=curr_bal+line['amount_currency']
+	curr = line.get('currency_code','')
+	if curr == None:
+	   curr=''
+        if line['a_code']=='OPEJ':
+           continue
+	%>
         <tr>
-            <td>${line['date']}</td>
+            <td>${formatLang(line['date'],date=True)}</td>
 	    <td>${line['code']}</td>
-            <td>${line['move_name']}</td>
             <td>${line['a_code']}</td>
-            <td>${line['ref']}</td>
+            <td>${line['move_name']}</td>
             <td>${line['name']}</td>
-	    <td>${line['reconcile']}</td>
-            <td>${line['debit']}</td>
-            <td>${line['credit']}</td>
-	    <td>${line['progress']}</td>
-
+	    <td>${rec}</td>
+            <td align="right">${formatLang(line['debit'])}</td>
+            <td align="right">${formatLang(line['credit'])}</td>
+	    <td align="right">${company.currency_id.symbol}${formatLang(bal)}</td>
+            %if display_currency:
+	       <td align="right">${formatLang(line['amount_currency'])} ${curr}</td>
+            %endif
         </tr>
     %endfor
+        <tr>
+            <td></td>
+	    <td></td>
+
+            <td></td>
+            <td></td>
+            <td></td>
+	    <td></td>
+            <td style="font-weight:bold;" align="right">${sum_debit_partner(p)}</td>
+            <td style="font-weight:bold;" align="right">${sum_credit_partner(p)}</td>
+	    <td></td>
+            %if display_currency:
+	       <td align="right">${curr_bal}</td>
+            %endif
+	    
+        </tr>
+
     </table>
 
 <!--

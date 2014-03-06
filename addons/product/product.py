@@ -760,6 +760,7 @@ class product_product(osv.osv):
         product = self.read(cr, uid, id, ['name'], context=context_wo_lang)
         default = default.copy()
         default.update(name=_("%s (copy)") % (product['name']))
+        default.update(default_code=_("%s (copy)") % (product['default_code']))
 
         if context.get('variant',False):
             fields = ['product_tmpl_id', 'active', 'variants', 'default_code',

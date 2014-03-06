@@ -41,6 +41,23 @@ class account_partner_ledger(osv.osv_memory):
        'initial_balance': False,
        'page_split': False,
     }
+    def _get_fiscalyear(self, cr, uid, context=None):
+        return False
+        if context is None:
+            context = {}
+        now = time.strftime('%Y-%m-%d')
+        company_id = False
+        ids = context.get('active_ids', [])
+        if ids and context.get('active_model') == 'account.account':
+            company_id = self.pool.get('account.account').browse(cr, uid, ids[0], context=context).company_id.id
+        else:  # use current company id
+            company_id = self.pool.get('res.users').browse(cr, uid, uid, context=context).company_id.id
+        domain = [('company_id', '=', company_id), ('date_start', '<', now), ('date_stop', '>', now)]
+        fiscalyears = self.pool.get('account.fiscalyear').search(cr, uid, domain, limit=1)
+        return fiscalyears and fiscalyears[0] or False
+
+    def _get_all_journal(self, cr, uid, context=None):
+        return self.pool.get('account.journal').search(cr, uid ,[('centralisation','=',False)])
 
     def onchange_filter(self, cr, uid, ids, filter='filter_no', fiscalyear_id=False, context=None):
         res = super(account_partner_ledger, self).onchange_filter(cr, uid, ids, filter=filter, fiscalyear_id=fiscalyear_id, context=context)

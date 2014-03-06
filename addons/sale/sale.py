@@ -32,6 +32,7 @@ from openerp import netsvc
 class sale_shop(osv.osv):
     _name = "sale.shop"
     _description = "Sales Shop"
+    _order = "name desc"
     _columns = {
         'name': fields.char('Shop Name', size=64, required=True),
         'payment_default_id': fields.many2one('account.payment.term', 'Default Payment Term', required=True),
