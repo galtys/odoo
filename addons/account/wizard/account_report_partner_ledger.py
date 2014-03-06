@@ -20,6 +20,18 @@
 ##############################################################################
 
 from openerp.osv import fields, osv
+class account_sale_analysis(osv.osv_memory):
+    _name = 'account.sale.analysis'
+    _description="Sale Analysis"
+    _columns ={
+        'name':fields.char('Name', size=444),
+        }
+    def button_run_sale_analysis(cr, uid, ids, *a, **kw):
+        return {
+            'type': 'ir.actions.report.xml',
+            'report_name': 'sale_analysis_webkit',
+            'datas': [],
+            }
 
 class account_partner_ledger(osv.osv_memory):
     """
@@ -33,15 +45,17 @@ class account_partner_ledger(osv.osv_memory):
         'initial_balance': fields.boolean('Include Initial Balances',
                                     help='If you selected to filter by date or period, this field allow you to add a row to display the amount of debit/credit/balance that precedes the filter you\'ve set.'),
         'filter': fields.selection([('filter_no', 'No Filters'), ('filter_date', 'Date'), ('filter_period', 'Periods'), ('unreconciled', 'Unreconciled Entries')], "Filter by", required=True),
-        'page_split': fields.boolean('One Partner Per Page', help='Display Ledger Report with One partner per page'),
+        'page_split': fields.boolean('One Partner Per Page4', help='Display Ledger Report with One partner per page JT'),
         'amount_currency': fields.boolean("With Currency", help="It adds the currency column on report if the currency differs from the company currency."),
         'journal_ids': fields.many2many('account.journal', 'account_partner_ledger_journal_rel', 'account_id', 'journal_id', 'Journals', required=True),
     }
-    _defaults = {
-       'initial_balance': False,
-       'page_split': False,
-    }
+    def _get_account(self, cr, uid, context=None):
+        user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
+        accounts = self.pool.get('account.account').search(cr, uid, [('parent_id', '=', False), ('company_id', '=', user.company_id.id)], limit=1)
+        return accounts and accounts[0] or False
+
     def _get_fiscalyear(self, cr, uid, context=None):
+        print 'GET FISCAL YEAR'
         return False
         if context is None:
             context = {}
@@ -57,7 +71,8 @@ class account_partner_ledger(osv.osv_memory):
         return fiscalyears and fiscalyears[0] or False
 
     def _get_all_journal(self, cr, uid, context=None):
-        return self.pool.get('account.journal').search(cr, uid ,[('centralisation','=',False)])
+        ids =  self.pool.get('account.journal').search(cr, uid ,[('centralisation','=',False)])
+        return ids
 
     def onchange_filter(self, cr, uid, ids, filter='filter_no', fiscalyear_id=False, context=None):
         res = super(account_partner_ledger, self).onchange_filter(cr, uid, ids, filter=filter, fiscalyear_id=fiscalyear_id, context=context)
@@ -66,6 +81,17 @@ class account_partner_ledger(osv.osv_memory):
                  res['value'].update({'fiscalyear_id': False})
             res['value'].update({'initial_balance': False, 'period_from': False, 'period_to': False, 'date_from': False ,'date_to': False})
         return res
+    _defaults = {
+            'fiscalyear_id': _get_fiscalyear,
+            'company_id': lambda self,cr,uid,c: self.pool.get('res.company')._company_default_get(cr, uid, 'account.common.report',context=c),
+            'journal_ids': _get_all_journal,
+            'filter': 'filter_no',
+            'chart_account_id': _get_account,
+            'target_move': 'posted',
+            'initial_balance': False,
+            'page_split': False,
+
+    }
 
     def _print_report(self, cr, uid, ids, data, context=None):
         if context is None:
