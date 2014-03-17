@@ -133,7 +133,7 @@
     </table>
     
 
-    <table class="basic_table" width="100%">
+    <table class="basic_table" width="100%" align="right">
         <tr>
             <td style="font-weight:bold;">Date</td>
             <td style="font-weight:bold;">JRNL</td>
@@ -148,7 +148,7 @@
 	       <td style="font-weight:bold;">Currency</td>
             %endif
         </tr>
-    %for line in sorted(lines(p),key=lambda a:a['date']):
+	%for line in sorted(lines(p),key=lambda a:(a['date'])):
 	<%
 	bal=bal+line['debit']-line['credit']
 	rec=line.get('reconcile','')
@@ -173,11 +173,10 @@
 	       <td align="right">${formatLang(line['amount_currency'])} ${curr}</td>
             %endif
         </tr>
-    %endfor
+	%endfor
         <tr>
             <td></td>
 	    <td></td>
-
             <td></td>
             <td></td>
             <td></td>
@@ -187,10 +186,26 @@
 	    <td></td>
             %if display_currency:
 	       <td align="right">${curr_bal}</td>
-            %endif
+               %endif
 	    
         </tr>
 
+    </table>
+    <h1 style="clear:both;">Partner Vouchers</h1>
+
+    <table class="basic_table" width="100%" align="right">
+        <tr>
+            <td style="font-weight:bold;">Date</td>
+            <td style="font-weight:bold;">Number</td> 
+            <td style="font-weight:bold;">Amount</td> 
+        </tr>
+	%for vo in vouchers(p):
+	   <tr>
+             <td>${vo.date}</td>
+	     <td>${vo.number}</td>
+             <td>${vo.amount}</td>
+	   </tr>
+        %endfor
     </table>
 
 <!--
