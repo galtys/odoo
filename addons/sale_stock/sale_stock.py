@@ -185,6 +185,12 @@ class sale_order(osv.osv):
             if so.partner_id.property_account_position.name != so.fiscal_position.name:
                 return False
         return True
+    def _pjb_check_taxes(self, cr, uid, ids, context=None):
+        for so in self.browse(cr, uid, ids):
+            for l in so.order_line:
+                if len(l.tax_id) > 1:
+                    return False
+        return True
 
     def _pjb_check_fiscal_position_pricelist(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
@@ -210,6 +216,7 @@ class sale_order(osv.osv):
         (_pjb_check_fiscal_position_partner, 'Fiscal position on order must equal partner fiscal position.', []),
         (_pjb_check_fiscal_position_pricelist, 'EXVAT Fiscal positions (0%VAT or 20EXVAT CODES) must be used with EXVAT Pricelists.', []),        
         (_pjb_check_order_policy_manual, '"Create Invoice" must be "On Demand".', []),
+        (_pjb_check_taxes, 'Only one tax code per line allowed.', []),
    ]
 
     def unlink(self, cr, uid, ids, context=None):
