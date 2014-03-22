@@ -306,110 +306,6 @@ class third_party_ledger(report_sxw.rml_parse, common_report_header):
             return True
         return False
 
-def generate_sale_reports(pool, cr, uid):
-
-    invoice_ids = pool.get('account.invoice').search(cr, uid, [('type','in',['out_invoice','out_refund'])] )
-    by_shop={}
-    by_categ={}
-    for inv in pool.get('account.invoice').browse(cr, uid, invoice_ids):
-        Y,m,d=inv.date_invoice.split('-')
-        if Y=='2014' and inv.shop_id:
-            #print inv.number, inv.type,inv.amount_untaxed, inv.shop_id, inv.date_invoice
-            s=by_shop.setdefault(inv.shop_id.name, {} )
-            v=s.setdefault(m, [])
-            if inv.type=='out_invoice':
-                v.append( inv.amount_untaxed )
-            elif inv.type=='out_refund':
-                v.append( (-1) * inv.amount_untaxed )
-            for l in inv.invoice_line:
-                if l.product_id.categ_id:
-                    c=by_categ.setdefault( l.product_id.categ_id.name, {})
-                    vc=c.setdefault(m, [])
-                    if inv.type=='out_invoice':
-                        vc.append( l.price_unit * l.quantity )
-                    elif inv.type=='out_refund':
-                        vc.append( (-1) * l.price_unit * l.quantity )
-                
-    #print by_categ
-    header=[''] + ['%02d'%x for x in range(1,13)]
-
-    import HTML
-    def by2table(by_map):
-        out=[]
-        by_shop=by_map
-        for shop, data_map in by_shop.items():
-            row=[shop.encode('utf8')]
-            for m in ['%02d'%x for x in range(1,13)]:
-                d=data_map.get(m, [])
-                row.append( sum(d) )
-            out.append( row )
-        return out
-    #print out
-    htmlcode=HTML.table(by2table(by_categ),
-                        header_row = header)
-    file('by_categ.html','wb').write(htmlcode)
-
-    htmlcode=HTML.table(by2table(by_shop),
-                        header_row = header)
-    file('by_shop.html','wb').write(htmlcode)
-
-
-    picking_ids = pool.get('stock.picking').search(cr, uid, [('type','in',('in','out')), ('state','=','done') ] )
-    by_prod={}
-    for picking in pool.get('stock.picking').browse(cr, uid, picking_ids):
-        #print picking.name, picking.date_done
-        Y,m,d=picking.date_done.split(' ')[0].split('-')
-        #print [Y,m,d]
-        if Y=='2014' and (picking.name.startswith('OUT') or ('return' in picking.name) ) :
-            for move in picking.move_lines:
-                by_prod_m=by_prod.setdefault( "[%s] %s (%s)"%(move.product_id.default_code,move.product_id.name, move.product_id.property_account_income.code), {})
-                v=by_prod_m.setdefault(m, [])
-                if picking.type=='in':
-                    v.append( (-1)*move.product_qty )
-                else:
-                    v.append( move.product_qty )
-            
-    out=by2table(by_prod)
-    htmlcode=HTML.table(out,
-                        header_row = header)
-    file('by_product.html','wb').write(htmlcode)
-
-
-class sale_analysis(report_sxw.rml_parse, common_report_header):
-
-    def __init__(self, cr, uid, name, context=None):
-        super(sale_analysis, self).__init__(cr, uid, name, context=context)
-        generate_sale_reports(self.pool, cr, uid)
-        invoice_ids = self.pool.get('account.invoice').search(cr, uid, [('type','in',['out_invoice','out_refund'])] )
-        by_shop={}
-        by_categ={}
-        for inv in self.pool.get('account.invoice').browse(cr, uid, invoice_ids):
-            Y,m,d=inv.date_invoice.split('-')
-            if Y=='2014' and inv.shop_id:
-                #print inv.number, inv.type,inv.amount_untaxed, inv.shop_id, inv.date_invoice
-                s=by_shop.setdefault(inv.shop_id.name, {} )
-                v=s.setdefault(m, [])
-                if inv.type=='out_invoice':
-                    v.append( inv.amount_untaxed )
-                elif inv.type=='out_refund':
-                    v.append( (-1) * inv.amount_untaxed )
-                for l in inv.invoice_line:
-                    if l.product_id.categ_id:
-                        c=by_categ.setdefault( l.product_id.categ_id.name, {})
-                        vc=c.setdefault(m, [])
-                        if inv.type=='out_invoice':
-                            vc.append( l.price_unit * l.quantity )
-                        elif inv.type=='out_refund':
-                            vc.append( (-1) * l.price_unit * l.quantity )
-
-        self.localcontext.update({
-            'time': time,
-            'by_shop': by_shop,
-            'by_categ': by_categ,
-        })
-
-
-
 report_sxw.report_sxw('report.account.third_party_ledger', 'res.partner',
         'addons/account/report/account_partner_ledger.rml',parser=third_party_ledger,
         header='internal')
@@ -421,11 +317,5 @@ report_sxw.report_sxw('report.account.third_party_ledger_other', 'res.partner',
 report_sxw.report_sxw('report.partner.overdue.webkit',
                       'res.partner',
                        parser=third_party_ledger)
-
-report_sxw.report_sxw('report.sale_analysis_webkit',
-                      'account.invoice',
-                      #'report/sale_analysis.mako',
-                       parser=sale_analysis)
-
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

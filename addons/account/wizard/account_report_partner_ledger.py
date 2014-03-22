@@ -20,18 +20,6 @@
 ##############################################################################
 
 from openerp.osv import fields, osv
-class account_sale_analysis(osv.osv_memory):
-    _name = 'account.sale.analysis'
-    _description="Sale Analysis"
-    _columns ={
-        'name':fields.char('Name', size=444),
-        }
-    def button_run_sale_analysis(cr, uid, ids, *a, **kw):
-        return {
-            'type': 'ir.actions.report.xml',
-            'report_name': 'sale_analysis_webkit',
-            'datas': [],
-            }
 
 class account_partner_ledger(osv.osv_memory):
     """

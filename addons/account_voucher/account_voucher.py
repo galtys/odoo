@@ -326,7 +326,53 @@ class account_voucher(osv.osv):
         for voucher in self.browse(cr, uid, ids, context=context):
             res[voucher.id] = self._get_currency_help_label(cr, uid, voucher.currency_id.id, voucher.payment_rate, voucher.payment_rate_currency_id.id, context=context)
         return res
+    def baba(self):
+            out='your payment of %0.2f\n' % voucher.amount
+            out+='<table style="width:300px">\n'
+            out+='''<tr>
+                    <td>Date Original</td>
+                    <td>Date Due</td>
+                    <td>Name</td>
+                    <td>Amount Original</td>
+                    <td>Amount Unreconciled</td>
+                    </tr>
+                '''
+            for line in voucher.line_cr_ids:
+                out+='''<tr>
+                         <td>%s</td>
+                         <td>%s</td>
+                         <td>%s</td>
+                         <td>%0.2f</td>
+                         <td>%0.2f</td>
+                     </tr>
+                     ''' % ( date2date(line.date_original) ,
+                             date2date(line.date_due),
+                             line.name,
+                             line.amount_original,
+                             line.amount_unreconciled )
+    def _remittance_advice(self, cr, uid, ids, name, args, context=None):
+        res = {}
+        def date2date(a):
+            if a:
+                Y,m,d=a.split('-')
+                return "%s/%s/%s" % (d,m,Y)
+            else:
+                return ''
+        for voucher in self.browse(cr, uid, ids, context=context):
+            out='your payment of %0.2f has been allocated as follows:\n' % voucher.amount
+            out+="""Credits:\n<ul>
+               """
+            for line in voucher.line_cr_ids:                
+                out+="""<li><font color="#4c4c4c" face="Lucida Grande, Helvetica, Verdana, Arial, sans-serif" size="2">%s (%s) </font></li> """ % (line.name, line.amount)
+            out+="</ul>"
+            out+="""Debits:<ul>
+               """
+            for line in voucher.line_dr_ids:                
+                out+="""<li><font color="#4c4c4c" face="Lucida Grande, Helvetica, Verdana, Arial, sans-serif" size="2">%s (%s) </font></li> """ % (line.name, line.amount)
+            out+="</ul>"
 
+            res[voucher.id]=out
+        return res
     _name = 'account.voucher'
     _description = 'Accounting Voucher'
     _inherit = ['mail.thread']
@@ -399,6 +445,7 @@ class account_voucher(osv.osv):
         'paid_amount_in_company_currency': fields.function(_paid_amount_in_company_currency, string='Paid Amount in Company Currency', type='float', readonly=True),
         'is_multi_currency': fields.boolean('Multi Currency Voucher', help='Fields with internal purpose only that depicts if the voucher is a multi currency one or not'),
         'currency_help_label': fields.function(_fnct_currency_help_label, type='text', string="Helping Sentence", help="This sentence helps you to know how to specify the payment rate by giving you the direct effect it has"), 
+        'remittance_advice': fields.function(_remittance_advice, type='text', string="Remittance Advice"),
     }
     _defaults = {
         'active': True,
@@ -1107,6 +1154,7 @@ class account_voucher(osv.osv):
         :return: the account move line and its counterpart to create, depicted as mapping between fieldname and value
         :rtype: tuple of dict
         '''
+        print 'baba', [amount_residual]
         if amount_residual > 0:
             account_id = line.voucher_id.company_id.expense_currency_exchange_account_id
             if not account_id:
@@ -1210,6 +1258,7 @@ class account_voucher(osv.osv):
             amount = self._convert_amount(cr, uid, line.untax_amount or line.amount, voucher.id, context=ctx)
             # if the amount encoded in voucher is equal to the amount unreconciled, we need to compute the
             # currency rate difference
+            print [line.id, line.name, line.move_line_id.debit, line.move_line_id.credit]
             if line.amount == line.amount_unreconciled:
                 if not line.move_line_id:
                     raise osv.except_osv(_('Wrong voucher line'),_("The invoice you are willing to pay is not valid anymore."))

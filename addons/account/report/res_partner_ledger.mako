@@ -185,8 +185,8 @@
             <td style="font-weight:bold;" align="right">${sum_credit_partner(p)}</td>
 	    <td></td>
             %if display_currency:
-	       <td align="right">${curr_bal}</td>
-               %endif
+	    <td align="right">${curr_bal}</td>
+            %endif
 	    
         </tr>
 
