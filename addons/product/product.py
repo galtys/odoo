@@ -757,11 +757,11 @@ class product_product(osv.osv):
         # will do the other languages).
         context_wo_lang = context.copy()
         context_wo_lang.pop('lang', None)
-        product = self.read(cr, uid, id, ['name'], context=context_wo_lang)
+        product = self.read(cr, uid, id, ['name','default_code'], context=context_wo_lang)
         default = default.copy()
         default.update(name=_("%s (copy)") % (product['name']))
         default.update(default_code=_("%s (copy)") % (product['default_code']))
-
+        default.update(magento_ids=[])
         if context.get('variant',False):
             fields = ['product_tmpl_id', 'active', 'variants', 'default_code',
                     'price_margin', 'price_extra']
