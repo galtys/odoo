@@ -215,6 +215,12 @@ class account_invoice(osv.osv):
         if move:
             invoice_ids = self.pool.get('account.invoice').search(cr, uid, [('move_id','in',move.keys())], context=context)
         return invoice_ids
+    def _pjb_check_taxes(self, cr, uid, ids, context=None):
+        for inv in self.browse(cr, uid, ids):
+            for l in inv.invoice_line:
+                if len(l.invoice_line_tax_id) > 1:
+                    return False
+        return True
 
     _name = "account.invoice"
     _inherit = ['mail.thread']
@@ -340,10 +346,9 @@ class account_invoice(osv.osv):
     _sql_constraints = [
         ('number_uniq', 'unique(number, company_id, journal_id, type)', 'Invoice Number must be unique per Company!'),
     ]
-
-
-
-
+    _constraints = [
+        (_pjb_check_taxes, 'Only one tax code per line allowed.', []),
+        ]
     def fields_view_get(self, cr, uid, view_id=None, view_type=False, context=None, toolbar=False, submenu=False):
         journal_obj = self.pool.get('account.journal')
         if context is None:
