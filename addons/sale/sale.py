@@ -631,14 +631,15 @@ class sale_order(osv.osv):
             context = {}
         sale_order_line_obj = self.pool.get('sale.order.line')
         for sale in self.browse(cr, uid, ids, context=context):
-            for inv in sale.invoice_ids:
-                if inv.state not in ('draft', 'cancel'):
-                    raise osv.except_osv(
-                        _('Cannot cancel this sales order!'),
-                        _('First cancel all invoices attached to this sales order.'))
-            for r in self.read(cr, uid, ids, ['invoice_ids']):
-                for inv in r['invoice_ids']:
-                    wf_service.trg_validate(uid, 'account.invoice', inv, 'invoice_cancel', cr)
+            if uid!=1:
+                for inv in sale.invoice_ids:                
+                    if inv.state not in ('draft', 'cancel'):
+                        raise osv.except_osv(
+                            _('Cannot cancel this sales order!'),
+                            _('First cancel all invoices attached to this sales order.'))
+                for r in self.read(cr, uid, ids, ['invoice_ids']):
+                    for inv in r['invoice_ids']:
+                        wf_service.trg_validate(uid, 'account.invoice', inv, 'invoice_cancel', cr)
             sale_order_line_obj.write(cr, uid, [l.id for l in  sale.order_line],
                     {'state': 'cancel'})
         self.write(cr, uid, ids, {'state': 'cancel'})
