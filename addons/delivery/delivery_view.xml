@@ -355,7 +355,7 @@
                 <xpath expr="/tree/field[@name='state']" position="after">
 		  <field name="delivery_partner_id"/>
 		  <field name="delivery_date"/>
-		  <field name="date_done"/>
+		  <field name="date_done" readonly="1"/>
 
                 </xpath>
 

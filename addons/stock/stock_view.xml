@@ -875,16 +875,16 @@
             <field name="name">stock.picking.out.tree</field>
             <field name="model">stock.picking.out</field>
             <field name="arch" type="xml">
-                <tree colors="blue:state == 'draft';grey:state == 'cancel';red:state not in ('cancel', 'done') and min_date &lt; current_date" string="Delivery Orders">
-                    <field name="name"/>
-                    <field name="partner_id" string="Customer"/>
-                    <field name="origin"/>
+                <tree colors="blue:state == 'draft';grey:state == 'cancel';red:state not in ('cancel', 'done') and min_date &lt; current_date" string="Delivery Orders" editable="top">
+                    <field name="name" readonly="1"/>
+                    <field name="partner_id" string="Customer" readonly="1"/>
+                    <field name="origin" readonly="1"/>
                     <field name="min_date"/>
-                    <field name="date"/>
-                    <field name="backorder_id"/>
-                    <field name="stock_journal_id" groups="account.group_account_user"/>
-                    <field name="invoice_state"/>
-                    <field name="state"/>
+                    <field name="date" readonly="1"/>
+                    <field name="backorder_id" readonly="1"/>
+                    <field name="stock_journal_id" groups="account.group_account_user" readonly="1"/>
+                    <field name="invoice_state" readonly="1"/>
+                    <field name="state" readonly="1"/>
                 </tree>
             </field>
         </record>
