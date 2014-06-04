@@ -203,7 +203,7 @@ class mrp_bom(osv.osv):
             for x in prod:
                 p=self.pool.get('product.product').browse(cr, uid, x['product_id'])
                 if x['product_qty']>0:
-                    q = p.qty_available/x['product_qty']
+                    q = (p.qty_available - p.outgoing_qty)/x['product_qty']
                 else:
                     q=0
                 qtys.append(q)
