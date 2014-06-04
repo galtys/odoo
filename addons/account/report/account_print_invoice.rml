@@ -316,7 +316,7 @@
         </tr>
       </blockTable>
     </section>
-    <blockTable colWidths="385.0,60.0,85.0" style="Table10">
+    <blockTable colWidths="375.0,70.0,85.0" style="Table10">
       <tr>
         <td>
           <para style="terp_default_8">
@@ -337,7 +337,7 @@
           </para>
         </td>
         <td>
-          <para style="terp_default_9">VAT:</para>
+          <para style="terp_default_9">VAT (20%):</para>
         </td>
         <td>
           <para style="terp_default_Right_9">[[ formatLang(o.amount_tax, digits=get_digits(dp='Account')) ]] [[ o.currency_id.symbol ]]</para>
