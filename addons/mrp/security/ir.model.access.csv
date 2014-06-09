@@ -64,7 +64,7 @@ access_product_uom_mrp_manager,product.uom mrp_manager,product.model_product_uom
 access_product_ul_mrp_manager,product.ul mrp_manager,product.model_product_ul,mrp.group_mrp_manager,1,1,1,1
 access_product_category_mrp_manager,product.category mrp_manager,product.model_product_category,mrp.group_mrp_manager,1,1,1,1
 access_product_template_mrp_manager,product.template mrp_manager,product.model_product_template,mrp.group_mrp_manager,1,1,1,1
-access_product_product_mrp_manager,product.product mrp_manager,product.model_product_product,mrp.group_mrp_manager,1,1,1,1
+access_product_product_mrp_manager,product.product mrp_manager,product.model_product_product,mrp.group_mrp_manager,1,0,0,0
 access_product_packaging_mrp_manager,product.packaging mrp_manager,product.model_product_packaging,mrp.group_mrp_manager,1,1,1,1
 access_pricelist_partnerinfo_mrp_manager,pricelist.partnerinfo mrp_manager,product.model_pricelist_partnerinfo,mrp.group_mrp_manager,1,1,1,1
 access_product_price_type_mrp_manager,product.price.type mrp_manager,product.model_product_price_type,mrp.group_mrp_manager,1,1,1,1

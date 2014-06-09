@@ -34,7 +34,7 @@ access_account_journal_cashbox_line,account.cashbox.journal.line,account.model_a
 access_account_cashbox_line_manager,account.cashbox.line manager,account.model_account_cashbox_line,group_pos_manager,1,1,1,1
 access_product_product,product.product,product.model_product_product,group_pos_user,1,0,0,0
 access_product_template_pos_user,product.template pos user,product.model_product_template,group_pos_user,1,0,0,0
-access_product_product_pos_manager,product.product.pos manager,product.model_product_product,group_pos_manager,1,1,1,1
+access_product_product_pos_manager,product.product.pos manager,product.model_product_product,group_pos_manager,1,0,0,0
 access_product_template_pos_manager,product.template pos manager,product.model_product_template,group_pos_manager,1,1,1,1
 access_account_move_line,account.move.line,account.model_account_move_line,group_pos_user,1,1,1,0
 access_account_move_line_manager,account.move.line manager,account.model_account_move_line,group_pos_manager,1,1,1,1
