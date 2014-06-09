@@ -46,7 +46,15 @@ class sale_order(osv.osv):
         'delivery_invoiced':fields.boolean("Delivery Invoiced"),
     }
 
-    def onchange_partner_id(self, cr, uid, ids, part, context=None):
+    def action_button_confirm(self, cr, uid, ids, context=None):
+        for so in self.browse(cr, uid, ids):
+            if not so.carrier_id:
+                raise osv.except_osv(_('Error!'),_('Please select delivery method.'))
+
+        result = super(sale_order, self).action_button_confirm(cr, uid, ids, part, context=context)
+        return result
+
+    def onchange_partner_id_do_not_change(self, cr, uid, ids, part, context=None):
         result = super(sale_order, self).onchange_partner_id(cr, uid, ids, part, context=context)
         if part:
             dtype = self.pool.get('res.partner').browse(cr, uid, part, context=context).property_delivery_carrier.id
