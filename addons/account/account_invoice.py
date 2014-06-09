@@ -218,7 +218,7 @@ class account_invoice(osv.osv):
     def _pjb_check_taxes(self, cr, uid, ids, context=None):
         for inv in self.browse(cr, uid, ids):
             for l in inv.invoice_line:
-                if len(l.invoice_line_tax_id) > 1:
+                if len(l.invoice_line_tax_id) != 1:
                     return False
         return True
 
