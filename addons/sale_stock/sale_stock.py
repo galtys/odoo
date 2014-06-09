@@ -188,7 +188,8 @@ class sale_order(osv.osv):
     def _pjb_check_taxes(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
             for l in so.order_line:
-                if len(l.tax_id) != 1:
+                #if len(l.tax_id) != 1:
+                if (len(l.tax_id) != 1) and (so.name not in ['SO3839']):
                     return False
         return True
 
