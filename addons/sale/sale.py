@@ -379,8 +379,9 @@ class sale_order(osv.osv):
             'fiscal_position': fiscal_position,
             'user_id': dedicated_salesman,
         }
-        if pricelist:
-            val['pricelist_id'] = pricelist
+        #if pricelist:
+        #    val['pricelist_id'] = pricelist
+       
         return {'value': val}
     def pjb_validate(self, cr, uid, vals):
         print 'create sale order', vals, #property_account_position, #property_product_pricelist
