@@ -51,7 +51,7 @@ class sale_order(osv.osv):
             if not so.carrier_id:
                 raise osv.except_osv(_('Error!'),_('Please select delivery method.'))
 
-        result = super(sale_order, self).action_button_confirm(cr, uid, ids, part, context=context)
+        result = super(sale_order, self).action_button_confirm(cr, uid, ids, context=context)
         return result
 
     def onchange_partner_id_do_not_change(self, cr, uid, ids, part, context=None):
