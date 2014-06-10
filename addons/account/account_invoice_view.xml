@@ -133,7 +133,7 @@
                     <field name="amount_total" sum="Total Amount"/>
                     <field name="state"/>
 		    <field name="supplier_invoice_number" string="SuInNo"/>
-		    <field name="name"/>
+		    <field name="name" string="Cust Ref"/>
                 </tree>
             </field>
         </record>
