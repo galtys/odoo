@@ -1090,6 +1090,7 @@ class stock_picking(osv.osv):
             'type': inv_type,
             'account_id': account_id,
             'partner_id': partner.id,
+            'shop_id': picking.sale_id.shop_id.id,
             'comment': comment,
             'payment_term': payment_term,
             'fiscal_position': partner.property_account_position.id,
