@@ -208,7 +208,7 @@ class sale_order(osv.osv):
         for so in self.browse(cr, uid, ids):
             if self._is_older(so.date_order):
                 return True
-            if so.order_policy != 'manual':
+            if so.pricelist_id.type == 'retail' and so.order_policy != 'manual':
                 return False
         return True
     def _pjb_check_partner_pricelist(self, cr, uid, ids, context=None):
@@ -221,7 +221,7 @@ class sale_order(osv.osv):
         (_pjb_check_fiscal_position_empty, 'Only UK Retail Sale Orders can have fiscal position empty.', []),
         (_pjb_check_fiscal_position_partner, 'Fiscal position on order must equal partner fiscal position.', []),
         (_pjb_check_fiscal_position_pricelist, 'EXVAT Fiscal positions (0%VAT or 20EXVAT CODES) must be used with EXVAT Pricelists.', []),        
-        (_pjb_check_order_policy_manual, '"Create Invoice" must be "On Demand".', []),
+        (_pjb_check_order_policy_manual, '"Create Invoice" for Retail orders must be "On Demand".', []),
         (_pjb_check_taxes, 'Only one tax code per line allowed.', []),
         (_pjb_check_partner_pricelist, 'Pricelist on Sale Order must be the same as sale pricelist on partner form.', []),
    ]
