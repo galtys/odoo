@@ -994,7 +994,16 @@ class stock_picking(osv.osv):
             amount_unit = move_line.product_id.price_get('standard_price', context=context)[move_line.product_id.id]
             return amount_unit
         else:
-            return move_line.product_id.list_price
+
+            price = self.pool.get('product.pricelist').price_get(cr, uid, [move_line.picking_id.sale_id.pricelist_id.id],
+                                                                 move_line.product_id.id, 1.0, move_line.picking_id.partner_id.id, 
+                                                                 {'uom': move_line.product_uom.id,
+                                                                  'date': move_line.picking_id.sale_id.date_order,
+                                                                  })[move_line.picking_id.sale_id.pricelist_id.id]
+
+            return price #move_line.product_id.list_price
+        
+        #return move_line.product_id.list_price
 
     def _get_discount_invoice(self, cr, uid, move_line):
         '''Return the discount for the move line'''
@@ -1090,6 +1099,8 @@ class stock_picking(osv.osv):
             'type': inv_type,
             'account_id': account_id,
             'partner_id': partner.id,
+            #'sale_id': picking.sale_id.id,
+            'shop_id': picking.sale_id.shop_id.id,
             'comment': comment,
             'payment_term': payment_term,
             'fiscal_position': partner.property_account_position.id,

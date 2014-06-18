@@ -60,12 +60,17 @@ class sale_order(osv.osv):
     def onchange_shop_id(self, cr, uid, ids, shop_id, context=None):
         v = {}
         print 'onchange_shop_id', ids,shop_id,context
+        so=self.browse(cr, uid, ids[0])
         if shop_id:
             shop = self.pool.get('sale.shop').browse(cr, uid, shop_id, context=context)
             if shop.project_id.id:
                 v['project_id'] = shop.project_id.id
-            if shop.pricelist_id.id:
-                v['pricelist_id'] = shop.pricelist_id.id
+            if so.partner_id.property_product_pricelist:
+                v['pricelist_id']=so.partner_id.property_product_pricelist.id
+            else:
+                if shop.pricelist_id.id:
+                    v['pricelist_id'] = shop.pricelist_id.id
+                
         return {'value': v}
 
     def copy(self, cr, uid, id, default=None, context=None):
@@ -351,8 +356,11 @@ class sale_order(osv.osv):
         context = context or {}
         if not pricelist_id:
             return {}
+        plist=self.pool.get('product.pricelist').browse(cr, uid, pricelist_id, context=context)
+        order_policy_map={'retail':'manual','trade':'picking','contract':'picking'}
         value = {
-            'currency_id': self.pool.get('product.pricelist').browse(cr, uid, pricelist_id, context=context).currency_id.id
+            'currency_id': plist.currency_id.id,
+            'order_policy': order_policy_map[plist.type],
         }
         if not order_lines:
             return {'value': value}
@@ -408,6 +416,17 @@ class sale_order(osv.osv):
         return super(sale_order, self).create(cr, uid, vals, context=context)
 
     def button_dummy(self, cr, uid, ids, context=None):
+        for so in self.browse(cr, uid, ids):
+            for l in so.order_line:
+                pricelist_id=so.pricelist_id.id
+                price = self.pool.get('product.pricelist').price_get(cr, uid, [pricelist_id],
+                                                                     l.product_id.id, 1.0, so.partner_id.id, 
+                                                                     {'uom': l.product_uom.id,
+                                                                      'date': so.date_order,
+                                                                      })[pricelist_id]
+                #print so.name,l.name,price
+                if not l.delivery_line:
+                    l.write({'price_unit':price})
         return True
 
     # FIXME: deprecated method, overriders should be using _prepare_invoice() instead.
@@ -645,8 +664,27 @@ class sale_order(osv.osv):
                     {'state': 'cancel'})
         self.write(cr, uid, ids, {'state': 'cancel'})
         return True
+    def _pjb_check_pricelist(self, cr, uid, ids, context=None):
+        ok=True
+        print 'CHECKING PRICELIST'
+        for so in self.browse(cr, uid, ids):
+            for l in so.order_line:
+                pricelist_id=so.pricelist_id.id
+                price = self.pool.get('product.pricelist').price_get(cr, uid, [pricelist_id],
+                                                                     l.product_id.id, 1.0, so.partner_id.id, 
+                                                                     {'uom': l.product_uom.id,
+                                                                      'date': so.date_order,
+                                                                      })[pricelist_id]
+                print so.name,l.name,price
+                #l.write({'price_unit':price})
+                if (abs(l.price_unit-price) > 0.0) and not l.delivery_line:
+                    ok=False
+        return ok
 
-    def action_button_confirm(self, cr, uid, ids, context=None):
+
+    def action_button_confirm(self, cr, uid, ids, context=None):         
+        if not self._pjb_check_pricelist(cr, uid, ids):
+            raise osv.except_osv(_('Error!'),_('Prices used on order lines do not match pricelist specified on sale order. Please edit sale order and click update button (above sale total).'))
         for so in self.browse(cr, uid, ids):
             if (so.amount_total > (so.partner_id.debit-so.partner_id.credit)) and so.pricelist_id.type=='retail' and ('Internet' not in so.shop_id.name):
                 raise osv.except_osv(_('Error!'),_('Current balance on partner account (%0.2f) does not exeed total order amount (%0.2f). For retail customers, payment must be received in advance.'%(so.partner_id.debit-so.partner_id.credit, so.amount_total )   ))
