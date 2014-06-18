@@ -48,7 +48,7 @@ class sale_order(osv.osv):
 
     def action_button_confirm(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
-            if not so.carrier_id:
+            if (not so.name.startswith('MG')) and (not so.carrier_id):
                 raise osv.except_osv(_('Error!'),_('Please select delivery method.'))
 
         result = super(sale_order, self).action_button_confirm(cr, uid, ids, context=context)
