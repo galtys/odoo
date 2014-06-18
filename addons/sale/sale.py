@@ -351,8 +351,11 @@ class sale_order(osv.osv):
         context = context or {}
         if not pricelist_id:
             return {}
+        plist=self.pool.get('product.pricelist').browse(cr, uid, pricelist_id, context=context)
+        order_policy_map={'retail':'manual','trade':'picking','contract':'picking'}
         value = {
-            'currency_id': self.pool.get('product.pricelist').browse(cr, uid, pricelist_id, context=context).currency_id.id
+            'currency_id': plist.currency_id.id,
+            'order_policy': order_policy_map[plist.type],
         }
         if not order_lines:
             return {'value': value}
