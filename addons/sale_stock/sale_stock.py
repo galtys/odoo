@@ -235,7 +235,8 @@ class sale_order(osv.osv):
         (_pjb_check_fiscal_position_pricelist, 'EXVAT Fiscal positions (0%VAT or 20EXVAT CODES) must be used with EXVAT Pricelists.', []),
         (_pjb_check_order_policy_manual, 'After 17.6.2014, "Create Invoice" for Retail must be "On Demand", for Trade and Contract must be "On Delivery Order". Please see Other Information tab', []),
         (_pjb_check_taxes, 'Only one tax code per line allowed.', []),
-        (_pjb_check_partner_pricelist, 'Pricelist on Sale Order must be the same as sale pricelist on partner form.', []),
+#        (_pjb_check_partner_pricelist, 'Pricelist on Sale Order must be the same as sale pricelist on partner form.', []),
+ #       (_pjb_check_pricelist, 'Prices used on order lines do not match pricelist specified on sale order. Please edit sale order and click update button (above sale total).', []),
    ]
 
     def unlink(self, cr, uid, ids, context=None):
