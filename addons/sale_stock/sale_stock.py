@@ -163,6 +163,15 @@ class sale_order(osv.osv):
         #order=date.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
         order = date(*x)
         return order < today
+    def _is_older17jun14(self, date_order):
+        #today_tuple=tuple( map(int,time.strftime("%Y-%m-%d").split('-')) )
+        today_tuple=(2014,6,17)
+        from datetime import date
+        today=date(*today_tuple)
+        x=tuple( map(int, date_order.split('-') ) )
+        #order=date.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
+        order = date(*x)
+        return order < today
         
     def _pjb_check_pricelist_type(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
@@ -205,12 +214,15 @@ class sale_order(osv.osv):
                     return False
         return True
     def _pjb_check_order_policy_manual(self, cr, uid, ids, context=None):
+        ok=True
         for so in self.browse(cr, uid, ids):
-            if self._is_older(so.date_order):
+            if self._is_older17jun14(so.date_order):
                 return True
             if so.pricelist_id.type == 'retail' and so.order_policy != 'manual':
-                return False
-        return True
+                ok=False
+            if so.pricelist_id.type in ['trade','contract'] and so.order_policy != 'picking':
+                ok=False                
+        return ok
     def _pjb_check_partner_pricelist(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
             if (so.pricelist_id.id != so.partner_id.property_product_pricelist.id) and (so.pricelist_id.type not in ('retail')):
@@ -220,8 +232,8 @@ class sale_order(osv.osv):
         (_pjb_check_pricelist_type, 'Pricelist type on shop on must equal to pricelist type on order (i.e. Retail Shop - Retail Pricelist)', []),
         (_pjb_check_fiscal_position_empty, 'Only UK Retail Sale Orders can have fiscal position empty.', []),
         (_pjb_check_fiscal_position_partner, 'Fiscal position on order must equal partner fiscal position.', []),
-        (_pjb_check_fiscal_position_pricelist, 'EXVAT Fiscal positions (0%VAT or 20EXVAT CODES) must be used with EXVAT Pricelists.', []),        
-        (_pjb_check_order_policy_manual, '"Create Invoice" for Retail orders must be "On Demand".', []),
+        (_pjb_check_fiscal_position_pricelist, 'EXVAT Fiscal positions (0%VAT or 20EXVAT CODES) must be used with EXVAT Pricelists.', []),
+        (_pjb_check_order_policy_manual, 'After 17.6.2014, "Create Invoice" for Retail must be "On Demand", for Trade and Contract must be "On Delivery Order". Please see Other Information tab', []),
         (_pjb_check_taxes, 'Only one tax code per line allowed.', []),
         (_pjb_check_partner_pricelist, 'Pricelist on Sale Order must be the same as sale pricelist on partner form.', []),
    ]
