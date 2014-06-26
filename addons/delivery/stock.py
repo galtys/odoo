@@ -59,6 +59,7 @@ class stock_picking(osv.osv):
         'carrier_tracking_ref': fields.char('Carrier Tracking Ref', size=32),
         'number_of_packages': fields.integer('Number of Packages'),
         'weight_uom_id': fields.many2one('product.uom', 'Unit of Measure', required=True,readonly="1",help="Unit of measurement for Weight",),
+        'email_sent':fields.boolean('Email Sent'),
         }
 
     def _prepare_shipping_invoice_line(self, cr, uid, picking, invoice, context=None):
@@ -189,6 +190,7 @@ class stock_picking_out(osv.osv):
         'weight_net': fields.function(_cal_weight, type='float', string='Net Weight', digits_compute= dp.get_precision('Stock Weight'), multi='_cal_weight'),
         'carrier_tracking_ref': fields.char('Carrier Tracking Ref', size=32),
         'number_of_packages': fields.integer('Number of Packages'),
+        'email_sent':fields.boolean('Email Sent'),
         }
 stock_picking_out()
 

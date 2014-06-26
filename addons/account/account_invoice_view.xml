@@ -134,6 +134,7 @@
                     <field name="state"/>
 		    <field name="supplier_invoice_number" string="SuInNo"/>
 		    <field name="name" string="Cust Ref"/>
+		    <field name="email_sent"/>
                 </tree>
             </field>
         </record>
