@@ -29,6 +29,16 @@ from openerp import pooler
 from openerp.osv import fields, osv, orm
 from openerp.tools.translate import _
 
+def _is_older_17jun14(date_order):
+        #today_tuple=tuple( map(int,time.strftime("%Y-%m-%d").split('-')) )
+        today_tuple=(2014,6,17)
+        from datetime import date
+        today=date(*today_tuple)
+        x=tuple( map(int, date_order.split('-') ) )
+        #order=date.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
+        order = date(*x)
+        return order < today
+
 class account_invoice(osv.osv):
     def _amount_all(self, cr, uid, ids, name, args, context=None):
         res = {}
@@ -215,8 +225,11 @@ class account_invoice(osv.osv):
         if move:
             invoice_ids = self.pool.get('account.invoice').search(cr, uid, [('move_id','in',move.keys())], context=context)
         return invoice_ids
+
     def _pjb_check_taxes(self, cr, uid, ids, context=None):
         for inv in self.browse(cr, uid, ids):
+            if _is_older_17jun14(inv.date_invoice):
+                return True
             for l in inv.invoice_line:
                 if (len(l.invoice_line_tax_id) != 1) and (inv.origin not in ['SO3839']):
                     return False
@@ -348,7 +361,7 @@ class account_invoice(osv.osv):
         ('number_uniq', 'unique(number, company_id, journal_id, type)', 'Invoice Number must be unique per Company!'),
     ]
     _constraints = [
-        (_pjb_check_taxes, 'One tax code per invoice line is mandatory.', []),
+        (_pjb_check_taxes, 'After 17.6.2014, one tax code per invoice line is mandatory.', []),
         ]
     def fields_view_get(self, cr, uid, view_id=None, view_type=False, context=None, toolbar=False, submenu=False):
         journal_obj = self.pool.get('account.journal')
