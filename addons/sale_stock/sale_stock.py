@@ -165,7 +165,7 @@ class sale_order(osv.osv):
         return order < today
     def _is_older17jun14(self, date_order):
         #today_tuple=tuple( map(int,time.strftime("%Y-%m-%d").split('-')) )
-        today_tuple=(2014,6,17)
+        today_tuple=(2014,6,19)
         from datetime import date
         today=date(*today_tuple)
         x=tuple( map(int, date_order.split('-') ) )

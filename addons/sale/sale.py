@@ -60,12 +60,15 @@ class sale_order(osv.osv):
     def onchange_shop_id(self, cr, uid, ids, shop_id, context=None):
         v = {}
         print 'onchange_shop_id', ids,shop_id,context
-        so=self.browse(cr, uid, ids[0])
+        if ids:
+            so=self.browse(cr, uid, ids[0])
+        else:
+            so=False
         if shop_id:
             shop = self.pool.get('sale.shop').browse(cr, uid, shop_id, context=context)
             if shop.project_id.id:
                 v['project_id'] = shop.project_id.id
-            if so.partner_id.property_product_pricelist:
+            if so and so.partner_id.property_product_pricelist:
                 v['pricelist_id']=so.partner_id.property_product_pricelist.id
             else:
                 if shop.pricelist_id.id:
@@ -683,8 +686,8 @@ class sale_order(osv.osv):
 
 
     def action_button_confirm(self, cr, uid, ids, context=None):         
-        if not self._pjb_check_pricelist(cr, uid, ids):
-            raise osv.except_osv(_('Error!'),_('Prices used on order lines do not match pricelist specified on sale order. Please edit sale order and click update button (above sale total).'))
+        #if not self._pjb_check_pricelist(cr, uid, ids):
+        #    raise osv.except_osv(_('Error!'),_('Prices used on order lines do not match pricelist specified on sale order. Please edit sale order and click update button (above sale total).'))
         for so in self.browse(cr, uid, ids):
             if (so.amount_total > (so.partner_id.debit-so.partner_id.credit)) and so.pricelist_id.type=='retail' and ('Internet' not in so.shop_id.name):
                 raise osv.except_osv(_('Error!'),_('Current balance on partner account (%0.2f) does not exeed total order amount (%0.2f). For retail customers, payment must be received in advance.'%(so.partner_id.debit-so.partner_id.credit, so.amount_total )   ))

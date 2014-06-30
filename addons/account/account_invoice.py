@@ -31,13 +31,16 @@ from openerp.tools.translate import _
 
 def _is_older_17jun14(date_order):
         #today_tuple=tuple( map(int,time.strftime("%Y-%m-%d").split('-')) )
-        today_tuple=(2014,6,17)
-        from datetime import date
-        today=date(*today_tuple)
-        x=tuple( map(int, date_order.split('-') ) )
-        #order=date.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
-        order = date(*x)
-        return order < today
+	if date_order and isinstance(date_order,str):
+		today_tuple=(2014,6,18)
+		from datetime import date
+		today=date(*today_tuple)
+		x=tuple( map(int, date_order.split('-') ) )
+		#order=date.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
+		order = date(*x)
+		return order < today
+	else:
+		return True
 
 class account_invoice(osv.osv):
     def _amount_all(self, cr, uid, ids, name, args, context=None):
