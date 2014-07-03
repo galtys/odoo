@@ -178,6 +178,8 @@ class stock_picking(osv.osv):
         return res
     _columns = {
         'pjb_carrier_id': fields.related('sale_id', 'carrier_id', string='Delivery',type="many2one",relation='delivery.carrier'),   
+        'client_order_ref': fields.related('sale_id', 'client_order_ref', string='Cust Ref', type="char"),
+
         'delivery_partner_id':fields.many2one("res.partner", "Delivery Partner"),
         'delivery_date': fields.date('Delivery Date',help="Delivery date given by carrier"),
         'delivery_date_f':fields.function(_delivery_date, type="char", string="Delivery Date Formatted"),
@@ -197,6 +199,8 @@ class stock_picking_out(osv.osv):
         return res
     _columns = {
         'pjb_carrier_id': fields.related('sale_id', 'carrier_id', string='Delivery',type="many2one",relation='delivery.carrier'),
+        'client_order_ref': fields.related('sale_id', 'client_order_ref', string='Cust Ref', type="char"),
+
         'delivery_partner_id':fields.many2one("res.partner", "Delivery Partner"),
         'delivery_date': fields.date('Delivery Date',help="Delivery date given by carrier"),
         'delivery_date_f':fields.function(_delivery_date, type="char", string="Delivery Date Formatted"),
