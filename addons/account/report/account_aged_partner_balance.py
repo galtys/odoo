@@ -221,8 +221,6 @@ class aged_trial_report(report_sxw.rml_parse, common_report_header):
             for i in range(5)+['direction']:
                 totals.setdefault(str(i), 0.0)
                 totals[str(i)] += float(r[str(i)] or 0.0)
-        import pprint
-        pprint.pprint(res)
         return [x for x in res if abs(x['total'])>0.0]
 
     def _get_lines_with_out_partner(self, form):
