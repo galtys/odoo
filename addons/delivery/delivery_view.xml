@@ -358,6 +358,7 @@
 		  <field name="date_done" readonly="1"/>
 		  <field name="email_sent" readonly="1"/>
 		  <field name="client_order_ref" readonly="1"/>
+		  <field name="carrier_tracking_ref"/>
                 </xpath>
 
             </field>
