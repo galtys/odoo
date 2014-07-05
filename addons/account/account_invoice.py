@@ -1284,14 +1284,20 @@ class account_invoice(osv.osv):
     def refund(self, cr, uid, ids, date=None, period_id=None, description=None, journal_id=None, context=None):
         new_ids = []
         for invoice in self.browse(cr, uid, ids, context=context):
-            invoice = self._prepare_refund(cr, uid, invoice,
+            invoice_data = self._prepare_refund(cr, uid, invoice,
                                                 date=date,
                                                 period_id=period_id,
                                                 description=description,
                                                 journal_id=journal_id,
                                                 context=context)
-            # create the new invoice
-            new_ids.append(self.create(cr, uid, invoice, context=context))
+	    # create the new invoice
+	    new_id =self.create(cr, uid, invoice_data, context=context)
+
+	    cr.execute('select order_id from sale_order_invoice_rel where invoice_id=%s', (invoice.id,))
+	    order_ids=[x[0] for x in cr.fetchall()]
+	    for order_id in order_ids: #link to sale orders...		    
+		    cr.execute('insert into sale_order_invoice_rel (order_id,invoice_id) values (%s,%s)', (order_id, new_id)) #link to sale order
+            new_ids.append(new_id)
 
         return new_ids
 

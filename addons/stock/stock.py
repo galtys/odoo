@@ -1223,6 +1223,8 @@ class stock_picking(osv.osv):
             self.write(cr, uid, [picking.id], {
                 'invoice_state': 'invoiced',
                 }, context=context)
+            if picking.sale_id: #keep links to sale order
+                cr.execute('insert into sale_order_invoice_rel (order_id,invoice_id) values (%s,%s)', (picking.sale_id.id, invoice_id))
             self._invoice_hook(cr, uid, picking, invoice_id)
         self.write(cr, uid, res.keys(), {
             'invoice_state': 'invoiced',
