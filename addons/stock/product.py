@@ -333,7 +333,10 @@ class product_product(osv.osv):
                     uoms_o[context.get('uom', False) or product2uom[prod_id]], context=context)
             res[prod_id] -= amount
         return res
-
+    def _prod_moves(self, cr, uid, ids, context=None):
+        ids_str = ','.join( map(ids,str) )
+        cr.execute("select product_id from stock_move where id in (%s)" % ids_str )
+        return [x[0] for x in cr.fetchall()]
     def _product_available(self, cr, uid, ids, field_names=None, arg=False, context=None):
         """ Finds the incoming and outgoing quantity of product.
         @return: Dictionary of values
@@ -359,12 +362,19 @@ class product_product(osv.osv):
             for id in ids:
                 res[id][f] = stock.get(id, 0.0)
         return res
-
+    def init(self, cr):
+        cr.execute("select id from product_product")
+        prod_ids=[x[0] for x in cr.fetchall()]
+        ret = self._product_available(cr, 1, prod_ids, ['qty_available'] )
+        for p_id,v in ret.items():
+            cr.execute("update product_product set qty_available=%s where id=%s"%(v['qty_available'],p_id) )
+        return True
     _columns = {
         'reception_count': fields.function(_stock_move_count, string="Reception", type='integer', multi='pickings'),
         'delivery_count': fields.function(_stock_move_count, string="Delivery", type='integer', multi='pickings'),
         'qty_available': fields.function(_product_available, multi='qty_available',
-            type='float',  digits_compute=dp.get_precision('Product Unit of Measure'),
+                                         store={'stock.move':(_prod_moves, ['product_qty'],10)},
+                                         type='float',  digits_compute=dp.get_precision('Product Unit of Measure'),
             string='Quantity On Hand',
             help="Current quantity of products.\n"
                  "In a context with a single Stock Location, this includes "
