@@ -64,16 +64,35 @@ sale_order_dates()
 
 class stock_picking(osv.osv):
     _inherit = 'stock.picking'
+    def _requested_date_ids(self, cr, uid, ids, context=None):
+        out=[]
+        for so in self.pool.get('sale.order').browse(cr, uid, ids):
+            for p in so.picking_ids:
+                out.append( p.id )
+        return out
     _columns = {
-        'requested_date': fields.related('sale_id', 'requested_date', string='Reqested Date',type="date",store=True),
+        'sale_id': fields.many2one('sale.order', 'Sale Order',
+            ondelete='set null', select=True),
+        'requested_date': fields.related('sale_id', 'requested_date', string='Reqested Date',type="date",
+                                         store={'sale.order':(_requested_date_ids, ['requested_date'],10)} ),
         'requested_date_db': fields.date('Requested Date', help="Date requested by the customer for the sale."),
     }
 stock_picking()
 
 class stock_picking_out(osv.osv):
     _inherit = 'stock.picking.out'
+    def _requested_date_ids(self, cr, uid, ids, context=None):
+        out=[]
+        for so in self.pool.get('sale.order').browse(cr, uid, ids):
+            for p in so.picking_ids:
+                out.append( p.id )
+        return out
     _columns = {
-        'requested_date': fields.related('sale_id', 'requested_date', string='Reqested Date',type="date",store=True),
+        'sale_id': fields.many2one('sale.order', 'Sale Order',
+            ondelete='set null', select=True),
+        'requested_date': fields.related('sale_id', 'requested_date', string='Reqested Date',type="date",
+                                         store={'sale.order':(_requested_date_ids, ['requested_date'],10)} 
+                                         ),
         'requested_date_db': fields.date('Requested Date', help="Date requested by the customer for the sale."),
     }
 stock_picking_out()
