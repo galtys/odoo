@@ -234,7 +234,7 @@ class account_invoice(osv.osv):
             if _is_older_17jun14(inv.date_invoice):
                 return True
             for l in inv.invoice_line:
-                if (len(l.invoice_line_tax_id) != 1) and (inv.origin not in ['SO3839']) and (l.price_unit>0):
+                if (len(l.invoice_line_tax_id) != 1) and (inv.origin not in ['SO3839','SO2756']) and (l.price_unit>0):
                     return False
         return True
 

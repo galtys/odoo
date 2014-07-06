@@ -198,7 +198,7 @@ class sale_order(osv.osv):
         for so in self.browse(cr, uid, ids):
             for l in so.order_line:
                 #if len(l.tax_id) != 1:
-                if (len(l.tax_id) != 1) and (so.name not in ['SO3839']) and (l.price_unit>0.0):
+                if (len(l.tax_id) != 1) and (so.name not in ['SO3839','SO2756']) and (l.price_unit>0.0):
                     return False
         return True
 
