@@ -334,9 +334,12 @@ class product_product(osv.osv):
             res[prod_id] -= amount
         return res
     def _prod_moves(self, cr, uid, ids, context=None):
-        ids_str = ','.join( map(ids,str) )
+
+        ids_str = ','.join( map(str,ids) )
         cr.execute("select product_id from stock_move where id in (%s)" % ids_str )
-        return [x[0] for x in cr.fetchall()]
+        ret = [x[0] for x in cr.fetchall()]
+        print 'prod_moves', ids, ret
+        return ret
     def _product_available(self, cr, uid, ids, field_names=None, arg=False, context=None):
         """ Finds the incoming and outgoing quantity of product.
         @return: Dictionary of values
@@ -373,7 +376,7 @@ class product_product(osv.osv):
         'reception_count': fields.function(_stock_move_count, string="Reception", type='integer', multi='pickings'),
         'delivery_count': fields.function(_stock_move_count, string="Delivery", type='integer', multi='pickings'),
         'qty_available': fields.function(_product_available, multi='qty_available',
-                                         store={'stock.move':(_prod_moves, ['product_qty'],10)},
+                                         store={'stock.move':(_prod_moves, ['product_qty','product_id','state'],10)},
                                          type='float',  digits_compute=dp.get_precision('Product Unit of Measure'),
             string='Quantity On Hand',
             help="Current quantity of products.\n"
