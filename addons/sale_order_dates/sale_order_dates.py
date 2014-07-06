@@ -61,7 +61,7 @@ class sale_order_dates(osv.osv):
 
 sale_order_dates()
 
-
+#67: Need to be able to sort by 'requested date' in Delivery Orders
 class stock_picking(osv.osv):
     _inherit = 'stock.picking'
     def _requested_date_ids(self, cr, uid, ids, context=None):
