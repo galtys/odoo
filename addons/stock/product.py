@@ -368,9 +368,9 @@ class product_product(osv.osv):
     def init(self, cr):
         cr.execute("select id from product_product")
         prod_ids=[x[0] for x in cr.fetchall()]
-        ret = self._product_available(cr, 1, prod_ids, ['qty_available'] )
+        ret = self._product_available(cr, 1, prod_ids, ['qty_available','virtual_available'] )
         for p_id,v in ret.items():
-            cr.execute("update product_product set qty_available=%s where id=%s"%(v['qty_available'],p_id) )
+            cr.execute("update product_product set qty_available=%s,virtual_available=%s where id=%s"%(v['virtual_available'], v['qty_available'],p_id) )
         return True
     _columns = {
         'reception_count': fields.function(_stock_move_count, string="Reception", type='integer', multi='pickings'),
@@ -391,6 +391,7 @@ class product_product(osv.osv):
                  "Otherwise, this includes goods stored in any Stock Location "
                  "with 'internal' type."),
         'virtual_available': fields.function(_product_available, multi='qty_available',
+                                             store={'stock.move':(_prod_moves, ['product_qty','product_id','state'],10)},
             type='float',  digits_compute=dp.get_precision('Product Unit of Measure'),
             string='Forecasted Quantity',
             help="Forecast quantity (computed as Quantity On Hand "
