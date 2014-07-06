@@ -38,7 +38,6 @@ class stock_picking(osv.osv):
     _columns = {
         'sale_id': fields.many2one('sale.order', 'Sales Order', ondelete='set null', select=True),
         'shop_id': fields.related('sale_id', 'shop_id', string='Shop',type="many2one",relation='sale.shop'),
-        'requested_date': fields.related('sale_id', 'requested_date', string='Reqested Date',type="date"),
     }
     _defaults = {
         'sale_id': False
@@ -133,7 +132,6 @@ class stock_picking_out(osv.osv):
         'sale_id': fields.many2one('sale.order', 'Sale Order',
             ondelete='set null', select=True),
         'shop_id': fields.related('sale_id', 'shop_id', string='Shop',type="many2one",relation='sale.shop'),
-        'requested_date': fields.related('sale_id', 'requested_date', string='Reqested Date',type="date"),
     }
 stock_picking_out()
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

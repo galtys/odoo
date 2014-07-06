@@ -61,4 +61,21 @@ class sale_order_dates(osv.osv):
 
 sale_order_dates()
 
+
+class stock_picking(osv.osv):
+    _inherit = 'stock.picking'
+    _columns = {
+        'requested_date': fields.related('sale_id', 'requested_date', string='Reqested Date',type="date",store=True),
+        'requested_date_db': fields.date('Requested Date', help="Date requested by the customer for the sale."),
+    }
+stock_picking()
+
+class stock_picking_out(osv.osv):
+    _inherit = 'stock.picking.out'
+    _columns = {
+        'requested_date': fields.related('sale_id', 'requested_date', string='Reqested Date',type="date",store=True),
+        'requested_date_db': fields.date('Requested Date', help="Date requested by the customer for the sale."),
+    }
+stock_picking_out()
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

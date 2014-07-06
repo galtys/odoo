@@ -155,10 +155,6 @@
                 <xpath expr="/tree/field[@name='state']" position="after">
 		  <field name="shop_id" readonly="1"/>
                 </xpath>
-                <xpath expr="/tree/field[@name='min_date']" position="after">
-		  <field name="requested_date" readonly="1"/>
-                </xpath>
-
             </field>
         </record>
 
