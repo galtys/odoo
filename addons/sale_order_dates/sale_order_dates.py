@@ -52,7 +52,6 @@ class sale_order_dates(osv.osv):
             if dates_list:
                 res[order.id] = min(dates_list)
         return res
-
     _columns = {
         'commitment_date': fields.function(_get_commitment_date, store=True, type='date', string='Commitment Date', help="Committed date for delivery."),
         'requested_date': fields.date('Requested Date', help="Date requested by the customer for the sale."),
@@ -70,12 +69,18 @@ class stock_picking(osv.osv):
             for p in so.picking_ids:
                 out.append( p.id )
         return out
+    def init(self,cr):
+        cr.execute("select id from stock_picking where sale_id is not Null")
+        p_ids=[x[0] for x in cr.fetchall()]
+        for p in self.pool.get('stock.picking').browse(cr, 1, p_ids):
+            if p.sale_id.requested_date != p.requested_date:
+                p.write({'requested_date':p.sale_id.requested_date})
     _columns = {
         'sale_id': fields.many2one('sale.order', 'Sale Order',
             ondelete='set null', select=True),
         'requested_date': fields.related('sale_id', 'requested_date', string='Reqested Date',type="date",
                                          store={'sale.order':(_requested_date_ids, ['requested_date'],10)} ),
-        'requested_date_db': fields.date('Requested Date', help="Date requested by the customer for the sale."),
+        #'requested_date_db': fields.date('Requested Date', help="Date requested by the customer for the sale."),
     }
 stock_picking()
 
@@ -93,7 +98,7 @@ class stock_picking_out(osv.osv):
         'requested_date': fields.related('sale_id', 'requested_date', string='Reqested Date',type="date",
                                          store={'sale.order':(_requested_date_ids, ['requested_date'],10)} 
                                          ),
-        'requested_date_db': fields.date('Requested Date', help="Date requested by the customer for the sale."),
+        #'requested_date_db': fields.date('Requested Date', help="Date requested by the customer for the sale."),
     }
 stock_picking_out()
 

@@ -198,7 +198,9 @@ class sale_order(osv.osv):
         for so in self.browse(cr, uid, ids):
             for l in so.order_line:
                 #if len(l.tax_id) != 1:
-                if (len(l.tax_id) != 1) and (so.name not in ['SO3839','SO2756']) and (l.price_unit>0.0):
+                if (not self._is_older17jun14(so.date_order)) and (len(l.tax_id) != 1) and (so.name not in ['SO3839','SO2756']) and (l.price_unit>0.0) and ('RENT' not in l.product_id.default_code.upper()):
+                    print 44*'!'
+                    print so.name
                     return False
         return True
 
@@ -430,6 +432,7 @@ class sale_order(osv.osv):
             'type': 'out',
             'state': 'auto',
             'move_type': order.picking_policy,
+            'requested_date':order.requested_date,
             'sale_id': order.id,
             'partner_id': order.partner_shipping_id.id,
             'note': order.note,
