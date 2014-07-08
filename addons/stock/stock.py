@@ -647,6 +647,21 @@ class stock_picking(osv.osv):
         for id in ids:
             res[id] = {'ship_today': True, 'shipped_today': True, 'today': today, 'older_than_today':True}                       
         return res
+    def _requested48(self, cr, uid, ids, field_name, arg, context=None):
+        r48_ids=self._requested48_search(cr, uid, None, 'requested48',[],context=None)
+        res = {}
+        for id in ids:
+            if id in r48_ids:
+                res[id] = {'requested48': True}
+            else:
+                res[id] = {'requested48': False}
+        return res
+    def _requested48_search(self, cursor, user, obj, name, args, context=None):
+        #sql="SELECT id,name,requested_date,min_date,state,type from stock_picking where (requested_date <= (now() + '48 hours'::interval)) and (state not in ('done','cancel')) and (type='out')  order by requested_date desc"
+        sql="SELECT id from stock_picking where (requested_date <= (now() + '48 hours'::interval)) and (state not in ('done','cancel')) and (type='out')  order by requested_date desc"
+        cursor.execute(sql)
+        ids=[x[0] for x in cursor.fetchall()]
+        return [('id', 'in', ids)]
 
     def create(self, cr, user, vals, context=None):
         if ('name' not in vals) or (vals.get('name')=='/'):
@@ -708,7 +723,8 @@ class stock_picking(osv.osv):
                                        type='boolean', string='To be shipped today'),
         'older_than_today': fields.function(_today, multi="today", fnct_search=_today_search,select=True,
                                        type='boolean', string='Outstanding Today'),
-
+        'requested_in_48': fields.function(_requested48, multi="requested48", fnct_search=_requested48_search,select=True,
+                                       type='boolean', string='Requested in 48'),
         'shipped_today': fields.function(_today, multi="today",
                                          type='boolean', string='Shipped today'),
         'today': fields.function(_today, multi="today",
