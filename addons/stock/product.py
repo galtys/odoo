@@ -370,7 +370,7 @@ class product_product(osv.osv):
         prod_ids=[x[0] for x in cr.fetchall()]
         ret = self._product_available(cr, 1, prod_ids, ['qty_available','virtual_available'] )
         for p_id,v in ret.items():
-            cr.execute("update product_product set qty_available=%s,virtual_available=%s where id=%s"%(v['virtual_available'], v['qty_available'],p_id) )
+            cr.execute("update product_product set qty_available=%s,virtual_available=%s where id=%s"%(v['qty_available'], v['virtual_available'],p_id) )
         return True
     _columns = {
         'reception_count': fields.function(_stock_move_count, string="Reception", type='integer', multi='pickings'),
