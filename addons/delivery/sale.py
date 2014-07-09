@@ -61,16 +61,6 @@ class sale_order(osv.osv):
             result['value']['carrier_id'] = dtype
         return result
 
-    def _prepare_order_picking(self, cr, uid, order, context=None):
-        result = super(sale_order, self)._prepare_order_picking(cr, uid, order, context=context)
-        print "prepare order picking carrier", result
-        if order.carrier_id:
-            result.update(carrier_id=order.carrier_id.id)
-            result.update(delivery_partner_id=order.carrier_id.partner_id.id)
-        result.update( {'delivery_notes':order.delivery_notes} )
-        return result
-
-
     def delivery_set(self, cr, uid, ids, context=None):
         order_obj = self.pool.get('sale.order')
         line_obj = self.pool.get('sale.order.line')

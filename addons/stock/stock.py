@@ -637,32 +637,6 @@ class stock_picking(osv.osv):
             res[pick]['max_date'] = dt2
         return res
 
-    def _today(self, cr, uid, ids, field_name, arg, context=None):
-        res = {}
-        import datetime,time
-        #today=datetime.datetime.strptime(time.strftime("%Y-%m-%d"), DEFAULT_SERVER_DATE_FORMAT)
-        #today=datetime.datetime.strptime(, DEFAULT_SERVER_DATE_FORMAT)
-        today=time.strftime("%Y-%m-%d")
-        #order=date.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
-        for id in ids:
-            res[id] = {'ship_today': True, 'shipped_today': True, 'today': today, 'older_than_today':True}                       
-        return res
-    def _requested48(self, cr, uid, ids, field_name, arg, context=None):
-        r48_ids=self._requested48_search(cr, uid, None, 'requested48',[],context=None)
-        res = {}
-        for id in ids:
-            if id in r48_ids:
-                res[id] = {'requested48': True}
-            else:
-                res[id] = {'requested48': False}
-        return res
-    def _requested48_search(self, cursor, user, obj, name, args, context=None):
-        #sql="SELECT id,name,requested_date,min_date,state,type from stock_picking where (requested_date <= (now() + '48 hours'::interval)) and (state not in ('done','cancel')) and (type='out')  order by requested_date desc"
-        sql="SELECT id from stock_picking where (requested_date <= (now() + '48 hours'::interval)) and (state not in ('done','cancel')) and (type='out')  order by requested_date desc"
-        cursor.execute(sql)
-        ids=[x[0] for x in cursor.fetchall()]
-        return [('id', 'in', ids)]
-
     def create(self, cr, user, vals, context=None):
         if ('name' not in vals) or (vals.get('name')=='/'):
             seq_obj_name =  self._name
@@ -672,23 +646,6 @@ class stock_picking(osv.osv):
     def _convert_to_date(self,d):
         import datetime
         return 
-    def _today_search(self, cursor, user, obj, name, args, context=None):
-        #if not len(args):
-        #print [ args], '_today_search'
-        import datetime,time
-        
-        #ids=self.search(cursor,user, [('state','not in',['done','cancel'])])
-        cursor.execute("select id from stock_picking where type='out' and state not in ('done','cancel')")
-        ids=[x[0] for x in cursor.fetchall()]
-        print 'state not in done or cancel', ids
-        today=time.strftime("%Y-%m-%d 23:59:59")
-        out=[]
-        for p in self.browse(cursor, user, ids):
-            print p.min_date,today
-            if datetime.datetime.strptime(p.min_date, DEFAULT_SERVER_DATETIME_FORMAT) <= datetime.datetime.strptime(today, DEFAULT_SERVER_DATETIME_FORMAT):
-                out.append(p.id)
-        print out
-        return [('id', 'in', out)]
 
     _columns = {
         'name': fields.char('Reference', size=64, select=True, states={'done':[('readonly', True)], 'cancel':[('readonly',True)]}),
@@ -719,16 +676,6 @@ class stock_picking(osv.osv):
         ),
         'min_date': fields.function(get_min_max_date, fnct_inv=_set_minimum_date, multi="min_max_date",
                  store=True, type='datetime', string='Scheduled Time', select=1, help="Scheduled time for the shipment to be processed"),
-        'ship_today': fields.function(_today, multi="today", #delete this
-                                       type='boolean', string='To be shipped today'),
-        'older_than_today': fields.function(_today, multi="today", fnct_search=_today_search,select=True,
-                                       type='boolean', string='Outstanding Today'),
-        'requested_in_48': fields.function(_requested48, multi="requested48", fnct_search=_requested48_search,select=True,
-                                       type='boolean', string='Requested in 48'),
-        'shipped_today': fields.function(_today, multi="today",
-                                         type='boolean', string='Shipped today'),
-        'today': fields.function(_today, multi="today",
-                                  type='datetime', string='Today'),
 
         'date': fields.datetime('Creation Date', help="Creation date, usually the time of the order.", select=True, states={'done':[('readonly', True)], 'cancel':[('readonly',True)]}),
         'date_done': fields.datetime('Date of Transfer', help="Date of Completion", states={'done':[('readonly', True)], 'cancel':[('readonly',True)]}),
