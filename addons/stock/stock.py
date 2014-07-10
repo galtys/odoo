@@ -1056,8 +1056,12 @@ class stock_picking(osv.osv):
             account_id = partner.property_account_payable.id
             payment_term = partner.property_supplier_payment_term.id or False
         comment = self._get_comment_invoice(cr, uid, picking)
+        if picking.sale_id:
+            name=picking.sale_id.client_order_ref
+        else:
+            name=picking.name
         invoice_vals = {
-            'name': picking.name,
+            'name': name,
             'origin': (picking.name or '') + (picking.origin and (':' + picking.origin) or ''),
             'type': inv_type,
             'account_id': account_id,
