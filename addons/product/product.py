@@ -545,8 +545,8 @@ class product_product(osv.osv):
     _inherit = ['mail.thread']
     _order = 'default_code,name_template'
     _columns = {
-        'qty_available': fields.function(_product_qty_available, type='float', string='Quantity On Hand',store=True),
-        'virtual_available': fields.function(_product_virtual_available, type='float', string='Quantity Available',store=True),
+        'qty_available': fields.function(_product_qty_available, type='float', string='Quantity On Hand'),
+        'virtual_available': fields.function(_product_virtual_available, type='float', string='Quantity Available'),
         'incoming_qty': fields.function(_product_incoming_qty, type='float', string='Incoming'),
         'outgoing_qty': fields.function(_product_outgoing_qty, type='float', string='Outgoing'),
         'price': fields.function(_product_price, type='float', string='Price', digits_compute=dp.get_precision('Product Price')),
