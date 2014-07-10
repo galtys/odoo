@@ -57,7 +57,7 @@ class sale_order(osv.osv):
         },
     }
 
-    def onchange_shop_id(self, cr, uid, ids, shop_id, context=None):
+    def onchange_shop_id(self, cr, uid, ids, shop_id, partner_id, context=None):
         v = {}
         print 'onchange_shop_id', ids,shop_id,context
         if ids:
@@ -68,9 +68,15 @@ class sale_order(osv.osv):
             shop = self.pool.get('sale.shop').browse(cr, uid, shop_id, context=context)
             if shop.project_id.id:
                 v['project_id'] = shop.project_id.id
-            if so and so.partner_id.property_product_pricelist:
-                v['pricelist_id']=so.partner_id.property_product_pricelist.id
-            else:
+            #print [so and so.partner_id.property_product_pricelist]
+            v['pricelist_id']=False
+            if partner_id:
+                partner=self.pool.get('res.partner').browse(cr, uid, partner_id, context=context)
+                if partner.property_product_pricelist:
+                    print 'USING partner pricelist'
+                    v['pricelist_id']=partner.property_product_pricelist.id
+            if not v['pricelist_id']:
+                print 'USING shop pricelist'
                 if shop.pricelist_id.id:
                     v['pricelist_id'] = shop.pricelist_id.id
                 
