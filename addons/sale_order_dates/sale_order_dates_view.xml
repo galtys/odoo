@@ -8,26 +8,13 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <group name="sale_pay" position="after">
-                    <group colspan="2" col="2">
-                        <separator string="Dates" colspan="2"/>                   
+                    <group colspan="2" col="2" groups="base.group_no_one">
+                        <separator string="Dates" colspan="2"/>
+                        <field name="requested_date"/>
                         <field name="commitment_date"/>
                         <field name="effective_date"/>
                     </group>
                 </group>
-		<field name="date_order" position="after">
-		  <field name="requested_date"/>
-		</field>
-            </field>
-        </record>
-        <record id="view_picking_out_tree_shop" model="ir.ui.view">
-            <field name="name">stock.picking.out.tree.shop</field>
-            <field name="model">stock.picking.out</field>
-	    <field name="inherit_id" ref="stock.view_picking_out_tree"/>
-            <field name="arch" type="xml">
-                <xpath expr="/tree/field[@name='min_date']" position="after">
-		  <field name="requested_date" readonly="1"/>
-                </xpath>
-
             </field>
         </record>
 
