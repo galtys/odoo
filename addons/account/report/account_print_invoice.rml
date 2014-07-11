@@ -80,22 +80,17 @@
       <lineStyle kind="LINEBELOW" colorName="#e6e6e6" start="1,-1" stop="1,-1"/>
       <lineStyle kind="LINEBELOW" colorName="#e6e6e6" start="2,-1" stop="2,-1"/>
     </blockTableStyle>
-    <blockTableStyle id="Table1">
-      <blockAlignment value="LEFT"/>
-      <blockValign value="TOP"/>
-    </blockTableStyle>
     <initialize>
       <paraStyle name="all" alignment="justify"/>
     </initialize>
     <paraStyle name="P1" fontName="Helvetica" fontSize="9.0" leading="11"/>
     <paraStyle name="P2" fontName="Helvetica-Bold" fontSize="18.0" leading="22" alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0"/>
-    <paraStyle name="P3" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="6.0" spaceAfter="6.0"/>
-    <paraStyle name="P4" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="6.0" spaceAfter="6.0"/>
-    <paraStyle name="P5" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="P6" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="P7" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="P8" fontName="Helvetica" fontSize="9.0" leading="11"/>
-    <paraStyle name="P9" fontName="Helvetica-Bold" fontSize="12.0" leading="15" alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="P3" fontName="Helvetica-Bold" fontSize="12.0" leading="15" alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="P4" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="6.0" spaceAfter="6.0"/>
+    <paraStyle name="P5" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="6.0" spaceAfter="6.0"/>
+    <paraStyle name="P6" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P7" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P8" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="Standard" fontName="Helvetica"/>
     <paraStyle name="Text body" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
     <paraStyle name="List" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
@@ -159,7 +154,7 @@
     <para style="P2">CREDIT NOTE [[ (o.type=='out_refund' or removeParentNode('para')) and '' ]]</para>
     <para style="P2">SUPPLIER CREDIT NOTE [[ (o.type=='in_refund' or removeParentNode('para')) and '' ]]</para>
     <para style="P2">SUPPLIER INVOICE [[ (o.type=='in_invoice' or removeParentNode('para')) and '' ]]</para>
-    <para style="P9">
+    <para style="P3">
       <font color="white"> </font>
     </para>
     <blockTable colWidths="222.0,21.0,31.0,7.0,246.0" style="Table3">
@@ -241,7 +236,7 @@
     <blockTable colWidths="199.0,93.0,196.0,50.0" style="Table4">
       <tr>
         <td>
-          <para style="P3">NUMBER: [[o.number]]</para>
+          <para style="P4">NUMBER: [[o.number]]</para>
         </td>
         <td>
           <para style="terp_tblheader_General_Centre">
@@ -249,7 +244,7 @@
           </para>
         </td>
         <td>
-          <para style="P3">DATE: [[ formatLang(o.date_invoice,date = True) ]]</para>
+          <para style="P4">DATE: [[ formatLang(o.date_invoice,date = True) ]]</para>
         </td>
         <td>
           <para style="terp_tblheader_General_Centre">
@@ -261,35 +256,35 @@
     <blockTable colWidths="261.0,31.0,203.0,43.0" style="Table5">
       <tr>
         <td>
-          <para style="P5">CUSTOMER ORDER NO: [[ o.name ]]</para>
+          <para style="P6">CUSTOMER ORDER NO: [[ o.name ]]</para>
         </td>
         <td>
-          <para style="P6">
+          <para style="P7">
             <font color="white"> </font>
           </para>
         </td>
         <td>
-          <para style="P5">ORIGIN: [[ o.origin ]]</para>
+          <para style="P6">ORIGIN: [[ o.origin ]]</para>
         </td>
         <td>
-          <para style="P6">
+          <para style="P7">
             <font color="white"> </font>
           </para>
         </td>
       </tr>
       <tr>
         <td>
-          <para style="P5">
-            <font color="white"> </font>
-          </para>
-        </td>
-        <td>
           <para style="P6">
             <font color="white"> </font>
           </para>
         </td>
         <td>
-          <para style="P5">
+          <para style="P7">
+            <font color="white"> </font>
+          </para>
+        </td>
+        <td>
+          <para style="P6">
             <font color="white"> </font>
           </para>
         </td>
@@ -309,7 +304,7 @@
           <para style="terp_tblheader_Details">Quantity</para>
         </td>
         <td>
-          <para style="P4">[Prod ref] Description</para>
+          <para style="P5">[Prod ref] Description</para>
         </td>
         <td>
           <para style="terp_tblheader_Details_Centre">
@@ -337,7 +332,7 @@
             <para style="terp_default_Right_9">[[ formatLang(l.quantity,digits=0)]] </para>
           </td>
           <td>
-            <para style="P7">[[l.name]]</para>
+            <para style="P8">[[l.name]]</para>
           </td>
           <td>
             <para style="terp_default_Right_9">
@@ -480,19 +475,6 @@
     </para>
     <para style="terp_default_9">[[ (o.payment_term and o.payment_term.note and format(o.payment_term and o.payment_term.note)) or removeParentNode('para') ]]</para>
     <para style="terp_default_9">
-      <font color="white"> </font>
-    </para>
-    <blockTable colWidths="120.0,410.0" style="Table1">
-      <tr>
-        <td>
-          <para style="terp_default_Bold_9">Fiscal Position Remark : </para>
-        </td>
-        <td>
-          <para style="terp_default_9">[[ (o.fiscal_position and o.fiscal_position.note and format(o.fiscal_position.note)) or removeParentNode('blockTable') ]]</para>
-        </td>
-      </tr>
-    </blockTable>
-    <para style="terp_default_2">
       <font color="white"> </font>
     </para>
   </story>
