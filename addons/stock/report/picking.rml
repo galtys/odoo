@@ -59,6 +59,9 @@
     <paraStyle name="P3" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="P4" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT"/>
     <paraStyle name="P5" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P6" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P7" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT"/>
+    <paraStyle name="P8" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="Standard" fontName="Helvetica"/>
     <paraStyle name="Heading" fontName="Helvetica" fontSize="14.0" leading="17" spaceBefore="12.0" spaceAfter="6.0"/>
     <paraStyle name="Text body" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
@@ -203,6 +206,29 @@
       </tr>
       <tr>
         <td>
+          <para style="terp_default_Bold_8">
+            <font color="white"> </font>
+          </para>
+        </td>
+        <td>
+          <para style="terp_default_9">
+            <font color="white"> </font>
+          </para>
+        </td>
+        <td>
+          <para style="P4">
+            <font color="white"> </font>
+          </para>
+        </td>
+        <td>
+          <para style="terp_default_Bold_8">REQUESTED DATE:</para>
+        </td>
+        <td>
+          <para style="terp_default_9">[[ formatLang(picking.requested_date,date = True) ]]</para>
+        </td>
+      </tr>
+      <tr>
+        <td>
           <para style="terp_default_Bold_8">ORIGIN:</para>
         </td>
         <td>
@@ -233,10 +259,10 @@
           </para>
         </td>
         <td>
-          <para style="terp_default_Bold_8">WEIGHT:</para>
+          <para style="terp_default_Bold_8">DELIVERY:</para>
         </td>
         <td>
-          <para style="terp_default_9">[[picking.weight ]]</para>
+          <para style="terp_default_9">[[ picking.delivery_partner_id.name ]]</para>
         </td>
       </tr>
       <tr>
@@ -245,6 +271,17 @@
         </td>
         <td>
           <para style="P5">[[picking.delivery_notes]]</para>
+        </td>
+        <td>
+          <para style="P4">
+            <font color="white"> </font>
+          </para>
+        </td>
+        <td>
+          <para style="terp_default_Bold_8">WEIGHT:</para>
+        </td>
+        <td>
+          <para style="terp_default_9">[[picking.weight ]]</para>
         </td>
       </tr>
     </blockTable>
