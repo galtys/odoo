@@ -425,6 +425,8 @@ class sale_order(osv.osv):
         return super(sale_order, self).create(cr, uid, vals, context=context)
 
     def button_dummy(self, cr, uid, ids, context=None):
+        return True
+    def button_dummyXX(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
             for l in so.order_line:
                 pricelist_id=so.pricelist_id.id
