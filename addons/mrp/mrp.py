@@ -344,7 +344,6 @@ class mrp_bom(osv.osv):
         @return: result: List of dictionaries containing product details.
                  result2: List of dictionaries containing Work Center details.
         """
-        print [cr, uid, bom, factor]
         routing_obj = self.pool.get('mrp.routing')
         factor = factor / (bom.product_efficiency or 1.0)
         max_rounding = max(bom.product_rounding, bom.product_uom.rounding)
