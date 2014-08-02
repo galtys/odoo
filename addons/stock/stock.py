@@ -957,14 +957,7 @@ class stock_picking(osv.osv):
             amount_unit = move_line.product_id.price_get('standard_price', context=context)[move_line.product_id.id]
             return amount_unit
         else:
-
-            price = self.pool.get('product.pricelist').price_get(cr, uid, [move_line.picking_id.sale_id.pricelist_id.id],
-                                                                 move_line.product_id.id, 1.0, move_line.picking_id.partner_id.id, 
-                                                                 {'uom': move_line.product_uom.id,
-                                                                  'date': move_line.picking_id.sale_id.date_order,
-                                                                  })[move_line.picking_id.sale_id.pricelist_id.id]
-
-            return price #move_line.product_id.list_price
+            return move_line.product_id.list_price
         
         #return move_line.product_id.list_price
 
@@ -1150,6 +1143,7 @@ class stock_picking(osv.osv):
         invoices_group = {}
         res = {}
         inv_type = type
+
         for picking in self.browse(cr, uid, ids, context=context):
             if picking.invoice_state != '2binvoiced':
                 continue
@@ -1184,7 +1178,24 @@ class stock_picking(osv.osv):
                 if vals:
                     invoice_line_id = invoice_line_obj.create(cr, uid, vals, context=context)
                     self._invoice_line_hook(cr, uid, move_line, invoice_line_id)
-
+            still_2bi=False
+            for p in picking.sale_id.picking_ids:
+                if p.id!=picking.id:
+                    if p.invoice_state == '2binvoiced':
+                        still_2bi=True
+#            invoice_obj.button_compute(cr, uid, [invoice_id], context=context,
+ #                   set_total=(inv_type in ('in_invoice', 'in_refund')))
+            current_invoice_untaxed = invoice_obj.browse(cr, uid, invoice_id).amount_untaxed
+            invoiced_total = sum( [x.amount_untaxed for x in picking.sale_id.invoice_ids] ) + current_invoice_untaxed
+            diff_adj = picking.sale_id.amount_untaxed - invoiced_total
+            if (not still_2bi) and abs(diff_adj) > 0.0:
+                vals['price_unit']=diff_adj
+                vals['product_id']=False
+                vals['name']='Adj to %s' % picking.sale_id.name
+                vals['discount']=0
+                vals['quantity']=1
+                invoice_line_id = invoice_line_obj.create(cr, uid, vals, context=context)
+                
             invoice_obj.button_compute(cr, uid, [invoice_id], context=context,
                     set_total=(inv_type in ('in_invoice', 'in_refund')))
             self.write(cr, uid, [picking.id], {
@@ -1193,6 +1204,7 @@ class stock_picking(osv.osv):
             if picking.sale_id: #keep links to sale order
                 cr.execute('insert into sale_order_invoice_rel (order_id,invoice_id) values (%s,%s)', (picking.sale_id.id, invoice_id))
             self._invoice_hook(cr, uid, picking, invoice_id)
+            
         self.write(cr, uid, res.keys(), {
             'invoice_state': 'invoiced',
             }, context=context)
