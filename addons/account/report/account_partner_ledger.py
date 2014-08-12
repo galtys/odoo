@@ -49,7 +49,6 @@ class third_party_ledger(report_sxw.rml_parse, common_report_header):
             'display_initial_balance':self._display_initial_balance,
             'display_currency':self._display_currency,
             'get_target_move': self._get_target_move,
-            'vouchers': self.get_vouchers,
         })
 
     def _get_filter(self, data):
@@ -60,10 +59,7 @@ class third_party_ledger(report_sxw.rml_parse, common_report_header):
     def set_context(self, objects, data, ids, report_type=None):
         obj_move = self.pool.get('account.move.line')
         obj_partner = self.pool.get('res.partner')
-        ctx=data['form'].get('used_context', {})
-        if not self._get_fiscalyear(data):
-            ctx.update({'all_fiscalyear':True})
-        self.query = obj_move._query_get(self.cr, self.uid, obj='l', context=ctx)
+        self.query = obj_move._query_get(self.cr, self.uid, obj='l', context=data['form'].get('used_context', {}))
         ctx2 = data['form'].get('used_context',{}).copy()
         self.initial_balance = data['form'].get('initial_balance', True)
         if self.initial_balance:
@@ -114,9 +110,7 @@ class third_party_ledger(report_sxw.rml_parse, common_report_header):
         self.partner_ids = [res['partner_id'] for res in self.cr.dictfetchall()]
         objects = obj_partner.browse(self.cr, self.uid, self.partner_ids)
         return super(third_party_ledger, self).set_context(objects, data, self.partner_ids, report_type)
-    def get_vouchers(self, partner):
-        voucher_ids=self.pool.get('account.voucher').search(self.cr, self.uid, [('partner_id','=',partner.id)])
-        return [x for x in self.pool.get('account.voucher').browse(self.cr, self.uid, voucher_ids)]
+
     def lines(self, partner):
         move_state = ['draft','posted']
         if self.target_move == 'posted':
@@ -128,10 +122,8 @@ class third_party_ledger(report_sxw.rml_parse, common_report_header):
         else:
             RECONCILE_TAG = "AND l.reconcile_id IS NULL"
         self.cr.execute(
-            "SELECT l.id, r.name as reconcile, l.date, j.code, acc.code as a_code, acc.name as a_name, l.ref, m.name as move_name, l.name, l.debit, l.credit, l.amount_currency,l.currency_id, c.symbol AS currency_code " \
+            "SELECT l.id, l.date, j.code, acc.code as a_code, acc.name as a_name, l.ref, m.name as move_name, l.name, l.debit, l.credit, l.amount_currency,l.currency_id, c.symbol AS currency_code " \
             "FROM account_move_line l " \
-            "LEFT JOIN account_move_reconcile r "\
-                "ON (l.reconcile_id=r.id) "\
             "LEFT JOIN account_journal j " \
                 "ON (l.journal_id = j.id) " \
             "LEFT JOIN account_account acc " \
@@ -151,7 +143,6 @@ class third_party_ledger(report_sxw.rml_parse, common_report_header):
         for r in res:
             sum += r['debit'] - r['credit']
             r['progress'] = sum
-            #r['reconcile']='ABC'
             full_account.append(r)
         return full_account
 
@@ -313,9 +304,5 @@ report_sxw.report_sxw('report.account.third_party_ledger', 'res.partner',
 report_sxw.report_sxw('report.account.third_party_ledger_other', 'res.partner',
         'addons/account/report/account_partner_ledger_other.rml',parser=third_party_ledger,
         header='internal')
-
-report_sxw.report_sxw('report.partner.overdue.webkit',
-                      'res.partner',
-                       parser=third_party_ledger)
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
