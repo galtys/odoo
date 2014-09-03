@@ -1178,11 +1178,6 @@ class stock_picking(osv.osv):
                 if vals:
                     invoice_line_id = invoice_line_obj.create(cr, uid, vals, context=context)
                     self._invoice_line_hook(cr, uid, move_line, invoice_line_id)
-            still_2bi=False
-            for p in picking.sale_id.picking_ids:
-                if p.id!=picking.id:
-                    if p.invoice_state == '2binvoiced':
-                        still_2bi=True
 #            invoice_obj.button_compute(cr, uid, [invoice_id], context=context,
  #                   set_total=(inv_type in ('in_invoice', 'in_refund')))
                 

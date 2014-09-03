@@ -119,14 +119,45 @@ class stock_picking(osv.osv):
         for picking in picking_obj.browse(cr, uid, result.keys(), context=context):
             invoice_id = result[picking.id]
             invoice = invoice_obj.browse(cr, uid, invoice_id, context=context)
+            taxes=[]
+            account_id=[]
+            for inv_line in invoice.invoice_line:
+                account_id.append( inv_line.account_id.id )
+                for t in inv_line.invoice_line_tax_id:
+                    if t.id not in taxes:
+                        taxes.append(t.id)
+            print 'taxes', taxes
+            assert len(taxes)==1
+
             invoice_line = self._prepare_shipping_invoice_line(cr, uid, picking, invoice, context=context)
             if invoice_line:
                 invoice_line_obj.create(cr, uid, invoice_line)
                 invoice_obj.button_compute(cr, uid, [invoice.id], context=context)
         #for picking in self.browse(cr, uid, ids, context=context):
             current_invoice_untaxed = invoice_obj.browse(cr, uid, invoice_id).amount_untaxed
-            invoiced_total = sum( [x.amount_untaxed for x in picking.sale_id.invoice_ids] ) + current_invoice_untaxed
+            print 'current invoice untaxed ', current_invoice_untaxed, [x.amount_untaxed for x in picking.sale_id.invoice_ids]
+            invoiced_total = sum( [x.amount_untaxed for x in picking.sale_id.invoice_ids] ) #+ current_invoice_untaxed
             diff_adj = picking.sale_id.amount_untaxed - invoiced_total
+            still_2bi=False
+
+            vals = {
+                'name': picking.name,
+                'origin': picking.name,
+                'invoice_id': invoice_id,
+                'uos_id': False,
+                #'product_id': move_line.product_id.id,
+                'account_id': account_id[-1],
+                #'price_unit': self._get_price_unit_invoice(cr, uid, move_line, invoice_vals['type']),
+                #'discount': self._get_discount_invoice(cr, uid, move_line),
+                #'quantity': move_line.product_uos_qty or move_line.product_qty,
+                'invoice_line_tax_id': [(6, 0, taxes)],
+                #'account_analytic_id': self._get_account_analytic_invoice(cr, uid, picking, move_line),
+                }
+            for p in picking.sale_id.picking_ids:
+                if p.id!=picking.id:
+                    if p.invoice_state == '2binvoiced':
+                        still_2bi=True
+
             if (not still_2bi) and abs(diff_adj) > 0.0:
                 vals['price_unit']=diff_adj
                 vals['product_id']=False
