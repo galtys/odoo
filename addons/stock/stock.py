@@ -1185,16 +1185,6 @@ class stock_picking(osv.osv):
                         still_2bi=True
 #            invoice_obj.button_compute(cr, uid, [invoice_id], context=context,
  #                   set_total=(inv_type in ('in_invoice', 'in_refund')))
-            current_invoice_untaxed = invoice_obj.browse(cr, uid, invoice_id).amount_untaxed
-            invoiced_total = sum( [x.amount_untaxed for x in picking.sale_id.invoice_ids] ) + current_invoice_untaxed
-            diff_adj = picking.sale_id.amount_untaxed - invoiced_total
-            if (not still_2bi) and abs(diff_adj) > 0.0:
-                vals['price_unit']=diff_adj
-                vals['product_id']=False
-                vals['name']='Adj to %s' % picking.sale_id.name
-                vals['discount']=0
-                vals['quantity']=1
-                invoice_line_id = invoice_line_obj.create(cr, uid, vals, context=context)
                 
             invoice_obj.button_compute(cr, uid, [invoice_id], context=context,
                     set_total=(inv_type in ('in_invoice', 'in_refund')))

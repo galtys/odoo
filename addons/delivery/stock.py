@@ -109,7 +109,7 @@ class stock_picking(osv.osv):
         return vals
 
     def action_invoice_create(self, cr, uid, ids, journal_id=False,
-            group=False, type='out_invoice', context=None):
+                              group=False, type='out_invoice', context=None):
         invoice_obj = self.pool.get('account.invoice')
         picking_obj = self.pool.get('stock.picking')
         invoice_line_obj = self.pool.get('account.invoice.line')
@@ -117,12 +117,25 @@ class stock_picking(osv.osv):
                 ids, journal_id=journal_id, group=group, type=type,
                 context=context)
         for picking in picking_obj.browse(cr, uid, result.keys(), context=context):
-            invoice = invoice_obj.browse(cr, uid, result[picking.id], context=context)
+            invoice_id = result[picking.id]
+            invoice = invoice_obj.browse(cr, uid, invoice_id, context=context)
             invoice_line = self._prepare_shipping_invoice_line(cr, uid, picking, invoice, context=context)
             if invoice_line:
                 invoice_line_obj.create(cr, uid, invoice_line)
                 invoice_obj.button_compute(cr, uid, [invoice.id], context=context)
+        #for picking in self.browse(cr, uid, ids, context=context):
+            current_invoice_untaxed = invoice_obj.browse(cr, uid, invoice_id).amount_untaxed
+            invoiced_total = sum( [x.amount_untaxed for x in picking.sale_id.invoice_ids] ) + current_invoice_untaxed
+            diff_adj = picking.sale_id.amount_untaxed - invoiced_total
+            if (not still_2bi) and abs(diff_adj) > 0.0:
+                vals['price_unit']=diff_adj
+                vals['product_id']=False
+                vals['name']='Adj to %s' % picking.sale_id.name
+                vals['discount']=0
+                vals['quantity']=1
+                invoice_line_id = invoice_line_obj.create(cr, uid, vals, context=context)
         return result
+
     def _get_default_uom(self,cr,uid,c):
         uom_categ, uom_categ_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'product', 'product_uom_categ_kgm')
         return self.pool.get('product.uom').search(cr, uid, [('category_id', '=', uom_categ_id),('factor','=',1)])[0]
