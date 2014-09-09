@@ -60,6 +60,7 @@ class stock_picking(osv.osv):
         'number_of_packages': fields.integer('Number of Packages'),
         'weight_uom_id': fields.many2one('product.uom', 'Unit of Measure', required=True,readonly="1",help="Unit of measurement for Weight",),
         'email_sent':fields.boolean('Email Sent'),
+        'pjb_autowiz':fields.boolean('pjb_autowiz'), #has been process by pjb auto delivery wizzard
         }
 
     def _prepare_shipping_invoice_line(self, cr, uid, picking, invoice, context=None):
@@ -235,6 +236,7 @@ class stock_picking_out(osv.osv):
         'carrier_tracking_ref': fields.char('Carrier Tracking Ref', size=32),
         'number_of_packages': fields.integer('Number of Packages'),
         'email_sent':fields.boolean('Email Sent'),
+        'pjb_autowiz':fields.boolean('pjb_autowiz'), #has been process by pjb auto delivery wizzard
         }
 stock_picking_out()
 

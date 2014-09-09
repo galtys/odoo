@@ -347,6 +347,7 @@ class account_invoice(osv.osv):
         'user_id': fields.many2one('res.users', 'Salesperson', readonly=True, track_visibility='onchange', states={'draft':[('readonly',False)]}),
         'fiscal_position': fields.many2one('account.fiscal.position', 'Fiscal Position', readonly=True, states={'draft':[('readonly',False)]}),
         'email_sent':fields.boolean('EmailSent'),
+        'validate_and_send':fields.boolean('Validate And Send'),
     }
     _defaults = {
         'type': _get_type,
