@@ -781,7 +781,6 @@ class product_product(osv.osv):
             args.append((('categ_id', 'child_of', context['search_default_categ_id'])))
         ids= super(product_product, self).search(cr, uid, args, offset=offset, limit=limit, order=order, context=context, count=count)
         qty_map={}
-        print 'PRODUCT search  ', ids
         if isinstance(ids, list):
             for p in self.pool.get('product.product').browse(cr, uid, ids):
                 qty_map[p.id]=p.qty_available
