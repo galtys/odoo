@@ -239,8 +239,11 @@ class stock_picking(osv.osv):
                 if p.id!=picking.id:
                     if p.invoice_state == '2binvoiced':
                         still_2bi=True
-
+    
             if (not still_2bi) and abs(diff_adj) > 0.0:
+                if abs(diff_adj)>0.0:
+                    assert False
+                    raise
                 vals['price_unit']=diff_adj
                 vals['product_id']=False
                 vals['name']='Adj to %s' % picking.sale_id.name
