@@ -198,6 +198,13 @@ class stock_picking(osv.osv):
         result = super(stock_picking, self).action_invoice_create(cr, uid,
                 ids, journal_id=journal_id, group=group, type=type,
                 context=context)
+        def inv_sign(inv):
+            if inv.type=='out_invoice':
+                return 1.0
+            elif inv.type=='out_refund':
+                return -1.0
+            else:
+                raise
         for picking in picking_obj.browse(cr, uid, result.keys(), context=context):
             invoice_id = result[picking.id]
             invoice = invoice_obj.browse(cr, uid, invoice_id, context=context)
@@ -218,7 +225,8 @@ class stock_picking(osv.osv):
         #for picking in self.browse(cr, uid, ids, context=context):
             current_invoice_untaxed = invoice_obj.browse(cr, uid, invoice_id).amount_untaxed
             print 'current invoice untaxed ', current_invoice_untaxed, [x.amount_untaxed for x in picking.sale_id.invoice_ids]
-            invoiced_total = sum( [x.amount_untaxed for x in picking.sale_id.invoice_ids] ) #+ current_invoice_untaxed
+            
+            invoiced_total = sum( [inv_sign(x)*x.amount_untaxed for x in picking.sale_id.invoice_ids] ) #+ current_invoice_untaxed
             diff_adj = picking.sale_id.amount_untaxed - invoiced_total
             still_2bi=False
 
@@ -241,7 +249,8 @@ class stock_picking(osv.osv):
                         still_2bi=True
     
             if (not still_2bi) and abs(diff_adj) > 0.0:
-                if abs(diff_adj)>0.0:
+                print 'DIFF ADJ: ', diff_adj
+                if abs(diff_adj)>0.001:
                     assert False
                     raise
                 vals['price_unit']=diff_adj
