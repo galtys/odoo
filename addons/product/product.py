@@ -597,6 +597,7 @@ class product_product(osv.osv):
         'retail': fields.float('Retail', digits_compute=dp.get_precision('Retail Price')),
         'trade': fields.float('Trade', digits_compute=dp.get_precision('Trade Price')),
         'contract': fields.float('Contract', digits_compute=dp.get_precision('Contract Price')),
+        'user_price_unit':fields.boolean('User Price Unit', select=True),
         'magento_name':fields.char("MagentoName",size=444),
         'opera_name':fields.char("OperaName",size=444),
         'stock_level': fields.float('StockLevel', digits_compute=dp.get_precision('Product Price')),

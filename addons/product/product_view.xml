@@ -92,6 +92,7 @@
 					<field name="retail"/>
 					
                                         <field name="list_price"/>
+					<field name="user_price_unit"/>
                                     </group>
                                     <group>
                                         <field name="default_code"/>

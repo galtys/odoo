@@ -426,19 +426,6 @@ class sale_order(osv.osv):
 
     def button_dummy(self, cr, uid, ids, context=None):
         return True
-    def button_dummyXX(self, cr, uid, ids, context=None):
-        for so in self.browse(cr, uid, ids):
-            for l in so.order_line:
-                pricelist_id=so.pricelist_id.id
-                price = self.pool.get('product.pricelist').price_get(cr, uid, [pricelist_id],
-                                                                     l.product_id.id, 1.0, so.partner_id.id, 
-                                                                     {'uom': l.product_uom.id,
-                                                                      'date': so.date_order,
-                                                                      })[pricelist_id]
-                #print so.name,l.name,price
-                if not l.delivery_line:
-                    l.write({'price_unit':price})
-        return True
 
     # FIXME: deprecated method, overriders should be using _prepare_invoice() instead.
     #        can be removed after 6.1.
@@ -809,7 +796,7 @@ class sale_order_line(osv.osv):
                                                   sale_order_line sol ON (sol.order_id = rel.order_id)
                                     WHERE rel.invoice_id = ANY(%s)""", (list(ids),))
         return [i[0] for i in cr.fetchall()]
-
+                                             
     _name = 'sale.order.line'
     _description = 'Sales Order Line'
     _columns = {
@@ -823,6 +810,7 @@ class sale_order_line(osv.osv):
                 'account.invoice': (_order_lines_from_invoice, ['state'], 10),
                 'sale.order.line': (lambda self,cr,uid,ids,ctx=None: ids, ['invoice_lines'], 10)}),
         'price_unit': fields.float('Unit Price', required=True, digits_compute= dp.get_precision('Product Price'), readonly=True, states={'draft': [('readonly', False)]}),
+        'listprice_unit': fields.float('Unit ListPrice', digits_compute= dp.get_precision('Product Price')),
         'type': fields.selection([('make_to_stock', 'from stock'), ('make_to_order', 'on order')], 'Procurement Method', required=True, readonly=True, states={'draft': [('readonly', False)]},
          help="From stock: When needed, the product is taken from the stock or we wait for replenishment.\nOn order: When needed, the product is purchased or produced."),
         'price_subtotal': fields.function(_amount_line, string='Subtotal', digits_compute= dp.get_precision('Account')),
@@ -1081,7 +1069,8 @@ class sale_order_line(osv.osv):
 
                 warning_msgs += _("No valid pricelist line found ! :") + warn_msg +"\n\n"
             else:
-                result.update({'price_unit': price})
+                result.update({'price_unit': price, 
+                               'listprice_unit':price})
         if warning_msgs:
             warning = {
                        'title': _('Configuration Error!'),

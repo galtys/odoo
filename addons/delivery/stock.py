@@ -172,8 +172,8 @@ class stock_picking(osv.osv):
             boms = move_line.sale_line_id.product_id.bom_ids
             if boms:
                 if len(boms)==1:
-                    prod,ret =  self.pool.get('mrp.bom')._bom_explode(cursor, user, boms[0], 1)
-                    bom_components_map = dict( [ (x['product_id'],x['product_qty']) for x in prod ] )
+                    #prod,ret =  self.pool.get('mrp.bom')._bom_explode(cursor, user, boms[0], 1)
+                    #bom_components_map = dict( [ (x['product_id'],x['product_qty']) for x in prod ] )
                     move_ids=move_line.sale_line_id.move_ids
                     total=0
                     for move in move_ids:
