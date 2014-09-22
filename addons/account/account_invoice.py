@@ -60,7 +60,7 @@ class account_invoice(osv.osv):
             for line in invoice.tax_line:
                 res[invoice.id]['amount_tax'] += line.amount
             res[invoice.id]['amount_total'] = res[invoice.id]['amount_tax'] + res[invoice.id]['amount_untaxed']
-	    if invoice.type in ('out_refund', 'in_refund'):
+	    if invoice.type in ('out_refund', 'in_invoice'):
 		    res[invoice.id]['amount_untaxed_sign'] = res[invoice.id]['amount_untaxed'] * (-1.0)
 		    res[invoice.id]['amount_total_sign'] = res[invoice.id]['amount_total'] * (-1.0)
 	    else:
@@ -163,7 +163,7 @@ class account_invoice(osv.osv):
 	    res={}
 	    
 	    for inv in self.browse(cr, uid, ids):
-		    if inv.type in ('out_refund','in_refund'):
+		    if inv.type in ('out_refund','in_invoice'):
 			    sign=-1.0
 		    else:
 			    sign=1.0
