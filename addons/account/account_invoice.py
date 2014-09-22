@@ -49,13 +49,24 @@ class account_invoice(osv.osv):
             res[invoice.id] = {
                 'amount_untaxed': 0.0,
                 'amount_tax': 0.0,
-                'amount_total': 0.0
+                'amount_total': 0.0,
+
+                'amount_untaxed_sign': 0.0,
+                'amount_total_sign': 0.0
+
             }
             for line in invoice.invoice_line:
                 res[invoice.id]['amount_untaxed'] += line.price_subtotal
             for line in invoice.tax_line:
                 res[invoice.id]['amount_tax'] += line.amount
             res[invoice.id]['amount_total'] = res[invoice.id]['amount_tax'] + res[invoice.id]['amount_untaxed']
+	    if invoice.type in ('out_refund', 'in_refund'):
+		    res[invoice.id]['amount_untaxed_sign'] = res[invoice.id]['amount_untaxed'] * (-1.0)
+		    res[invoice.id]['amount_total_sign'] = res[invoice.id]['amount_total'] * (-1.0)
+	    else:
+		    res[invoice.id]['amount_untaxed_sign'] = res[invoice.id]['amount_untaxed']
+		    res[invoice.id]['amount_total_sign'] = res[invoice.id]['amount_total']
+
         return res
 
     def _get_journal(self, cr, uid, context=None):
@@ -148,7 +159,17 @@ class account_invoice(osv.osv):
             #prevent the residual amount on the invoice to be less than 0
             result[invoice.id] = max(result[invoice.id], 0.0)            
         return result
-
+    def _amount_residual_sign(self, cr, uid, ids, name, args, context=None):
+	    res={}
+	    
+	    for inv in self.browse(cr, uid, ids):
+		    if inv.type in ('out_refund','in_refund'):
+			    sign=-1.0
+		    else:
+			    sign=1.0
+		    
+		    res[inv.id]=inv.residual*sign
+	    return res
     # Give Journal Items related to the payment reconciled to this invoice
     # Return ids of partial and total payments related to the selected invoices
     def _get_lines(self, cr, uid, ids, name, arg, context=None):
@@ -306,6 +327,7 @@ class account_invoice(osv.osv):
                 'account.invoice.line': (_get_invoice_line, ['price_unit','invoice_line_tax_id','quantity','discount','invoice_id'], 20),
             },
             multi='all'),
+        'amount_untaxed_sign': fields.function(_amount_all, digits_compute=dp.get_precision('Account'), string='Subtotal', track_visibility='always', multi='all'),
         'amount_tax': fields.function(_amount_all, digits_compute=dp.get_precision('Account'), string='Tax',
             store={
                 'account.invoice': (lambda self, cr, uid, ids, c={}: ids, ['invoice_line'], 20),
@@ -320,6 +342,8 @@ class account_invoice(osv.osv):
                 'account.invoice.line': (_get_invoice_line, ['price_unit','invoice_line_tax_id','quantity','discount','invoice_id'], 20),
             },
             multi='all'),
+        'amount_total_sign': fields.function(_amount_all, digits_compute=dp.get_precision('Account'), string='Total', multi='all'),
+
         'currency_id': fields.many2one('res.currency', 'Currency', required=True, readonly=True, states={'draft':[('readonly',False)]}, track_visibility='always'),
         'journal_id': fields.many2one('account.journal', 'Journal', required=True, readonly=True, states={'draft':[('readonly',False)]}),
         'company_id': fields.many2one('res.company', 'Company', required=True, change_default=True, readonly=True, states={'draft':[('readonly',False)]}),
@@ -342,6 +366,9 @@ class account_invoice(osv.osv):
                 'account.move.reconcile': (_get_invoice_from_reconcile, None, 50),
             },
             help="Remaining amount due."),
+        'residual_sign': fields.function(_amount_residual_sign, digits_compute=dp.get_precision('Account'), string='Balance',
+            help="Remaining amount due. With sign for Credit Notes"),
+
         'payment_ids': fields.function(_compute_lines, relation='account.move.line', type="many2many", string='Payments'),
         'move_name': fields.char('Journal Entry', size=64, readonly=True, states={'draft':[('readonly',False)]}),
         'user_id': fields.many2one('res.users', 'Salesperson', readonly=True, track_visibility='onchange', states={'draft':[('readonly',False)]}),
