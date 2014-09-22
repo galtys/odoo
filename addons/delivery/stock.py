@@ -192,6 +192,8 @@ class stock_picking(osv.osv):
 
     def action_invoice_create(self, cr, uid, ids, journal_id=False,
                               group=False, type='out_invoice', context=None):
+        if (context is None) or ('scripted_invoicing' not in context):
+            raise osv.except_osv(_('Error!'), ("Manual invoicing from delivery temporarily disabled. Please contact Jan to run the invoicing script."))
         invoice_obj = self.pool.get('account.invoice')
         picking_obj = self.pool.get('stock.picking')
         invoice_line_obj = self.pool.get('account.invoice.line')
@@ -251,8 +253,7 @@ class stock_picking(osv.osv):
             if (not still_2bi) and abs(diff_adj) > 0.0:
                 print 'DIFF ADJ: ', diff_adj
                 if abs(diff_adj)>0.001:
-                    assert False
-                    raise
+                    raise osv.except_osv(_('Error!'), ("Adj > 0.001. Not allowed"))
                 vals['price_unit']=diff_adj
                 vals['product_id']=False
                 vals['name']='Adj to %s' % picking.sale_id.name
@@ -435,6 +436,9 @@ class stock_picking_out(osv.osv):
 
     def action_invoice_create(self, cr, uid, ids, journal_id=False,
                               group=False, type='out_invoice', context=None):
+        if (context is None) or ('scripted_invoicing' not in context):
+            raise osv.except_osv(_('Error!'), ("Manual invoicing from delivery temporarily disabled. Please contact Jan to run the invoicing script."))
+
         invoice_obj = self.pool.get('account.invoice')
         picking_obj = self.pool.get('stock.picking')
         invoice_line_obj = self.pool.get('account.invoice.line')
@@ -484,12 +488,15 @@ class stock_picking_out(osv.osv):
                         still_2bi=True
 
             if (not still_2bi) and abs(diff_adj) > 0.0:
+                print 'DIFF ADJ: ', diff_adj
+                if abs(diff_adj)>0.001:
+                    raise osv.except_osv(_('Error!'), ("Adj > 0.001. Not allowed"))
                 vals['price_unit']=diff_adj
                 vals['product_id']=False
                 vals['name']='Adj to %s' % picking.sale_id.name
                 vals['discount']=0
                 vals['quantity']=1
-                invoice_line_id = invoice_line_obj.create(cr, uid, vals, context=context)
+                #invoice_line_id = invoice_line_obj.create(cr, uid, vals, context=context)
         return result
 
     def _get_default_uom(self,cr,uid,c):
