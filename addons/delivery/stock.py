@@ -489,7 +489,7 @@ class stock_picking_out(osv.osv):
 
             if (not still_2bi) and abs(diff_adj) > 0.0:
                 print 'DIFF ADJ: ', diff_adj
-                if abs(diff_adj)>0.001:
+                if (abs(diff_adj)>0.001) and (not context.get('allow_adj')):
                     raise osv.except_osv(_('Error!'), ("Adj > 0.001. Not allowed"))
                 vals['price_unit']=diff_adj
                 vals['product_id']=False
