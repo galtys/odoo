@@ -145,6 +145,8 @@
                         <button name="copy_quotation" states="cancel" string="New Copy of Quotation" type="object"/>
                         <button name="cancel" states="draft,sent" string="Cancel Quotation" groups="base.group_user"/>
                         <button name="action_cancel" states="manual,progress" string="Cancel Order" type="object" groups="base.group_sale_salesman"/>
+                        <button name="action_cancel" states="done" string="Cancel Order" type="object" groups="base.group_erp_manager"/>
+
                         <button name="invoice_cancel" states="invoice_except" string="Cancel Order" groups="base.group_sale_salesman"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,sent,invoiced,done" statusbar_colors='{"invoice_except":"red","waiting_date":"blue"}'/>
                 </header>
