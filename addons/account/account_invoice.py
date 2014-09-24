@@ -267,7 +267,7 @@ class account_invoice(osv.osv):
 
         'number': fields.related('move_id','name', type='char', readonly=True, size=64, relation='account.move', store=True, string='Number'),
 	'so_not_required':fields.boolean('SO Not Required', help="All Sale Invoices and Credit Notes (out_invoice,out_refund) must be linked to one and only one Sale Order. Please tick this box to allow an exception"),
-	'so_not_required_reason':fields.char('SO Not Required Reason', help="Please give a reason why this invoice does not need to be linked to a Sale Order. Your answer must be at least 10 characters long."),
+	'so_not_required_reason':fields.char('SO Not Required Reason', size=444,help="Please give a reason why this invoice does not need to be linked to a Sale Order. Your answer must be at least 10 characters long."),
         'internal_number': fields.char('Invoice Number', size=444, readonly=True, help="Unique number of the invoice, computed automatically when the invoice is created."),
         'reference': fields.char('Invoice Reference', size=64, help="The partner reference of this invoice."),
         'reference_type': fields.selection(_get_reference_type, 'Payment Reference',
