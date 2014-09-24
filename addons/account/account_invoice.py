@@ -29,19 +29,6 @@ from openerp import pooler
 from openerp.osv import fields, osv, orm
 from openerp.tools.translate import _
 
-def _is_older_17jun14(date_order):
-        #today_tuple=tuple( map(int,time.strftime("%Y-%m-%d").split('-')) )
-	if date_order and isinstance(date_order,str):
-		today_tuple=(2014,6,18)
-		from datetime import date
-		today=date(*today_tuple)
-		x=tuple( map(int, date_order.split('-') ) )
-		#order=date.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
-		order = date(*x)
-		return order < today
-	else:
-		return True
-
 class account_invoice(osv.osv):
     def _amount_all(self, cr, uid, ids, name, args, context=None):
         res = {}
@@ -255,15 +242,6 @@ class account_invoice(osv.osv):
             invoice_ids = self.pool.get('account.invoice').search(cr, uid, [('move_id','in',move.keys())], context=context)
         return invoice_ids
 
-    def _pjb_check_taxes(self, cr, uid, ids, context=None):
-        for inv in self.browse(cr, uid, ids):
-            if _is_older_17jun14(inv.date_invoice):
-                return True
-            for l in inv.invoice_line:
-                if (len(l.invoice_line_tax_id) != 1) and (inv.origin not in ['SO3839','SO2756']) and (l.price_unit>0):
-                    return False
-        return True
-
     _name = "account.invoice"
     _inherit = ['mail.thread']
     _description = 'Invoice'
@@ -289,7 +267,8 @@ class account_invoice(osv.osv):
 
         'number': fields.related('move_id','name', type='char', readonly=True, size=64, relation='account.move', store=True, string='Number'),
 	'so_not_required':fields.boolean('SO Not Required', help="All Sale Invoices and Credit Notes (out_invoice,out_refund) must be linked to one and only one Sale Order. Please tick this box to allow an exception"),
-        'internal_number': fields.char('Invoice Number', size=32, readonly=True, help="Unique number of the invoice, computed automatically when the invoice is created."),
+	'so_not_required_reason':fields.char('SO Not Required Reason', help="Please give a reason why this invoice does not need to be linked to a Sale Order. Your answer must be at least 10 characters long."),
+        'internal_number': fields.char('Invoice Number', size=444, readonly=True, help="Unique number of the invoice, computed automatically when the invoice is created."),
         'reference': fields.char('Invoice Reference', size=64, help="The partner reference of this invoice."),
         'reference_type': fields.selection(_get_reference_type, 'Payment Reference',
             required=True, readonly=True, states={'draft':[('readonly',False)]}),
@@ -385,6 +364,7 @@ class account_invoice(osv.osv):
     _defaults = {
         'type': _get_type,
         'state': 'draft',
+	'so_not_required': False,
         'journal_id': _get_journal,
         'currency_id': _get_currency,
         'company_id': lambda self,cr,uid,c: self.pool.get('res.company')._company_default_get(cr, uid, 'account.invoice', context=c),
@@ -393,13 +373,10 @@ class account_invoice(osv.osv):
         'internal_number': False,
         'user_id': lambda s, cr, u, c: u,
         'sent': False,
-    }
+	}
     _sql_constraints = [
         ('number_uniq', 'unique(number, company_id, journal_id, type)', 'Invoice Number must be unique per Company!'),
     ]
-    _constraints = [
-        (_pjb_check_taxes, 'After 17.6.2014, one tax code per invoice line is mandatory.', []),
-        ]
     def fields_view_get(self, cr, uid, view_id=None, view_type=False, context=None, toolbar=False, submenu=False):
         journal_obj = self.pool.get('account.journal')
         if context is None:

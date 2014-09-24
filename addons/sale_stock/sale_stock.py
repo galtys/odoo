@@ -230,6 +230,26 @@ class sale_order(osv.osv):
             if (so.pricelist_id.id != so.partner_id.property_product_pricelist.id) and (so.pricelist_id.type not in ('retail')):
                 return False
         return True
+    def _get_tax_codes(self, cr, uid, ids):
+            codes=[]
+            for so in self.browse(cr, uid, ids):
+                for l in so.order_line:
+                    for t in l.tax_id:
+                        if t.id not in codes:
+                            codes.append(t.id)
+            return codes
+
+    def _pjb_check_same_tax_codes(self, cr, uid, ids, context=None):
+        def same_tax(cr, uid, ids):
+            codes=self._get_tax_codes(cr, uid, ids)
+            if len(codes)>1:
+                return False
+            return True
+        for so in self.browse(cr, uid, ids):
+            #cust_inv = inv.type in ['in_invoice','in_refund']
+            if not same_tax(cr, uid, [so.id]):
+                return False
+        return True
     _constraints = [
         (_pjb_check_pricelist_type, 'Pricelist type on shop on must equal to pricelist type on order (i.e. Retail Shop - Retail Pricelist)', []),
         (_pjb_check_fiscal_position_empty, 'Only UK Retail Sale Orders can have fiscal position empty.', []),
@@ -237,6 +257,7 @@ class sale_order(osv.osv):
         (_pjb_check_fiscal_position_pricelist, 'EXVAT Fiscal positions (0%VAT or 20EXVAT CODES) must be used with EXVAT Pricelists.', []),
         (_pjb_check_order_policy_manual, 'After 17.6.2014, "Create Invoice" for Retail must be "On Demand", for Trade and Contract must be "On Delivery Order". Please see Other Information tab', []),
         (_pjb_check_taxes, 'Only one tax code per line allowed.', []),
+        (_pjb_check_same_tax_codes, 'All tax codes used on an sale order must be the same.', [])
 #        (_pjb_check_partner_pricelist, 'Pricelist on Sale Order must be the same as sale pricelist on partner form.', []),
  #       (_pjb_check_pricelist, 'Prices used on order lines do not match pricelist specified on sale order. Please edit sale order and click update button (above sale total).', []),
    ]
