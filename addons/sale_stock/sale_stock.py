@@ -175,7 +175,6 @@ class sale_order(osv.osv):
         
     def _pjb_check_pricelist_type(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
-            print 'check so', so.shop_id.pricelist_id.type, so.pricelist_id.type
             if so.shop_id.pricelist_id.type != so.pricelist_id.type:
                 return False
         return True
@@ -197,10 +196,7 @@ class sale_order(osv.osv):
     def _pjb_check_taxes(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
             for l in so.order_line:
-                #if len(l.tax_id) != 1:
                 if (not self._is_older17jun14(so.date_order)) and (len(l.tax_id) != 1) and (so.name not in ['SO3839','SO2756']) and (l.price_unit>0.0) and ('RENT' not in l.product_id.default_code.upper()):
-                    print 44*'!'
-                    print so.name
                     return False
         return True
 
