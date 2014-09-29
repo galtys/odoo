@@ -287,6 +287,7 @@ class sale_order(osv.osv):
         'invoice_exists': fields.function(_invoice_exists, string='Invoiced',
             fnct_search=_invoiced_search, type='boolean', help="It indicates that sales order has at least one invoice."),
         'note': fields.text('Terms and conditions'),
+        'tax_codes_reviewed': fields.boolean("Tax Codes Reviewed"),
 
         'amount_untaxed': fields.function(_amount_all, digits_compute=dp.get_precision('Account'), string='Untaxed Amount',
             store={
