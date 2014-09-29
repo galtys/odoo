@@ -218,7 +218,7 @@ class stock_picking(osv.osv):
                     if t.id not in taxes:
                         taxes.append(t.id)
             print 'taxes', taxes
-            assert len(taxes)==1
+            #assert len(taxes)==1
 
             invoice_line = self._prepare_shipping_invoice_line(cr, uid, picking, invoice, context=context)
             if invoice_line:
@@ -259,7 +259,7 @@ class stock_picking(osv.osv):
                 vals['name']='Adj to %s' % picking.sale_id.name
                 vals['discount']=0
                 vals['quantity']=1
-                invoice_line_id = invoice_line_obj.create(cr, uid, vals, context=context)
+                #invoice_line_id = invoice_line_obj.create(cr, uid, vals, context=context)
         return result
 
     def _get_default_uom(self,cr,uid,c):
