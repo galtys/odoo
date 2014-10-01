@@ -37,6 +37,12 @@ class sale_shop(osv.osv):
 
 sale_shop()
 
+DEBUG=False
+def tax_reviewed(so):
+    if DEBUG:
+        return False
+    return so.tax_codes_reviewed
+
 class sale_order(osv.osv):
     _inherit = "sale.order"
     
@@ -244,14 +250,14 @@ class sale_order(osv.osv):
         for so in self.browse(cr, uid, ids):
             #cust_inv = inv.type in ['in_invoice','in_refund']
             if not same_tax(cr, uid, [so.id]):
-                return False
+                return False or tax_reviewed(so)
         return True
     def _pjb_check_tax_and_pricelist(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
             codes=self._get_tax_codes(cr, uid, [so.id])
             pt_ids=[x.id for x in so.pricelist_id.tax_ids]
             if not set(codes).issubset( set(pt_ids) ):
-                return False
+                return False or tax_reviewed(so)
         return True
 
     _constraints = [
