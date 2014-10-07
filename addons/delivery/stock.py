@@ -250,7 +250,7 @@ class stock_picking(osv.osv):
                     if p.invoice_state == '2binvoiced':
                         still_2bi=True
     
-            if (not still_2bi) and abs(diff_adj) > 0.0:
+            if 0:#(not still_2bi) and abs(diff_adj) > 0.0:
                 print 'DIFF ADJ: ', diff_adj
                 if abs(diff_adj)>0.001:
                     raise osv.except_osv(_('Error!'), ("Adj > 0.001. Not allowed"))
@@ -487,7 +487,7 @@ class stock_picking_out(osv.osv):
                     if p.invoice_state == '2binvoiced':
                         still_2bi=True
 
-            if (not still_2bi) and abs(diff_adj) > 0.0:
+            if 0:#(not still_2bi) and abs(diff_adj) > 0.0:
                 print 'DIFF ADJ: ', diff_adj
                 if (abs(diff_adj)>0.001) and (not context.get('allow_adj')):
                     raise osv.except_osv(_('Error!'), ("Adj > 0.001. Not allowed"))
