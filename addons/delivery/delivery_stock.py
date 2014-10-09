@@ -54,10 +54,6 @@ class picking_operations(osv.osv):
             :return: dict containing the values to create the invoice line,
                      or None to create nothing
         """
-        print 44*'__'
-        print 'invoice shipping '
-
-            
         carrier_obj = self.pool.get('delivery.carrier')
         grid_obj = self.pool.get('delivery.grid')
 
@@ -98,15 +94,12 @@ class picking_operations(osv.osv):
         """
         if context is None:
             context = {}
-
         if type in ('in_invoice', 'in_refund'):
             # Take the user company and pricetype
             context['currency_id'] = move_line.company_id.currency_id.id
             amount_unit = move_line.product_id.price_get('standard_price', context=context)[move_line.product_id.id]
             return amount_unit
         else:
-
-
             return move_line.product_id.list_price
         
         #return move_line.product_id.list_price
@@ -127,7 +120,7 @@ class picking_operations(osv.osv):
         return price_pricelist
     def _get_price_unit_invoice_galtys(self, cursor, user, move_line, type):
         #ret_super=super(stock_picking, self)._get_price_unit_invoice2(cursor, user, move_line, type)
-        print 'CALC', move_line, move_line.sale_line_id.id,  move_line.sale_line_id.move_ids
+        #print 'CALC', move_line, move_line.sale_line_id.id,  move_line.sale_line_id.move_ids
         #print 'calc', [move_line]
         ret_super=self._get_price_unit_invoice2(cursor, user, move_line, type)
         ret=ret_super
@@ -146,7 +139,7 @@ class picking_operations(osv.osv):
                 ret_uos=price_unit
                 ret=ret_uos
         if move_line.sale_line_id:        
-            print 'move_price', move_line
+            #print 'move_price', move_line
             move_price = self._product_pricelist_price(cursor, user, move_line)
             boms = move_line.sale_line_id.product_id.bom_ids
             if boms:
@@ -158,14 +151,14 @@ class picking_operations(osv.osv):
                     for move in move_ids:
                         if move_line.sale_line_id.procurement_id.move_id.id != move.id:                            
                             price=self._product_pricelist_price(cursor, user, move)
-                            print 'move product trade price', move.product_id, price
+                            #print 'move product trade price', move.product_id, price
                             total += move.product_qty*price
-                    print 'total', total
+                    #print 'total', total
                     pro_rata=move_line.sale_line_id.product_uom_qty*move_line.sale_line_id.price_unit/total
                     ret_pro_rata = move_price * pro_rata
                     ret=ret_pro_rata
                     
-        print 'GET PRICE LINE', [move_line.name, ret_super, ret_line, ret_uos, ret_pro_rata,ret, move_line.sale_line_id.id,  move_line.sale_line_id.price_unit, move_line.sale_line_id.discount ]
+        #print 'GET PRICE LINE', [move_line.name, ret_super, ret_line, ret_uos, ret_pro_rata,ret, move_line.sale_line_id.id,  move_line.sale_line_id.price_unit, move_line.sale_line_id.discount ]
         #raise
         return ret
 
@@ -180,7 +173,7 @@ class picking_operations(osv.osv):
         result = super(picking_operations, self).action_invoice_create(cr, uid,
                 ids, journal_id=journal_id, group=group, type=type,
                 context=context)
-        print 444*'_.'
+        #print 444*'_.'
         for picking in picking_obj.browse(cr, uid, result.keys(), context=context):
             invoice_id = result[picking.id]
             invoice = invoice_obj.browse(cr, uid, invoice_id, context=context)
@@ -191,7 +184,7 @@ class picking_operations(osv.osv):
                 for t in inv_line.invoice_line_tax_id:
                     if t.id not in taxes:
                         taxes.append(t.id)
-            print 'taxes', taxes
+            #print 'taxes', taxes
             assert len(taxes)==1
 
             invoice_line = self._prepare_shipping_invoice_line(cr, uid, picking, invoice, context=context)
@@ -200,7 +193,7 @@ class picking_operations(osv.osv):
                 invoice_obj.button_compute(cr, uid, [invoice.id], context=context)
         #for picking in self.browse(cr, uid, ids, context=context):
             current_invoice_untaxed = invoice_obj.browse(cr, uid, invoice_id).amount_untaxed
-            print 'current invoice untaxed ', current_invoice_untaxed, [x.amount_untaxed for x in picking.sale_id.invoice_ids]
+            #print 'current invoice untaxed ', current_invoice_untaxed, [x.amount_untaxed for x in picking.sale_id.invoice_ids]
             invoiced_total = sum( [x.amount_untaxed for x in picking.sale_id.invoice_ids] ) #+ current_invoice_untaxed
             diff_adj = picking.sale_id.amount_untaxed - invoiced_total
             still_2bi=False
