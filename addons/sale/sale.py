@@ -1100,7 +1100,11 @@ class sale_order_line(osv.osv):
                 raise osv.except_osv(_('Invalid Action!'), _('Cannot delete a sales order line which is in state \'%s\'.') %(rec.state,))
         return super(sale_order_line, self).unlink(cr, uid, ids, context=context)
 
-
+class account_invoice_line(osv.osv):
+    _inherit = 'account.invoice.line'
+    _columns = {
+        'order_lines': fields.many2many('sale.order.line', 'sale_order_line_invoice_rel', 'invoice_id', 'order_line_id', 'Sale Order lines', readonly=True),
+        }
 class mail_compose_message(osv.Model):
     _inherit = 'mail.compose.message'
 
