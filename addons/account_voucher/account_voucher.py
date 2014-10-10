@@ -1019,6 +1019,70 @@ class account_voucher(osv.osv):
         self.write(cr, uid, ids, res)
         return True
 
+    def button_update_voucher(self, cr, uid, ids, context=None):
+        #raise
+#        if 1:
+        reconcile_pool = self.pool.get('account.move.reconcile')
+        move_pool = self.pool.get('account.move')
+        assert len(ids)==1
+        for voucher in self.browse(cr, uid, ids, context=context):
+            # refresh to make sure you don't unlink an already removed move
+            filter_id=self.pool.get('ir.filters').search(cr,uid,[('name','ilike','%s%%'% voucher.number)])
+            if len(filter_id)!=1:
+                return
+            #assert len(filter_id)==1
+            f=self.pool.get('ir.filters').browse(cr, uid, filter_id[0])
+            existing_ids = self.pool.get('account.invoice').search(cr, uid, eval(f.domain) )
+            print existing_ids
+            line_ids=[]
+            for inv in self.pool.get('account.invoice').browse(cr,uid,existing_ids):
+                for l in inv.move_id.line_id:
+                    if l.account_id.code in ['6020']:
+                        line_ids.append(l.id)
+            context={'move_line_ids': line_ids}
+            ret=self.recompute_voucher_lines(cr, uid, ids, voucher.partner_id.id, voucher.journal_id.id, voucher.amount, voucher.payment_rate_currency_id.id, voucher.type, voucher.date, context=context)
+            line_cr_ids = ret['value']['line_cr_ids']
+            line_dr_ids=ret['value']['line_dr_ids']
+            #print line_cr_ids
+            print ret['value'].keys()
+            print ret['value']['writeoff_amount']
+            for l in voucher.line_ids:
+                l.unlink()
+            for vl in line_cr_ids:
+                vl['voucher_id']=voucher.id
+                if vl['move_line_id'] in line_ids:
+                    new_id=self.pool.get('account.voucher.line').create(cr,uid,vl)
+
+            for vl in line_dr_ids:
+                vl['voucher_id']=voucher.id
+                if vl['move_line_id'] in line_ids:
+                    new_id=self.pool.get('account.voucher.line').create(cr,uid,vl)
+            #voucher.write({'line_cr_ids':line_cr_ids})
+            #voucher.write({'line_dr_ids':line_dr_ids})
+
+            #print line_dr_ids
+        if 1:
+            voucher.refresh()
+            recs = []
+            for line in voucher.move_ids:
+                if line.reconcile_id:
+                    recs += [line.reconcile_id.id]
+                if line.reconcile_partial_id:
+                    recs += [line.reconcile_partial_id.id]
+
+            reconcile_pool.unlink(cr, uid, recs)
+
+            if voucher.move_id:
+                move_pool.button_cancel(cr, uid, [voucher.move_id.id])
+                #move_pool.unlink(cr, uid, [voucher.move_id.id])
+        res = {
+            'state':'cancel',
+            #'move_id':False,
+        }
+        self.write(cr, uid, ids, res)
+        self.action_move_line_update(cr, uid, ids, context=None)
+        return True
+
     def unlink(self, cr, uid, ids, context=None):
         for t in self.read(cr, uid, ids, ['state'], context=context):
             if t['state'] not in ('draft', 'cancel'):
@@ -1140,6 +1204,77 @@ class account_voucher(osv.osv):
             'period_id': voucher.period_id.id,
         }
         return move
+
+    def action_move_line_update(self, cr, uid, ids, context=None):
+        '''
+        Confirm the vouchers given in ids and create the journal entries for each of them
+        '''
+        if context is None:
+            context = {}
+        move_pool = self.pool.get('account.move')
+        move_line_pool = self.pool.get('account.move.line')
+        for voucher in self.browse(cr, uid, ids, context=context):
+            #if voucher.move_id:
+            #    continue
+            company_currency = self._get_company_currency(cr, uid, voucher.id, context)
+            current_currency = self._get_current_currency(cr, uid, voucher.id, context)
+            # we select the context to use accordingly if it's a multicurrency case or not
+            context = self._sel_context(cr, uid, voucher.id, context)
+            # But for the operations made by _convert_amount, we always need to give the date in the context
+            ctx = context.copy()
+            ctx.update({'date': voucher.date})
+            # Create the account move record.
+            #move_id = move_pool.create(cr, uid, self.account_move_get(cr, uid, voucher.id, context=context), context=context)
+            move_id=voucher.move_id.id
+            # Get the name of the account_move just created
+            name = move_pool.browse(cr, uid, move_id, context=context).name
+
+            # Create the first line of the voucher
+            #move_line_id = move_line_pool.create(cr, uid, self.first_move_line_get(cr,uid,voucher.id, move_id, company_currency, current_currency, context), context)
+            move_line_id = False
+            to_unlink=[]
+            for l in voucher.move_id.line_id:
+                if voucher.account_id.id == l.account_id.id:
+                    move_line_id=l.id
+                else:
+                    to_unlink.append(l.id)
+            if to_unlink:
+                move_line_pool.unlink(cr,uid, to_unlink)
+
+            move_line_brw = move_line_pool.browse(cr, uid, move_line_id, context=context)
+            line_total = move_line_brw.debit - move_line_brw.credit
+            rec_list_ids = []
+            if voucher.type == 'sale':
+                line_total = line_total - self._convert_amount(cr, uid, voucher.tax_amount, voucher.id, context=ctx)
+            elif voucher.type == 'purchase':
+                line_total = line_total + self._convert_amount(cr, uid, voucher.tax_amount, voucher.id, context=ctx)
+            # Create one move line per voucher line where amount is not 0.0
+            line_total, rec_list_ids = self.voucher_move_line_create(cr, uid, voucher.id, line_total, move_id, company_currency, current_currency, context)
+
+            # Create the writeoff line if needed
+            ml_writeoff = self.writeoff_move_line_get(cr, uid, voucher.id, line_total, move_id, name, company_currency, current_currency, context)
+            if ml_writeoff:
+                move_line_pool.create(cr, uid, ml_writeoff, context)
+            # We post the voucher.
+            #print 'line_total, rec_list_ids', line_total, rec_list_ids
+
+            self.write(cr, uid, [voucher.id], {
+                'move_id': move_id,
+                'state': 'posted',
+                'number': name,
+            })
+            if voucher.journal_id.entry_posted:
+                move_pool.post(cr, uid, [move_id], context={})
+
+            # We automatically reconcile the account move lines.
+            reconcile = False
+            one_reconciliation=[]
+            for rec_ids in rec_list_ids:
+                if len(rec_ids) >= 2:
+                    one_reconciliation+=rec_ids
+            reconcile = move_line_pool.reconcile_partial(cr, uid, one_reconciliation, writeoff_acc_id=voucher.writeoff_acc_id.id, writeoff_period_id=voucher.period_id.id, writeoff_journal_id=voucher.journal_id.id)
+        return True
+
 
     def _get_exchange_lines(self, cr, uid, line, move_id, amount_residual, company_currency, current_currency, context=None):
         '''
@@ -1354,6 +1489,8 @@ class account_voucher(osv.osv):
                 rec_ids.append(new_id)
             if line.move_line_id.id:
                 rec_lst_ids.append(rec_ids)
+        print 'tot_line',tot_line
+        print 'rec_lst_ids',rec_lst_ids
         return (tot_line, rec_lst_ids)
 
     def writeoff_move_line_get(self, cr, uid, voucher_id, line_total, move_id, name, company_currency, current_currency, context=None):
@@ -1549,6 +1686,7 @@ class account_voucher_line(osv.osv):
         'partner_id':fields.related('voucher_id', 'partner_id', type='many2one', relation='res.partner', string='Partner'),
         'untax_amount':fields.float('Untax Amount'),
         'amount':fields.float('Amount', digits_compute=dp.get_precision('Account')),
+        'use_line': fields.boolean('USE LINE'),
         'reconcile': fields.boolean('Full Reconcile'),
         'type':fields.selection([('dr','Debit'),('cr','Credit')], 'Dr/Cr'),
         'account_analytic_id':  fields.many2one('account.analytic.account', 'Analytic Account'),

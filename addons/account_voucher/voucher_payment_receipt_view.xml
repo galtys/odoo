@@ -411,6 +411,9 @@
                 <header invisible="context.get('line_type', False)">
                     <button name="proforma_voucher" string="Validate" states="draft" class="oe_highlight"/>
                     <button name="cancel_voucher" string="Cancel Receipt" states="draft,proforma"/>
+		    <button name="button_update_voucher" string="Update Voucher" type="object"/>
+<!--		    <button name="button_post_updated_voucher" string="Post Updated Voucher" type="object" states="posted" /> -->
+
                     <button name="cancel_voucher" string="Unreconcile" type="object" states="posted" confirm="Are you sure to unreconcile and cancel this record ?"/>
                     <button name="action_cancel_draft" type="object" states="cancel" string="Set to Draft"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,posted" statusbar_colors='{"proforma":"blue"}'/>
@@ -439,7 +442,7 @@
 
                             <field name="account_id"
                                 widget="selection"
-                                invisible="True"/>
+                                readonly="1"/>
                             <field name="pre_line" invisible="1"/>
                             <field name="type" invisible="True"/>
                         </group>
@@ -507,10 +510,10 @@
                                 </group>
                             </group>
                         </page>
-                        <page string="Journal Items" attrs="{'invisible': [('state','!=','posted')]}">
+                        <page string="Journal Items">
                             <group col="4">
-                                <field name="period_id"/>
-                                <field name="audit"/>
+                                <field name="period_id" readonly="1"/>
+                                <field name="audit" readonly="1"/>
                             </group>
                             <field name="move_ids" readonly="1">
                                 <tree string="Journal Items">
