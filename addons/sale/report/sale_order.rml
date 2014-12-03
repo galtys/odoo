@@ -172,7 +172,7 @@
             <font color="white"> </font>
           </para>
           <para style="terp_default_9">Tel. : [[ (o.partner_shipping_id.phone) or removeParentNode('para') ]]</para>
-          <para style="terp_default_9">M: [[ (o.partner_invoice_id.mobile) or removeParentNode('para') ]]</para>
+          <para style="terp_default_9">M: [[ (o.partner_shipping_id.mobile) or removeParentNode('para') ]]</para>
           <para style="terp_default_9">Fax : [[ (o.partner_shipping_id.fax) or removeParentNode('para') ]]</para>
           <para style="terp_default_9">VAT : [[ (o.partner_shipping_id.vat) or removeParentNode('para') ]]</para>
           <para style="terp_default_9">E: [[ o.partner_shipping_id and o.partner_shipping_id.email or removeParentNode('para') ]]</para>
