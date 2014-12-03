@@ -1020,7 +1020,7 @@ class account_voucher(osv.osv):
         return True
 
     def button_update_voucher(self, cr, uid, ids, context=None):
-        #raise
+        raise
 #        if 1:
         reconcile_pool = self.pool.get('account.move.reconcile')
         move_pool = self.pool.get('account.move')

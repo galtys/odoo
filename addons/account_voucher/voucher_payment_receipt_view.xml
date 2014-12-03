@@ -442,7 +442,7 @@
 
                             <field name="account_id"
                                 widget="selection"
-                                readonly="1"/>
+                                invisible="True"/>
                             <field name="pre_line" invisible="1"/>
                             <field name="type" invisible="True"/>
                         </group>
