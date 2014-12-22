@@ -159,6 +159,8 @@ class aged_trial_report(report_sxw.rml_parse, common_report_header):
                 dates_query += ' < %s)'
                 args_list += (form[str(i)]['stop'],)
             args_list += (self.date_from,)
+
+            #OR (l.reconcile_id IN (SELECT recon.id FROM account_move_reconcile AS recon WHERE recon.create_date > %s )))
             self.cr.execute('''SELECT l.partner_id, SUM(l.debit-l.credit)
                     FROM account_move_line AS l, account_account, account_move am 
                     WHERE (l.account_id = account_account.id) AND (l.move_id=am.id)
@@ -166,7 +168,7 @@ class aged_trial_report(report_sxw.rml_parse, common_report_header):
                         AND (account_account.type IN %s)
                         AND (l.partner_id IN %s)
                         AND ((l.reconcile_id IS NULL)
-                          OR (l.reconcile_id IN (SELECT recon.id FROM account_move_reconcile AS recon WHERE recon.create_date > %s )))
+                          OR (l.reconcile_id IN (SELECT recon.id FROM account_move_reconcile AS recon WHERE False and (recon.create_date > %s) )))
                         AND ''' + self.query + '''
                         AND account_account.active
                         AND ''' + dates_query + '''
