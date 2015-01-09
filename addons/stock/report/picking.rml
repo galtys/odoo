@@ -215,7 +215,7 @@
           <para style="terp_default_9">
             <font color="white"> </font>
           </para>	  
-	  <barCode code="code128" x="0" quiet="9" fontName="Times-Roman" fontSize="50"  alignment="CENTER">[[ picking.name ]]</barCode>
+	  <barCode code="code128" x="0" quiet="9" fontName="Times-Roman" fontSize="50"  alignment="CENTER" barWidth="1">[[ picking.name ]]</barCode>
         </td>
 
 
