@@ -95,6 +95,7 @@
                             <field name="incoming_qty" class="oe_inline"/>
                             <field name="outgoing_qty" class="oe_inline"/>
                             <field name="virtual_available" class="oe_inline"/>
+			    <field name="stock_alert" class="oe_inline"/>
                     </group>
                     <group name="lot" groups="stock.group_tracking_lot,stock.group_production_lot" string="Lots">
                         <field name="track_production" groups="stock.group_production_lot"/>
@@ -150,7 +151,7 @@
                             <field name="valuation" attrs="{'readonly':[('type', '=', 'service')]}"/>
                         </group>
                         <group colspan="2" col="2">
-                            <field name="property_stock_account_input" attrs="{'invisible':[('valuation', '!=', 'real_time')]}"
+			  <field name="property_stock_account_input" attrs="{'invisible':[('valuation', '!=', 'real_time')]}"
                                 domain="[('type','&lt;&gt;','view'),('type','&lt;&gt;','consolidation')]"/>
                             <field name="property_stock_account_output" attrs="{'invisible':[('valuation', '!=', 'real_time')]}"
                                 domain="[('type','&lt;&gt;','view'),('type','&lt;&gt;','consolidation')]"/>
