@@ -36,12 +36,14 @@ class sale_shop(osv.osv):
     }
 
 sale_shop()
+so_exceptions=['SO2022', 'SO2102', 'SO2102', 'SO2391', 'SO3088', 'SO4273', 'SO3457', 'SO3280', 'SO2771', 'SO3093', 'SO3091', 'SO3087', 'SO3089', 'SO3502', 'SO3502', 'SO4275', 'SO3688', 'SO4414', 'SO4970', 'SO4970', 'SO4970', 'SO4970', 'SO3691', 'SO3691', 'SO5878', 'SO5878', 'SO3092', 'SO5886', 'SO5886', 'SO5038', 'SO5038', 'SO5038', 'SO5038', 'SO5038', 'SO5038', 'SO5038', 'SO5038']
 
-DEBUG=False
+DEBUG=True
+so_exceptions=[]
 def tax_reviewed(so):
     if DEBUG:
         return False
-    return so.tax_codes_reviewed
+    return so.tax_codes_reviewed or (so.name in so_exceptions)
 
 class sale_order(osv.osv):
     _inherit = "sale.order"
@@ -249,11 +251,13 @@ class sale_order(osv.osv):
             return True
         for so in self.browse(cr, uid, ids):
             #cust_inv = inv.type in ['in_invoice','in_refund']
+            #print '_pjb_check_same_tax_codes', so.name
             if not same_tax(cr, uid, [so.id]):
                 return False or tax_reviewed(so)
         return True
     def _pjb_check_tax_and_pricelist(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
+            #print '_pjb_check_tax_and_pricelist', so.name
             codes=self._get_tax_codes(cr, uid, [so.id])
             pt_ids=[x.id for x in so.pricelist_id.tax_ids]
             if not set(codes).issubset( set(pt_ids) ):
