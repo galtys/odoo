@@ -196,21 +196,23 @@ class mrp_bom(osv.osv):
         res = {}
         ([{'product_uos_qty': False, 'name': u'Brighton Lounge Armchair (no cushions)', 'product_uom': 1, 'product_qty': 1.0, 'product_uos': False, 'product_id': 189}, {'product_uos_qty': False, 'name': u'Grey Standard Cushions for Brighton Lounge Armchair', 'product_uom': 1, 'product_qty': 1.0, 'product_uos': False, 'product_id': 72}], [])
 
-
-        for bom in self.browse(cr, uid, ids, context=context):
-            prod,ret =  self._bom_explode(cr, uid, bom, 1)
-            qtys=[]
-            for x in prod:
-                p=self.pool.get('product.product').browse(cr, uid, x['product_id'])
-                if x['product_qty']>0:
-                    q = (p.qty_available - p.outgoing_qty)/x['product_qty']
+        #for bom in self.browse(cr, uid, ids, context=context):
+        #    res[bom.id]=0
+        if 1:
+            for bom in self.browse(cr, uid, ids, context=context):
+                prod,ret =  self._bom_explode(cr, uid, bom, 1)
+                qtys=[]
+                for x in prod:
+                    p=self.pool.get('product.product').browse(cr, uid, x['product_id'])
+                    if x['product_qty']>0:
+                        q = (p.qty_available - p.outgoing_qty)/x['product_qty']
+                    else:
+                        q=0
+                    qtys.append(q)
+                if qtys:
+                    res[bom.id] = min(qtys)/bom.product_qty
                 else:
-                    q=0
-                qtys.append(q)
-            if qtys:
-                res[bom.id] = min(qtys)/bom.product_qty
-            else:
-                res[bom.id]=0
+                    res[bom.id]=0
 
         return res
 
