@@ -43,6 +43,7 @@
                     <field name="qty_available" groups="base.group_user"/>
                     <field name="virtual_available" groups="base.group_user"/>
 		    <field name="stock_alert" groups="base.group_user"/>
+		    <field name="report_stock_level" groups="base.group_user"/>
 		    <field name="trade" groups="base.group_user"/>
 		    <field name="contract" groups="base.group_user"/>
 		    <field name="retail" groups="base.group_user"/>
