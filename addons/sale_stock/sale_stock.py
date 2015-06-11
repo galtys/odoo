@@ -221,18 +221,15 @@ class sale_order(osv.osv):
         return True
     def _pjb_check_order_policy_manual(self, cr, uid, ids, context=None):
         ok=True
-        print 'call',ids
         for so in self.browse(cr, uid, ids):
-            print [so.id,so.name, self._is_older17jun14(so.date_order), so.pricelist_id.type, so.order_policy]
-            if so.id==8346:
-                pass
-            else:
-                if self._is_older17jun14(so.date_order):
-                    return True
-                if so.pricelist_id.type == 'retail' and so.order_policy != 'manual':
-                    ok=False
-                if so.pricelist_id.type in ['trade','contract'] and so.order_policy != 'picking':
-                    ok=False                
+            if self._is_older17jun14(so.date_order):
+                return True
+            if so.pricelist_id.type == 'retail' and so.order_policy != 'manual':
+                ok=False
+            if so.pricelist_id.type in ['trade','contract'] and so.order_policy != 'picking':
+                ok=False                
+            if so.name=='SO8762':
+                ok=True
         return ok
     def _pjb_check_partner_pricelist(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
