@@ -79,7 +79,7 @@ class sale_order(osv.osv):
                 print 'USING shop pricelist'
                 if shop.pricelist_id.id:
                     v['pricelist_id'] = shop.pricelist_id.id
-        if so.state not in ['draft','sent']:
+        if so and (so.state not in ['draft','sent']):
             v.pop('pricelist_id')
         print v
         return {'value': v}
