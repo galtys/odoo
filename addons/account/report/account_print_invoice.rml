@@ -78,7 +78,7 @@
     <paraStyle name="P7" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="P8" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="P9" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="P10" rightIndent="0.0" leftIndent="-3.0" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P10" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="6.0" spaceAfter="6.0"/>
     <paraStyle name="Standard" fontName="Helvetica"/>
     <paraStyle name="Text_20_body" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
     <paraStyle name="List" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
@@ -295,9 +295,7 @@
           <para style="P5">[Prod ref] Description</para>
         </td>
         <td>
-          <para style="terp_5f_tblheader_5f_Details_5f_Centre">
-            <font color="white"> </font>
-          </para>
+          <para style="P10">Discount</para>
         </td>
         <td>
           <para style="terp_5f_tblheader_5f_Details_5f_Right">Unit Price </para>
@@ -323,9 +321,7 @@
             <para style="P8">[[l.name]]</para>
           </td>
           <td>
-            <para style="terp_5f_default_5f_Right_5f_9">
-              <font color="white"> </font>
-            </para>
+            <para style="P9">[[ formatLang(l.discount) ]]</para>
           </td>
           <td>
             <para style="terp_5f_default_5f_Right_5f_9">[[ formatLang(l.price_unit) ]]</para>
@@ -336,7 +332,7 @@
             </para>
           </td>
           <td>
-            <para style="P9">[[ o.currency_id.symbol ]] [[ formatLang(l.price_subtotal, digits=get_digits(dp='Account')) ]] </para>
+            <para style="terp_5f_default_5f_Right_5f_9">[[ formatLang(l.price_subtotal, digits=get_digits(dp='Account')) ]] [[ o.currency_id.symbol ]]</para>
           </td>
         </tr>
         <tr>
@@ -382,7 +378,7 @@
           <para style="terp_5f_default_5f_9">Net Total:</para>
         </td>
         <td>
-          <para style="P9">[[ o.currency_id.symbol ]] [[ formatLang(o.amount_untaxed, digits=get_digits(dp='Account')) ]] </para>
+          <para style="terp_5f_default_5f_Right_5f_9">[[ formatLang(o.amount_untaxed, digits=get_digits(dp='Account')) ]] [[ o.currency_id.symbol ]]</para>
         </td>
       </tr>
       <tr>
@@ -395,7 +391,7 @@
           <para style="terp_5f_default_5f_9">VAT:</para>
         </td>
         <td>
-          <para style="P9">[[ o.currency_id.symbol ]][[ formatLang(o.amount_tax, digits=get_digits(dp='Account')) ]] </para>
+          <para style="terp_5f_default_5f_Right_5f_9">[[ formatLang(o.amount_tax, digits=get_digits(dp='Account')) ]] [[ o.currency_id.symbol ]]</para>
         </td>
       </tr>
       <tr>
@@ -408,7 +404,7 @@
           <para style="terp_5f_tblheader_5f_Details">Total:</para>
         </td>
         <td>
-          <para style="P10">[[ o.currency_id.symbol ]] [[ formatLang(o.amount_total, digits=get_digits(dp='Account')) ]]</para>
+          <para style="terp_5f_default_5f_Bold_5f_Right_5f_9">[[ formatLang(o.amount_total, digits=get_digits(dp='Account')) ]] [[ o.currency_id.symbol ]]</para>
         </td>
       </tr>
     </blockTable>
