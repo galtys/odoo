@@ -135,24 +135,6 @@ class account_automatic_reconcile(osv.osv_memory):
             else:
                 ok = False
         return (reconciled, len(credits)+len(debits), reconciled_ids)
-    def open_reconciled(self, cr, uid, ids, context=None):
-        r = context['reconciled_ids'] 
-        print context
-        if r:
-            domain = "[('id','in', [" + ','.join(map(str, context['reconciled_ids'] )) + "])]"
-        else:
-            domain = "[('id','in', []) ]"
-        return {
-            'domain': domain,
-            #'domain': "" % str(job_id),
-            'name': 'AUT Reconciled Items',
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            'res_model': 'account.move.line',
-            #'view_id': False,
-            'type': 'ir.actions.act_window',
-            #'search_view_id': id['res_id']
-            }
     def reconcile(self, cr, uid, ids, context=None):
         move_line_obj = self.pool.get('account.move.line')
         obj_model = self.pool.get('ir.model.data')
