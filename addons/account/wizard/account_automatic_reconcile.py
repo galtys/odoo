@@ -164,6 +164,7 @@ class account_automatic_reconcile(osv.osv_memory):
         allow_write_off = form.allow_write_off
         reconciled = unreconciled = 0
         reconciled_ids = []
+        all_ids =[]
         if not form.account_ids:
             raise osv.except_osv(_('User Error!'), _('You must select accounts to reconcile.'))
         for account_id in form.account_ids:
@@ -192,12 +193,14 @@ class account_automatic_reconcile(osv.osv_memory):
                 line_ids = [id for (id,) in cr.fetchall()]
                 if line_ids:
                     reconciled += len(line_ids)
+                    all_ids += line_ids
                     if allow_write_off:
                         i_id=move_line_obj.reconcile(cr, uid, line_ids, 'auto', form.writeoff_acc_id.id, form.period_id.id, form.journal_id.id, context)
                         reconciled_ids.append(i_id)
                     else:
                         i_id=move_line_obj.reconcile_partial(cr, uid, line_ids, 'manual', context=context)
                         reconciled_ids.append(i_id)                       
+            #print reconciled_ids
             # get the list of partners who have more than one unreconciled transaction
             cr.execute(
                 "SELECT partner_id " \
@@ -238,10 +241,10 @@ class account_automatic_reconcile(osv.osv_memory):
                     (account_id.id, partner_id))
                 credits = cr.fetchall()
 
-                (rec, unrec, r_ids) = self.do_reconcile(cr, uid, credits, debits, max_amount, power, form.writeoff_acc_id.id, form.period_id.id, form.journal_id.id, context)
-                reconciled_ids += r_ids
-                reconciled += rec
-                unreconciled += unrec
+                #(rec, unrec, r_ids) = self.do_reconcile(cr, uid, credits, debits, max_amount, power, form.writeoff_acc_id.id, form.period_id.id, form.journal_id.id, context)
+                #reconciled_ids += r_ids
+                #reconciled += rec
+                #unreconciled += unrec
 
             # add the number of transactions for partners who have only one
             # unreconciled transactions to the unreconciled count
@@ -255,7 +258,7 @@ class account_automatic_reconcile(osv.osv_memory):
                 (account_id.id,))
             additional_unrec = cr.fetchone()[0]
             unreconciled = unreconciled + additional_unrec
-        context.update({'reconciled': reconciled, 'unreconciled': unreconciled, 'reconciled_ids':reconciled_ids})
+        context.update({'reconciled': reconciled, 'unreconciled': unreconciled, 'reconciled_ids':reconciled_ids, 'all_ids':all_ids})
         model_data_ids = obj_model.search(cr,uid,[('model','=','ir.ui.view'),('name','=','account_automatic_reconcile_view1')])
         resource_id = obj_model.read(cr, uid, model_data_ids, fields=['res_id'])[0]['res_id']
         return {
