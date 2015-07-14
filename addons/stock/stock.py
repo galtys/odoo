@@ -1125,7 +1125,6 @@ class stock_picking(osv.osv):
             'invoice_line_tax_id': [(6, 0, self._get_taxes_invoice(cr, uid, move_line, invoice_vals['type']))],
             'account_analytic_id': self._get_account_analytic_invoice(cr, uid, picking, move_line),
         }
-        print '_prepare_invoice_line',ret
         return ret
 
     def action_invoice_create(self, cr, uid, ids, journal_id=False,

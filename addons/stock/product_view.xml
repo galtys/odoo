@@ -97,7 +97,6 @@
                             <field name="virtual_available" class="oe_inline"/>
 			    <field name="stock_alert" class="oe_inline"/>
 			    <field name="report_stock_alert" class="oe_inline"/>
-			    <field name="report_stock_level" class="oe_inline"/>
                     </group>
                     <group name="lot" groups="stock.group_tracking_lot,stock.group_production_lot" string="Lots">
                         <field name="track_production" groups="stock.group_production_lot"/>
