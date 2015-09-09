@@ -51,6 +51,10 @@
       <lineStyle kind="LINEBELOW" colorName="#e6e6e6" start="3,-1" stop="3,-1"/>
       <lineStyle kind="LINEBELOW" colorName="#e6e6e6" start="4,-1" stop="4,-1"/>
     </blockTableStyle>
+    <blockTableStyle id="Table3">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+    </blockTableStyle>
     <initialize>
       <paraStyle name="all" alignment="justify"/>
     </initialize>
@@ -59,108 +63,107 @@
     <paraStyle name="P3" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="P4" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT"/>
     <paraStyle name="P5" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="P6" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="P7" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT"/>
-    <paraStyle name="P8" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P6" fontName="Helvetica" fontSize="12.0" leading="15" alignment="LEFT"/>
+    <paraStyle name="P7" fontName="Helvetica" fontSize="12.0" leading="15" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="Standard" fontName="Helvetica"/>
     <paraStyle name="Heading" fontName="Helvetica" fontSize="14.0" leading="17" spaceBefore="12.0" spaceAfter="6.0"/>
-    <paraStyle name="Text body" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
+    <paraStyle name="Text_20_body" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
     <paraStyle name="List" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
     <paraStyle name="Caption" fontName="Helvetica-Oblique" fontSize="12.0" leading="15" spaceBefore="6.0" spaceAfter="6.0"/>
     <paraStyle name="Index" fontName="Helvetica"/>
-    <paraStyle name="terp_header" fontName="Helvetica-Bold" fontSize="12.0" leading="15" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_header_Centre" fontName="Helvetica-Bold" fontSize="12.0" leading="15" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_default_8" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_default_Bold_8" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_tblheader_Details" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_tblheader_Details_Centre" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_default_Centre_8" fontName="Helvetica" fontSize="8.0" leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_default_Centre_9" fontName="Helvetica" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_tblheader_General" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="6.0" spaceAfter="6.0"/>
-    <paraStyle name="terp_tblheader_General_Centre" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="Table Contents" fontName="Helvetica"/>
+    <paraStyle name="terp_5f_header" fontName="Helvetica-Bold" fontSize="12.0" leading="15" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_header_5f_Centre" fontName="Helvetica-Bold" fontSize="12.0" leading="15" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_default_5f_8" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_default_5f_Bold_5f_8" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_tblheader_5f_Details" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_tblheader_5f_Details_5f_Centre" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_default_5f_Centre_5f_8" fontName="Helvetica" fontSize="8.0" leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_default_5f_Centre_5f_9" fontName="Helvetica" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_tblheader_5f_General" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="6.0" spaceAfter="6.0"/>
+    <paraStyle name="terp_5f_tblheader_5f_General_5f_Centre" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="Table_20_Contents" fontName="Helvetica"/>
     <paraStyle name="Footer" fontName="Helvetica"/>
-    <paraStyle name="Table Heading" fontName="Helvetica" alignment="CENTER"/>
-    <paraStyle name="Horizontal Line" fontName="Helvetica" fontSize="6.0" leading="8" spaceBefore="0.0" spaceAfter="14.0"/>
-    <paraStyle name="Heading 9" fontName="Helvetica-Bold" fontSize="75%" leading="NaN" spaceBefore="12.0" spaceAfter="6.0"/>
-    <paraStyle name="terp_tblheader_General_Right" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_tblheader_Details_Right" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_default_Right_8" fontName="Helvetica" fontSize="8.0" leading="10" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_header_Right" fontName="Helvetica-Bold" fontSize="15.0" leading="19" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_default_address" fontName="Helvetica" fontSize="10.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_default_9" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_default_Bold_9" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_default_Right_9" fontName="Helvetica" fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_default_2" fontName="Helvetica" fontSize="2.0" leading="3" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_default_5cm_Above_Space" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="6.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_default_1cm_above_space" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="3.0" spaceAfter="0.0"/>
+    <paraStyle name="Table_20_Heading" fontName="Helvetica" alignment="CENTER"/>
+    <paraStyle name="Horizontal_20_Line" fontName="Helvetica" fontSize="6.0" leading="8" spaceBefore="0.0" spaceAfter="14.0"/>
+    <paraStyle name="Heading_20_9" fontName="Helvetica-Bold" fontSize="75%" leading="NaN" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="terp_5f_tblheader_5f_General_5f_Right" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_tblheader_5f_Details_5f_Right" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_default_5f_Right_5f_8" fontName="Helvetica" fontSize="8.0" leading="10" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_header_5f_Right" fontName="Helvetica-Bold" fontSize="15.0" leading="19" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_default_5f_address" fontName="Helvetica" fontSize="10.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_default_5f_9" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_default_5f_Bold_5f_9" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_default_5f_Right_5f_9" fontName="Helvetica" fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_default_5f_2" fontName="Helvetica" fontSize="2.0" leading="3" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_default_5f_5cm_5f_Above_5f_Space" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="6.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_5f_default_5f_1cm_5f_above_5f_space" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="3.0" spaceAfter="0.0"/>
     <paraStyle name="Header" fontName="Helvetica"/>
     <images/>
   </stylesheet>
   <story>
-    <para style="terp_default_8">[[repeatIn(objects,'picking')]]</para>
-    <para style="terp_default_8">[[picking.type == 'out' and picking.partner_id and setLang(picking.partner_id.lang) or '']]</para>
-    <para style="terp_default_8">
+    <para style="terp_5f_default_5f_8">[[repeatIn(objects,'picking')]]</para>
+    <para style="terp_5f_default_5f_8">[[picking.type == 'out' and picking.partner_id and setLang(picking.partner_id.lang) or '']]</para>
+    <para style="terp_5f_default_5f_8">
       <font color="white"> </font>
     </para>
-    <para style="terp_default_8">
+    <para style="terp_5f_default_5f_8">
       <font color="white"> </font>
     </para>
     <blockTable colWidths="231.0,22.0,32.0,7.0,246.0" style="Table2">
       <tr>
         <td>
-          <para style="terp_default_Bold_9">
+          <para style="terp_5f_default_5f_Bold_5f_9">
             <font color="white"> </font>
           </para>
         </td>
         <td>
-          <para style="terp_default_8">
+          <para style="terp_5f_default_5f_8">
             <font color="white"> </font>
           </para>
         </td>
         <td>
-          <para style="terp_default_8">
+          <para style="terp_5f_default_5f_8">
             <font color="white"> </font>
           </para>
         </td>
         <td>
-          <para style="terp_default_8">
+          <para style="terp_5f_default_5f_8">
             <font color="white"> </font>
           </para>
         </td>
         <td>
-          <para style="terp_default_Bold_9">Shipping address :</para>
-          <para style="terp_default_9">[[ (picking.partner_id and picking.partner_id.title and picking.partner_id.title.name) or '' ]] [[ (picking.partner_id and picking.partner_id.name) or '' ]]</para>
-          <para style="terp_default_9">[[ picking.partner_id and display_address(picking.partner_id) ]]</para>
-          <para style="terp_default_9">Tel: [[ (picking.partner_id.phone) or removeParentNode('para') ]]</para>
-          <para style="terp_default_9">M: [[ (picking.partner_id.mobile) or removeParentNode('para') ]]</para>
-          <para style="terp_default_9">Fax: [[ (picking.partner_id.fax) or removeParentNode('para') ]]</para>
-          <para style="terp_default_9">E: [[ picking.partner_id and picking.partner_id.email or removeParentNode('para') ]]</para>
+          <para style="terp_5f_default_5f_Bold_5f_9">Shipping address :</para>
+          <para style="terp_5f_default_5f_9">[[ (picking.partner_id and picking.partner_id.title and picking.partner_id.title.name) or '' ]] [[ (picking.partner_id and picking.partner_id.name) or '' ]]</para>
+          <para style="terp_5f_default_5f_9">[[ picking.partner_id and display_address(picking.partner_id) ]]</para>
+          <para style="terp_5f_default_5f_9">Tel: [[ (picking.partner_id.phone) or removeParentNode('para') ]]</para>
+          <para style="terp_5f_default_5f_9">M: [[ (picking.partner_id.mobile) or removeParentNode('para') ]]</para>
+          <para style="terp_5f_default_5f_9">Fax: [[ (picking.partner_id.fax) or removeParentNode('para') ]]</para>
+          <para style="terp_5f_default_5f_9">E: [[ picking.partner_id and picking.partner_id.email or removeParentNode('para') ]]</para>
         </td>
       </tr>
       <tr>
         <td>
-          <para style="terp_default_Bold_9">
+          <para style="terp_5f_default_5f_Bold_5f_9">
             <font color="white"> </font>
           </para>
         </td>
         <td>
-          <para style="terp_default_8">
+          <para style="terp_5f_default_5f_8">
             <font color="white"> </font>
           </para>
         </td>
         <td>
-          <para style="terp_default_8">
+          <para style="terp_5f_default_5f_8">
             <font color="white"> </font>
           </para>
         </td>
         <td>
-          <para style="terp_default_8">
+          <para style="terp_5f_default_5f_8">
             <font color="white"> </font>
           </para>
         </td>
         <td>
-          <para style="terp_default_Bold_9">
+          <para style="terp_5f_default_5f_Bold_5f_9">
             <font color="white"> </font>
           </para>
         </td>
@@ -169,7 +172,7 @@
     <para style="P2">
       <font color="white"> </font>
     </para>
-    <para style="terp_header">
+    <para style="terp_5f_header">
       <font color="white"> </font>
     </para>
     <blockTable colWidths="540.0" style="Table_Title_String">
@@ -181,16 +184,16 @@
         </td>
       </tr>
     </blockTable>
-    <para style="terp_default_5cm_Above_Space">
+    <para style="terp_5f_default_5f_5cm_5f_Above_5f_Space">
       <font color="white"> </font>
     </para>
     <blockTable colWidths="92.0,192.0,8.0,82.0,179.0" style="Table7">
       <tr>
         <td>
-          <para style="terp_default_Bold_8">NUMBER:</para>
+          <para style="terp_5f_default_5f_Bold_5f_8">NUMBER:</para>
         </td>
         <td>
-          <para style="terp_default_9">[[picking.name]]</para>
+          <para style="terp_5f_default_5f_9">[[picking.name]]</para>
         </td>
         <td>
           <para style="P4">
@@ -198,45 +201,41 @@
           </para>
         </td>
         <td>
-          <para style="terp_default_Bold_8">DATE:</para>
+          <para style="terp_5f_default_5f_Bold_5f_8">DATE:</para>
         </td>
         <td>
-          <para style="terp_default_9">[[ formatLang(picking.min_date,date = True) ]]</para>
+          <para style="terp_5f_default_5f_9">[[ formatLang(picking.min_date,date = True) ]]</para>
         </td>
       </tr>
       <tr>
         <td>
-          <para style="terp_default_Bold_8">
+          <para style="terp_5f_default_5f_Bold_5f_8">
             <font color="white"> </font>
           </para>
         </td>
-
         <td>
-          <para style="terp_default_9">
+          <para style="terp_5f_default_5f_9">
             <font color="white"> </font>
-          </para>	  
-	  <barCode code="code128" x="0" quiet="9" fontName="Times-Roman" fontSize="50"  alignment="CENTER" barWidth="1">[[ picking.name ]]</barCode>
+          </para>
         </td>
-
-
         <td>
           <para style="P4">
             <font color="white"> </font>
           </para>
         </td>
         <td>
-          <para style="terp_default_Bold_8">REQUESTED DATE:</para>
+          <para style="terp_5f_default_5f_Bold_5f_8">REQUESTED DATE:</para>
         </td>
         <td>
-          <para style="terp_default_9">[[ formatLang(picking.requested_date,date = True) ]]</para>
+          <para style="terp_5f_default_5f_9">[[ formatLang(picking.requested_date,date = True) ]]</para>
         </td>
       </tr>
       <tr>
         <td>
-          <para style="terp_default_Bold_8">ORIGIN:</para>
+          <para style="terp_5f_default_5f_Bold_5f_8">ORIGIN:</para>
         </td>
         <td>
-          <para style="terp_default_9">[[picking.origin]]</para>
+          <para style="terp_5f_default_5f_9">[[picking.origin]]</para>
         </td>
         <td>
           <para style="P4">
@@ -244,18 +243,18 @@
           </para>
         </td>
         <td>
-          <para style="terp_default_Bold_8">TRANSPORT BY:</para>
+          <para style="terp_5f_default_5f_Bold_5f_8">TRANSPORT BY:</para>
         </td>
         <td>
-          <para style="terp_default_9">[[ picking.carrier_id.partner_id.name ]]</para>
+          <para style="terp_5f_default_5f_9">[[ picking.carrier_id.partner_id.name ]]</para>
         </td>
       </tr>
       <tr>
         <td>
-          <para style="terp_default_Bold_8">CUSTOMER REF:</para>
+          <para style="terp_5f_default_5f_Bold_5f_8">CUSTOMER REF:</para>
         </td>
         <td>
-          <para style="terp_default_9">[[picking.sale_id.client_order_ref]] </para>
+          <para style="terp_5f_default_5f_9">[[picking.sale_id.client_order_ref]] </para>
         </td>
         <td>
           <para style="P4">
@@ -263,10 +262,10 @@
           </para>
         </td>
         <td>
-          <para style="terp_default_Bold_8">DELIVERY:</para>
+          <para style="terp_5f_default_5f_Bold_5f_8">DELIVERY:</para>
         </td>
         <td>
-          <para style="terp_default_9">[[ picking.delivery_partner_id.name ]]</para>
+          <para style="terp_5f_default_5f_9">[[ picking.delivery_partner_id.name ]]</para>
         </td>
       </tr>
       <tr>
@@ -282,92 +281,132 @@
           </para>
         </td>
         <td>
-          <para style="terp_default_Bold_8">WEIGHT:</para>
+          <para style="terp_5f_default_5f_Bold_5f_8">WEIGHT:</para>
         </td>
         <td>
-          <para style="terp_default_9">[[picking.weight ]]</para>
+          <para style="terp_5f_default_5f_9">[[picking.weight ]]</para>
         </td>
       </tr>
     </blockTable>
-    <para style="terp_header">
+    <para style="terp_5f_header">
       <font color="white"> </font>
     </para>
-    <para style="terp_header">
+    <para style="terp_5f_header">
       <font color="white"> </font>
     </para>
     <blockTable colWidths="422.0,38.0,73.0" repeatRows="1" style="Move_Line_Header">
       <tr>
         <td>
-          <para style="terp_tblheader_Details">[Product Ref.] Description</para>
+          <para style="terp_5f_tblheader_5f_Details">[Product Ref.] Description</para>
         </td>
         <td>
-          <para style="terp_tblheader_Details_Right">
+          <para style="terp_5f_tblheader_5f_Details_5f_Right">
             <font color="white"> </font>
           </para>
         </td>
         <td>
-          <para style="terp_tblheader_Details_Right">Quantity</para>
+          <para style="terp_5f_tblheader_5f_Details_5f_Right">Quantity</para>
         </td>
       </tr>
     </blockTable>
     <section>
-      <para style="terp_default_2">[[ repeatIn([line for line in picking.move_lines if (line.state == 'confirmed' or line.state=='done' or line.state=='assigned')],'move_lines') ]]</para>
-      <para style="terp_default_2">[[ (picking.move_lines!=[] and removeParentNode('para')) or removeParentNode('section')]]</para>
+      <para style="terp_5f_default_5f_2">[[ repeatIn([line for line in picking.move_lines if (line.state == 'confirmed' or line.state=='done' or line.state=='assigned')],'move_lines') ]]</para>
+      <para style="terp_5f_default_5f_2">[[ (picking.move_lines!=[] and removeParentNode('para')) or removeParentNode('section')]]</para>
       <blockTable colWidths="423.0,37.0,77.0" style="Move_Line_Contect_Assign_State">
         <tr>
           <td>
-            <para style="terp_default_9">[[ get_product_desc(move_lines) ]]</para>
+            <para style="terp_5f_default_5f_9">[[ get_product_desc(move_lines) ]]</para>
           </td>
           <td>
-            <para style="terp_default_Centre_9">
+            <para style="terp_5f_default_5f_Centre_5f_9">
               <font color="white"> </font>
             </para>
           </td>
           <td>
-            <para style="terp_default_Right_9">[[ formatLang(move_lines.product_qty,digits=0) ]] </para>
+            <para style="terp_5f_default_5f_Right_5f_9">[[ formatLang(move_lines.product_qty,digits=0) ]] </para>
           </td>
         </tr>
       </blockTable>
     </section>
-    <para style="terp_default_Bold_9">
+    <para style="terp_5f_default_5f_Bold_5f_9">
       <font color="white"> </font>
     </para>
-    <para style="terp_default_2"/>
+    <para style="terp_5f_default_5f_2"/>
     <section>
-      <para style="terp_default_2">[[ repeatIn([line for line in picking.move_lines if (line.state == 'draft' or line.state=='waiting')],'move_lines') ]]</para>
-      <para style="terp_default_2">[[ (picking.move_lines!=[] and removeParentNode('para')) or removeParentNode('sec</para>
+      <para style="terp_5f_default_5f_2">[[ repeatIn([line for line in picking.move_lines if (line.state == 'draft' or line.state=='waiting')],'move_lines') ]]</para>
+      <para style="terp_5f_default_5f_2">[[ (picking.move_lines!=[] and removeParentNode('para')) or removeParentNode('sec</para>
       <blockTable colWidths="264.0,76.0,69.0,52.0,74.0" style="Table1">
         <tr>
           <td>
-            <para style="terp_default_9">
+            <para style="terp_5f_default_5f_9">
               <font color="white"> </font>
             </para>
           </td>
           <td>
-            <para style="terp_default_Centre_9">
+            <para style="terp_5f_default_5f_Centre_5f_9">
               <font color="white"> </font>
             </para>
           </td>
           <td>
-            <para style="terp_default_9">
+            <para style="terp_5f_default_5f_9">
               <font color="white"> </font>
             </para>
           </td>
           <td>
-            <para style="terp_default_Right_9">
+            <para style="terp_5f_default_5f_Right_5f_9">
               <font color="white"> </font>
             </para>
           </td>
           <td>
-            <para style="terp_default_Right_9">
+            <para style="terp_5f_default_5f_Right_5f_9">
               <font color="white"> </font>
             </para>
           </td>
         </tr>
       </blockTable>
     </section>
-    <para style="terp_default_2">
+    <para style="terp_5f_default_5f_2">
       <font color="white"> </font>
+    </para>
+    <para style="terp_5f_default_5f_2">
+      <font color="white"> </font>
+    </para>
+    <para style="terp_5f_default_5f_2">
+      <font color="white"> </font>
+    </para>
+    <blockTable colWidths="276.0,276.0" style="Table3">
+      <tr>
+        <td>
+          <para style="P6">
+            <font color="white"> </font>
+          </para>
+        </td>
+        <td>
+          <para style="P6">
+            <font color="white"> </font>
+          </para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="P6">
+            <font color="white"> </font>
+          </para>
+        </td>
+        <td>
+          <para style="P6">
+            <font color="white"> </font>
+          </para>
+        </td>
+      </tr>
+    </blockTable>
+    <para style="P7">
+      <font color="white"> </font>
+    </para>
+    <para style="P7">
+      <font face="Helvetica" size="8.0">Please note: </font>
+      <font face="Helvetica" size="8.0">All goods must be checked for damage, and Bridgman must be notified within 30 days of you receiving the goods. Failing to contact us within this time period will make you liable for the delivery and collection cost. For all queries, please email </font>
+      <font face="Helvetica" size="8.0">support@bridgman.co.uk</font>
     </para>
   </story>
 </document>
