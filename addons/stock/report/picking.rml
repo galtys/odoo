@@ -62,8 +62,8 @@
     <paraStyle name="P2" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="P3" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="P4" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT"/>
-    <paraStyle name="P5" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="P6" fontName="Helvetica" fontSize="12.0" leading="15" alignment="LEFT"/>
+    <paraStyle name="P5" fontName="Helvetica" fontSize="12.0" leading="15" alignment="LEFT"/>
+    <paraStyle name="P6" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="P7" fontName="Helvetica" fontSize="12.0" leading="15" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="Standard" fontName="Helvetica"/>
     <paraStyle name="Heading" fontName="Helvetica" fontSize="14.0" leading="17" spaceBefore="12.0" spaceAfter="6.0"/>
@@ -273,7 +273,7 @@
           <para style="P3">COMMENTS:</para>
         </td>
         <td>
-          <para style="P5">[[picking.delivery_notes]]</para>
+          <para style="P6">[[picking.delivery_notes]]</para>
         </td>
         <td>
           <para style="P4">
@@ -377,24 +377,24 @@
     <blockTable colWidths="276.0,276.0" style="Table3">
       <tr>
         <td>
-          <para style="P6">
+          <para style="P5">
             <font color="white"> </font>
           </para>
         </td>
         <td>
-          <para style="P6">
+          <para style="P5">
             <font color="white"> </font>
           </para>
         </td>
       </tr>
       <tr>
         <td>
-          <para style="P6">
+          <para style="P5">
             <font color="white"> </font>
           </para>
         </td>
         <td>
-          <para style="P6">
+          <para style="P5">
             <font color="white"> </font>
           </para>
         </td>
@@ -405,7 +405,9 @@
     </para>
     <para style="P7">
       <font face="Helvetica" size="8.0">Please note: </font>
-      <font face="Helvetica" size="8.0">All goods must be checked for damage, and Bridgman must be notified within 30 days of you receiving the goods. Failing to contact us within this time period will make you liable for the delivery and collection cost. For all queries, please email </font>
+      <font face="Helvetica" size="8.0">All goods must be checked for damage, and Bridgman must be notified within </font>
+      <font face="Helvetica" size="8.0">7</font>
+      <font face="Helvetica" size="8.0"> days of you receiving the goods. Failing to contact us within this time period will make you liable for the delivery and collection cost. For all queries, please email </font>
       <font face="Helvetica" size="8.0">support@bridgman.co.uk</font>
     </para>
   </story>
