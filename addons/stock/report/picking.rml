@@ -209,9 +209,7 @@
       </tr>
       <tr>
         <td>
-          <para style="terp_5f_default_5f_Bold_5f_8">
-            <font color="white"> </font>
-          </para>
+	  <barCode code="code128" x="0" quiet="9" fontName="Times-Roman" fontSize="50"  alignment="CENTER" barWidth="1">[[ picking.name ]]</barCode>
         </td>
         <td>
           <para style="terp_5f_default_5f_9">
@@ -222,7 +220,6 @@
           <para style="P4">
             <font color="white"> </font>
           </para>
-	  <barCode code="code128" x="0" quiet="9" fontName="Times-Roman" fontSize="50"  alignment="CENTER" barWidth="1">[[ picking.name ]]</barCode>
         </td>
         <td>
           <para style="terp_5f_default_5f_Bold_5f_8">REQUESTED DATE:</para>
