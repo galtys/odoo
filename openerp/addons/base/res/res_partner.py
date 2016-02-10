@@ -316,13 +316,14 @@ class res_partner(osv.osv, format_address):
         if (not view_id) and (view_type=='form') and context and context.get('force_email', False):
             view_id = self.pool.get('ir.model.data').get_object_reference(cr, user, 'base', 'view_partner_simple_form')[1]
         res = super(res_partner,self).fields_view_get(cr, user, view_id, view_type, context, toolbar=toolbar, submenu=submenu)
-        if view_type == 'form':
-            res['arch'] = self.fields_view_get_address(cr, user, res['arch'], context=context)
+        #if view_type == 'form':
+        #    res['arch'] = self.fields_view_get_address(cr, user, res['arch'], context=context)
         return res
 
     _defaults = {
         'active': True,
-        'lang': lambda self, cr, uid, ctx: ctx.get('lang', 'en_US'),
+        #'lang': lambda self, cr, uid, ctx: ctx.get('lang', 'en_US'),
+        'lang': '',
         'tz': lambda self, cr, uid, ctx: ctx.get('tz', False),
         'customer': True,
         'category_id': _default_category,
@@ -527,6 +528,9 @@ class res_partner(osv.osv, format_address):
         #is the same as the company of all users that inherit from this partner
         #(this is to allow the code from res_users to write to the partner!) or
         #if setting the company_id to False (this is compatible with any user company)
+        #if 'lang' in vals:
+        #TODO!!!!!
+        vals['lang']=''
         if vals.get('company_id'):
             for partner in self.browse(cr, uid, ids, context=context):
                 if partner.user_ids:
@@ -539,6 +543,7 @@ class res_partner(osv.osv, format_address):
         return result
 
     def create(self, cr, uid, vals, context=None):
+        vals['lang']=''
         new_id = super(res_partner, self).create(cr, uid, vals, context=context)
         partner = self.browse(cr, uid, new_id, context=context)
         self._fields_sync(cr, uid, partner, vals, context)
