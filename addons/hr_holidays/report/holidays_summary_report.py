@@ -96,7 +96,7 @@ class report_custom(report_rml):
         res=cr.fetchone()[0]
         date_xml=[]
         date_today=time.strftime('%Y-%m-%d %H:%M:%S')
-        date_xml +=['<res name="%s" today="%s" />' % (res,date_today)]
+        date_xml +=['<res name="%s" today="%s" />' % (to_xml(res),date_today)]
 
         cr.execute("SELECT id, name, color_name FROM hr_holidays_status ORDER BY id")
         legend=cr.fetchall()
@@ -128,7 +128,7 @@ class report_custom(report_rml):
 #        date_xml=[]
         for l in range(0,len(legend)):
             date_xml += ['<legend row="%d" id="%d" name="%s" color="%s" />' % (l+1,legend[l][0],_(legend[l][1]),legend[l][2])]
-        date_xml += ['<date month="%s" year="%d" />' % (som.strftime('%B'), som.year),'<days>']
+        date_xml += ['<date month="%s" year="%d" />' % (ustr(som.strftime('%B')), som.year),'<days>']
 
         cell=1
         if day_diff.days>=30:
@@ -223,9 +223,7 @@ class report_custom(report_rml):
         elif data['model']=='ir.ui.menu':
             for id in data['form']['depts']:
                 dept = obj_dept.browse(cr, uid, id, context=context)
-                cr.execute("""SELECT id FROM hr_employee \
-                WHERE department_id = %s""", (id,))
-                emp_ids = [x[0] for x in cr.fetchall()]
+                emp_ids = obj_emp.search(cr, uid, [('department_id', '=', id)], context=context)
                 if emp_ids==[]:
                     continue
                 dept_done=0

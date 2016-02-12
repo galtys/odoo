@@ -97,6 +97,8 @@ def preload_registry(dbname):
         db, registry = openerp.pooler.get_db_and_pool(dbname,update_module=update_module)
     except Exception:
         _logger.exception('Failed to initialize database `%s`.', dbname)
+        return False
+    return registry._assertion_report.failures == 0
 
 def run_test_file(dbname, test_file):
     """ Preload a registry, possibly run a test file, and start the cron."""
@@ -105,8 +107,15 @@ def run_test_file(dbname, test_file):
         db, registry = openerp.pooler.get_db_and_pool(dbname, update_module=config['init'] or config['update'])
         cr = db.cursor()
         _logger.info('loading test file %s', test_file)
-        openerp.tools.convert_yaml_import(cr, 'base', file(test_file), 'test', {}, 'test', True)
-        cr.rollback()
+        openerp.tools.convert_yaml_import(cr, 'base', file(test_file), 'test', {}, 'init')
+
+        if config['test_commit']:
+            _logger.info('test %s has been commited', test_file)
+            cr.commit()
+        else:
+            _logger.info('test %s has been rollbacked', test_file)
+            cr.rollback()
+
         cr.close()
     except Exception:
         _logger.exception('Failed to initialize database `%s` and run test file `%s`.', dbname, test_file)
@@ -250,12 +259,14 @@ def main(args):
         else:
             openerp.service.start_services()
 
+    rc = 0
     if config['db_name']:
         for dbname in config['db_name'].split(','):
-            preload_registry(dbname)
+            if not preload_registry(dbname):
+                rc += 1
 
     if config["stop_after_init"]:
-        sys.exit(0)
+        sys.exit(rc)
 
     _logger.info('OpenERP server is running, waiting for connections...')
     quit_on_signals()

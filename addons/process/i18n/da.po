@@ -1,25 +1,25 @@
-# Danish translation for openobject-addons
-# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
-#
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+# * process
+# 
+# Translators:
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Project-Id-Version: Odoo 7.0\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-07 19:37+0000\n"
-"PO-Revision-Date: 2012-12-21 23:00+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Danish <da@li.org>\n"
+"PO-Revision-Date: 2015-05-29 13:15+0000\n"
+"Last-Translator: Martin Trigaux\n"
+"Language-Team: Danish (http://www.transifex.com/odoo/odoo-7/language/da/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-07-11 06:14+0000\n"
-"X-Generator: Launchpad (build 16696)\n"
+"Content-Transfer-Encoding: \n"
+"Language: da\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. module: process
-#: model:ir.model,name:process.model_process_node
-#: view:process.node:0
+#: model:ir.model,name:process.model_process_node view:process.node:0
 #: view:process.process:0
 msgid "Process Node"
 msgstr ""
@@ -29,28 +29,27 @@ msgstr ""
 msgid ""
 "If the active field is set to False, it will allow you to hide the process "
 "without removing it."
-msgstr ""
+msgstr "Hvis feltet ikke er afmærket, kan du gemme processen uden at slette den."
 
 #. module: process
 #: field:process.node,menu_id:0
 msgid "Related Menu"
-msgstr ""
+msgstr "Relateret menu"
 
 #. module: process
 #: selection:process.node,kind:0
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #. module: process
 #: field:process.transition,action_ids:0
 msgid "Buttons"
-msgstr ""
+msgstr "Knapper"
 
 #. module: process
-#: view:process.node:0
-#: view:process.process:0
+#: view:process.node:0 view:process.process:0
 msgid "Group By..."
-msgstr ""
+msgstr "Gruppér efter..."
 
 #. module: process
 #: view:process.node:0
@@ -60,7 +59,7 @@ msgstr ""
 #. module: process
 #: field:process.node,help_url:0
 msgid "Help URL"
-msgstr ""
+msgstr "Hjælp URL"
 
 #. module: process
 #: field:process.node,flow_start:0
@@ -69,23 +68,20 @@ msgstr ""
 
 #. module: process
 #: model:ir.actions.act_window,name:process.action_process_node_form
-#: model:ir.ui.menu,name:process.menu_process_node_form
-#: view:process.node:0
+#: model:ir.ui.menu,name:process.menu_process_node_form view:process.node:0
 #: view:process.process:0
 msgid "Process Nodes"
 msgstr ""
 
 #. module: process
-#: view:process.process:0
-#: field:process.process,node_ids:0
+#: view:process.process:0 field:process.process,node_ids:0
 msgid "Nodes"
 msgstr ""
 
 #. module: process
-#: field:process.node,condition_ids:0
-#: view:process.process:0
+#: field:process.node,condition_ids:0 view:process.process:0
 msgid "Conditions"
-msgstr ""
+msgstr "Betingelser"
 
 #. module: process
 #: view:process.transition:0
@@ -105,7 +101,7 @@ msgstr ""
 #. module: process
 #: field:process.transition,note:0
 msgid "Description"
-msgstr ""
+msgstr "Beskrivelse"
 
 #. module: process
 #: model:ir.model,name:process.model_process_transition_action
@@ -113,13 +109,11 @@ msgid "Process Transitions Actions"
 msgstr ""
 
 #. module: process
-#: field:process.condition,model_id:0
-#: view:process.node:0
-#: field:process.node,model_id:0
-#: view:process.process:0
+#: field:process.condition,model_id:0 view:process.node:0
+#: field:process.node,model_id:0 view:process.process:0
 #: field:process.process,model_id:0
 msgid "Object"
-msgstr ""
+msgstr "Objekt"
 
 #. module: process
 #: field:process.transition,source_node_id:0
@@ -127,8 +121,7 @@ msgid "Source Node"
 msgstr ""
 
 #. module: process
-#: view:process.transition:0
-#: field:process.transition,transition_ids:0
+#: view:process.transition:0 field:process.transition,transition_ids:0
 msgid "Workflow Transitions"
 msgstr ""
 
@@ -137,7 +130,7 @@ msgstr ""
 #: code:addons/process/static/src/xml/process.xml:39
 #, python-format
 msgid "Last modified by:"
-msgstr ""
+msgstr "Sidst ændret af:"
 
 #. module: process
 #: field:process.transition.action,action:0
@@ -160,32 +153,30 @@ msgstr ""
 #. module: process
 #: model:ir.model,name:process.model_process_condition
 msgid "Condition"
-msgstr ""
+msgstr "Betingelse"
 
 #. module: process
 #: selection:process.transition.action,state:0
 msgid "Dummy"
-msgstr ""
+msgstr "Dummy"
 
 #. module: process
 #: model:ir.actions.act_window,name:process.action_process_form
 #: model:ir.ui.menu,name:process.menu_process_form
 msgid "Processes"
-msgstr ""
+msgstr "Processer"
 
 #. module: process
 #: field:process.transition.action,transition_id:0
 msgid "Transition"
-msgstr ""
+msgstr "Overgang"
 
 #. module: process
-#: field:process.condition,name:0
-#: field:process.node,name:0
-#: field:process.process,name:0
-#: field:process.transition,name:0
+#: field:process.condition,name:0 field:process.node,name:0
+#: field:process.process,name:0 field:process.transition,name:0
 #: field:process.transition.action,name:0
 msgid "Name"
-msgstr ""
+msgstr "Navn"
 
 #. module: process
 #: field:process.node,transition_in:0
@@ -197,16 +188,13 @@ msgstr ""
 #: code:addons/process/static/src/xml/process.xml:54
 #, python-format
 msgid "Related:"
-msgstr ""
+msgstr "Relateret:"
 
 #. module: process
-#: view:process.node:0
-#: field:process.node,note:0
-#: view:process.process:0
-#: field:process.process,note:0
-#: view:process.transition:0
+#: view:process.node:0 field:process.node,note:0 view:process.process:0
+#: field:process.process,note:0 view:process.transition:0
 msgid "Notes"
-msgstr ""
+msgstr "Noter"
 
 #. module: process
 #. openerp-web
@@ -230,12 +218,12 @@ msgstr ""
 #. module: process
 #: field:process.process,active:0
 msgid "Active"
-msgstr ""
+msgstr "Aktiv"
 
 #. module: process
 #: view:process.transition:0
 msgid "Associated Groups"
-msgstr ""
+msgstr "Tilknyttede grupper"
 
 #. module: process
 #: field:process.node,model_states:0
@@ -245,35 +233,34 @@ msgstr ""
 #. module: process
 #: selection:process.transition.action,state:0
 msgid "Action"
-msgstr ""
+msgstr "Handling"
 
 #. module: process
 #. openerp-web
 #: code:addons/process/static/src/xml/process.xml:67
 #, python-format
 msgid "Select Process"
-msgstr ""
+msgstr "Vælg Proces"
 
 #. module: process
 #: field:process.condition,model_states:0
 msgid "Expression"
-msgstr ""
+msgstr "Udtryk"
 
 #. module: process
 #: field:process.transition,group_ids:0
 msgid "Required Groups"
-msgstr ""
+msgstr "Nødvendige grupper"
 
 #. module: process
-#: view:process.node:0
-#: view:process.process:0
+#: view:process.node:0 view:process.process:0
 msgid "Incoming Transitions"
 msgstr ""
 
 #. module: process
 #: field:process.transition.action,state:0
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #. module: process
 #: field:process.node,transition_out:0
@@ -285,11 +272,10 @@ msgstr ""
 #: code:addons/process/static/src/js/process.js:243
 #: code:addons/process/static/src/xml/process.xml:33
 #: model:ir.model,name:process.model_process_process
-#: field:process.node,process_id:0
-#: view:process.process:0
+#: field:process.node,process_id:0 view:process.process:0
 #, python-format
 msgid "Process"
-msgstr ""
+msgstr "Behandl"
 
 #. module: process
 #: view:process.node:0
@@ -297,8 +283,7 @@ msgid "Search ProcessNode"
 msgstr ""
 
 #. module: process
-#: view:process.node:0
-#: view:process.process:0
+#: view:process.node:0 view:process.process:0
 msgid "Other Conditions"
 msgstr ""
 
@@ -310,13 +295,12 @@ msgstr ""
 #. module: process
 #: view:process.transition:0
 msgid "Actions"
-msgstr ""
+msgstr "Handlinger"
 
 #. module: process
-#: view:process.node:0
-#: view:process.process:0
+#: view:process.node:0 view:process.process:0
 msgid "Properties"
-msgstr ""
+msgstr "Egenskaber"
 
 #. module: process
 #: model:ir.actions.act_window,name:process.action_process_transition_form
@@ -342,8 +326,7 @@ msgid "Subflows:"
 msgstr ""
 
 #. module: process
-#: view:process.node:0
-#: view:process.process:0
+#: view:process.node:0 view:process.process:0
 msgid "Outgoing Transitions"
 msgstr ""
 
@@ -352,19 +335,17 @@ msgstr ""
 #: code:addons/process/static/src/xml/process.xml:36
 #, python-format
 msgid "Notes:"
-msgstr ""
+msgstr "Noter:"
 
 #. module: process
-#: selection:process.node,kind:0
-#: field:process.node,subflow_id:0
+#: selection:process.node,kind:0 field:process.node,subflow_id:0
 msgid "Subflow"
 msgstr ""
 
 #. module: process
-#: view:process.node:0
-#: view:process.process:0
+#: view:process.node:0 view:process.process:0
 msgid "Transitions"
-msgstr ""
+msgstr "Overgange"
 
 #. module: process
 #: selection:process.transition.action,state:0
@@ -376,4 +357,4 @@ msgstr ""
 #: code:addons/process/static/src/xml/process.xml:77
 #, python-format
 msgid "Select"
-msgstr ""
+msgstr "Markér"

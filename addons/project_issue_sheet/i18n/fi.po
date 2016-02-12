@@ -1,27 +1,28 @@
-# Finnish translation for openobject-addons
-# Copyright (c) 2011 Rosetta Contributors and Canonical Ltd 2011
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
-#
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+# * project_issue_sheet
+# 
+# Translators:
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2011
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Project-Id-Version: Odoo 7.0\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-07 19:37+0000\n"
-"PO-Revision-Date: 2012-12-21 23:00+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Finnish <fi@li.org>\n"
+"PO-Revision-Date: 2015-10-27 11:56+0000\n"
+"Last-Translator: Martin Trigaux\n"
+"Language-Team: Finnish (http://www.transifex.com/odoo/odoo-7/language/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-07-11 06:18+0000\n"
-"X-Generator: Launchpad (build 16696)\n"
+"Content-Transfer-Encoding: \n"
+"Language: fi\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. module: project_issue_sheet
 #: code:addons/project_issue_sheet/project_issue_sheet.py:57
 #, python-format
 msgid "The Analytic Account is pending !"
-msgstr ""
+msgstr "Analyyttinen tili (kustannuspaikka) on kesken"
 
 #. module: project_issue_sheet
 #: model:ir.model,name:project_issue_sheet.model_account_analytic_line
@@ -31,17 +32,17 @@ msgstr "Analyyttinen rivi"
 #. module: project_issue_sheet
 #: model:ir.model,name:project_issue_sheet.model_project_issue
 msgid "Project Issue"
-msgstr "Projekti tapahtuma"
+msgstr "Projektin huolenaihe"
 
 #. module: project_issue_sheet
 #: model:ir.model,name:project_issue_sheet.model_hr_analytic_timesheet
 msgid "Timesheet Line"
-msgstr "Tuntilistan rivi"
+msgstr "Tuntikortin rivi"
 
 #. module: project_issue_sheet
 #: view:project.issue:0
 msgid "on_change_project(project_id)"
-msgstr ""
+msgstr "on_change_project(project_id)"
 
 #. module: project_issue_sheet
 #: code:addons/project_issue_sheet/project_issue_sheet.py:57
@@ -61,12 +62,11 @@ msgid "Create Date"
 msgstr "Luontipäivä"
 
 #. module: project_issue_sheet
-#: view:project.issue:0
-#: field:project.issue,timesheet_ids:0
+#: view:project.issue:0 field:project.issue,timesheet_ids:0
 msgid "Timesheets"
-msgstr "Tuntilistat"
+msgstr "Tuntikortit"
 
 #. module: project_issue_sheet
 #: field:hr.analytic.timesheet,issue_id:0
 msgid "Issue"
-msgstr "Tapaus"
+msgstr "Huolenaihe"

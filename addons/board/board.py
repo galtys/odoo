@@ -3,7 +3,7 @@
 #
 #    OpenERP, Open Source Management Solution
 #    Copyright (C) 2004-2010 Tiny SPRL (<http://tiny.be>).
-#    Copyright (C) 2010-2012 OpenERP s.a. (<http://openerp.com>).
+#    Copyright (C) 2010-2013 OpenERP s.a. (<http://openerp.com>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -23,7 +23,7 @@
 from operator import itemgetter
 from textwrap import dedent
 
-from openerp import tools
+from openerp import tools, SUPERUSER_ID
 from openerp.osv import fields, osv
 
 class board_board(osv.osv):
@@ -49,6 +49,7 @@ class board_board(osv.osv):
             ('value', 'in', refs),
         ], context=context)
         menu_ids = map(itemgetter('res_id'), IrValues.read(cr, uid, irv_ids, ['res_id'], context=context))
+        menu_ids = Menus._filter_visible_menus(cr, uid, menu_ids, context=context)
         menu_names = Menus.name_get(cr, uid, menu_ids, context=context)
         return [dict(id=m[0], name=m[1]) for m in menu_names]
 
@@ -143,7 +144,7 @@ class board_create(osv.osv_memory):
             ''')
         }, context=context)
 
-        menu_id = self.pool.get('ir.ui.menu').create(cr, uid, {
+        menu_id = self.pool.get('ir.ui.menu').create(cr, SUPERUSER_ID, {
             'name': this.name,
             'parent_id': this.menu_parent_id.id,
             'action': 'ir.actions.act_window,%s' % (action_id,)

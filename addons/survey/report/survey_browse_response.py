@@ -22,6 +22,8 @@
 
 import time
 
+import pytz
+from datetime import datetime
 from openerp import pooler, tools
 from openerp.report import report_sxw
 from openerp.report.interface import report_rml
@@ -30,6 +32,8 @@ from openerp.tools.translate import _
 
 class survey_browse_response(report_rml):
     def create(self, cr, uid, ids, datas, context):
+        if context is None:
+            context = {}
         _divide_columns_for_matrix = 0.7
         _display_ans_in_rows = 5
         _pageSize = ('29.7cm','21.1cm')
@@ -161,18 +165,18 @@ class survey_browse_response(report_rml):
                     <initialize>
                       <paraStyle name="all" alignment="justify"/>
                     </initialize>
-                    <paraStyle name="title" fontName="helvetica-bold" fontSize="18.0" leftIndent="0.0" textColor="white"/>
-                    <paraStyle name="answer_right" alignment="RIGHT" fontName="helvetica" fontSize="09.0" leftIndent="2.0"/>
-                    <paraStyle name="Standard1" fontName="helvetica-bold" alignment="RIGHT" fontSize="09.0"/>
+                    <paraStyle name="title" fontName="Helvetica-Bold" fontSize="18.0" leftIndent="0.0" textColor="white"/>
+                    <paraStyle name="answer_right" alignment="RIGHT" fontName="Helvetica" fontSize="09.0" leftIndent="2.0"/>
+                    <paraStyle name="Standard1" fontName="Helvetica-Bold" alignment="RIGHT" fontSize="09.0"/>
                     <paraStyle name="Standard" alignment="LEFT" fontName="Helvetica-Bold" fontSize="11.0"/>
                     <paraStyle name="header1" fontName="Helvetica" fontSize="11.0"/>
-                    <paraStyle name="response" fontName="Helvetica-oblique" fontSize="9.5"/>
-                    <paraStyle name="page" fontName="helvetica" fontSize="11.0" leftIndent="0.0"/>
-                    <paraStyle name="question" fontName="helvetica-boldoblique" fontSize="10.0" leftIndent="3.0"/>
-                    <paraStyle name="answer_bold" fontName="Helvetica-Bold" fontSize="09.0" leftIndent="2.0"/>
-                    <paraStyle name="answer" fontName="helvetica" fontSize="09.0" leftIndent="2.0"/>
-                    <paraStyle name="answer1" fontName="helvetica" fontSize="09.0" leftIndent="2.0"/>
-                    <paraStyle name="Title" fontName="helvetica" fontSize="20.0" leading="15" spaceBefore="6.0" spaceAfter="6.0" alignment="CENTER"/>
+                    <paraStyle name="response" fontName="Helvetica-Oblique" fontSize="9.5"/>
+                    <paraStyle name="page" fontName="Helvetica" fontSize="11.0" leftIndent="0.0"/>
+                    <paraStyle name="question" fontName="Helvetica-BoldOblique" fontSize="10.0" leftIndent="3.0"/>
+                    <paraStyle name="answer_Bold" fontName="Helvetica-Bold" fontSize="09.0" leftIndent="2.0"/>
+                    <paraStyle name="answer" fontName="Helvetica" fontSize="09.0" leftIndent="2.0"/>
+                    <paraStyle name="answer1" fontName="Helvetica" fontSize="09.0" leftIndent="2.0"/>
+                    <paraStyle name="Title" fontName="Helvetica" fontSize="20.0" leading="15" spaceBefore="6.0" spaceAfter="6.0" alignment="CENTER"/>
                     <paraStyle name="P2" fontName="Helvetica" fontSize="14.0" leading="15" spaceBefore="6.0" spaceAfter="6.0"/>
                     <paraStyle name="comment" fontName="Helvetica" fontSize="14.0" leading="50" spaceBefore="0.0" spaceAfter="0.0"/>
                     <paraStyle name="P1" fontName="Helvetica" fontSize="9.0" leading="12" spaceBefore="0.0" spaceAfter="1.0"/>
@@ -183,8 +187,8 @@ class survey_browse_response(report_rml):
                     <paraStyle name="terp_tblheader_General_Centre" fontName="Helvetica-Bold" fontSize="10.0" leading="10" alignment="LEFT" spaceBefore="6.0" spaceAfter="6.0"/>
                     <paraStyle name="terp_tblheader_General_right_simple" fontName="Helvetica" fontSize="10.0" leading="10" alignment="RIGHT" spaceBefore="6.0" spaceAfter="6.0"/>
                     <paraStyle name="terp_tblheader_General_right" fontName="Helvetica-Bold" fontSize="10.0" leading="10" alignment="RIGHT" spaceBefore="6.0" spaceAfter="6.0"/>
-                    <paraStyle name="descriptive_text" fontName="helvetica-bold" fontSize="18.0" leftIndent="0.0" textColor="white"/>
-                    <paraStyle name="descriptive_text_heading" fontName="helvetica-bold" fontSize="18.0" alignment="RIGHT" leftIndent="0.0" textColor="white"/>
+                    <paraStyle name="descriptive_text" fontName="Helvetica-Bold" fontSize="18.0" leftIndent="0.0" textColor="white"/>
+                    <paraStyle name="descriptive_text_heading" fontName="Helvetica-Bold" fontSize="18.0" alignment="RIGHT" leftIndent="0.0" textColor="white"/>
                   </stylesheet>
                   <images/>
                   <story>"""
@@ -204,7 +208,9 @@ class survey_browse_response(report_rml):
             for survey in surv_obj.browse(cr, uid, [response.survey_id.id]):
                 tbl_width = float(_tbl_widths.replace('cm', ''))
                 colwidth =  "2.5cm,4.8cm," + str(tbl_width - 15.0) +"cm,3.2cm,4.5cm"
-                resp_create = tools.ustr(time.strftime('%d-%m-%Y %I:%M:%S %p', time.strptime(response.date_create.split('.')[0], '%Y-%m-%d %H:%M:%S')))
+                timezone = pytz.timezone(context.get('tz') or 'UTC')
+                create_date = pytz.UTC.localize(datetime.strptime(response.date_create.split('.')[0], tools.DEFAULT_SERVER_DATETIME_FORMAT))
+                resp_create = create_date.astimezone(timezone).strftime("%Y-%m-%d %H:%M:%S") #Converting date to user's timezone
                 rml += """<blockTable colWidths='""" + colwidth + """' style="Table_heading">
                           <tr>
                             <td><para style="terp_default_9_Bold">""" + _('Print Date : ') + """</para></td>

@@ -25,6 +25,8 @@ from openerp.osv import fields
 from openerp.osv import osv
 from openerp.tools.translate import _
 from openerp import netsvc
+from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
+
 
 class procurement_order(osv.osv):
     _inherit = 'procurement.order'
@@ -33,11 +35,6 @@ class procurement_order(osv.osv):
         'property_ids': fields.many2many('mrp.property', 'procurement_property_rel', 'procurement_id','property_id', 'Properties'),
         'production_id': fields.many2one('mrp.production', 'Manufacturing Order'),
     }
-
-    def _prepare_order_line_procurement(self, cr, uid, order, line, move_id, date_planned, context=None):
-        result = super(procurement_order, self)._prepare_order_line_procurement(cr, uid, order, line, move_id, date_planned, context)
-        result['property_ids'] = [(6, 0, [x.id for x in line.property_ids])]
-        return result
 
     def check_produce_product(self, cr, uid, procurement, context=None):
         ''' Depict the capacity of the procurement workflow to produce products (not services)'''
@@ -83,44 +80,49 @@ class procurement_order(osv.osv):
         res = procurement_obj.make_mo(cr, uid, ids, context=context)
         res = res.values()
         return len(res) and res[0] or 0
-    
+
+    def _get_date_planned(self, cr, uid, procurement, context=None):
+        format_date_planned = datetime.strptime(procurement.date_planned,
+                                                DEFAULT_SERVER_DATETIME_FORMAT)
+        date_planned = format_date_planned - relativedelta(days=procurement.product_id.produce_delay or 0.0)
+        date_planned = date_planned - relativedelta(days=procurement.company_id.manufacturing_lead)
+        return date_planned
+
+    def _prepare_mo_vals(self, cr, uid, procurement, context=None):
+        res_id = procurement.move_id.id
+        newdate = self._get_date_planned(cr, uid, procurement, context=context)
+        return {
+            'origin': procurement.origin,
+            'product_id': procurement.product_id.id,
+            'product_qty': procurement.product_qty,
+            'product_uom': procurement.product_uom.id,
+            'product_uos_qty': procurement.product_uos and procurement.product_uos_qty or False,
+            'product_uos': procurement.product_uos and procurement.product_uos.id or False,
+            'location_src_id': procurement.location_id.id,
+            'location_dest_id': procurement.location_id.id,
+            'bom_id': procurement.bom_id and procurement.bom_id.id or False,
+            'date_planned': newdate.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+            'move_prod_id': res_id,
+            'company_id': procurement.company_id.id,
+        }
+
     def make_mo(self, cr, uid, ids, context=None):
         """ Make Manufacturing(production) order from procurement
         @return: New created Production Orders procurement wise 
         """
         res = {}
-        company = self.pool.get('res.users').browse(cr, uid, uid, context).company_id
         production_obj = self.pool.get('mrp.production')
         move_obj = self.pool.get('stock.move')
         wf_service = netsvc.LocalService("workflow")
         procurement_obj = self.pool.get('procurement.order')
         for procurement in procurement_obj.browse(cr, uid, ids, context=context):
-            res_id = procurement.move_id.id
-            newdate = datetime.strptime(procurement.date_planned, '%Y-%m-%d %H:%M:%S') - relativedelta(days=procurement.product_id.produce_delay or 0.0)
-            newdate = newdate - relativedelta(days=company.manufacturing_lead)
-            produce_id = production_obj.create(cr, uid, {
-                'origin': procurement.origin,
-                'product_id': procurement.product_id.id,
-                'product_qty': procurement.product_qty,
-                'product_uom': procurement.product_uom.id,
-                'product_uos_qty': procurement.product_uos and procurement.product_uos_qty or False,
-                'product_uos': procurement.product_uos and procurement.product_uos.id or False,
-                'location_src_id': procurement.location_id.id,
-                'location_dest_id': procurement.location_id.id,
-                'bom_id': procurement.bom_id and procurement.bom_id.id or False,
-                'date_planned': newdate.strftime('%Y-%m-%d %H:%M:%S'),
-                'move_prod_id': res_id,
-                'company_id': procurement.company_id.id,
-            })
-            
+            vals = self._prepare_mo_vals(cr, uid, procurement, context=context)
+            produce_id = production_obj.create(cr, uid, vals, context=context)
             res[procurement.id] = produce_id
             self.write(cr, uid, [procurement.id], {'state': 'running', 'production_id': produce_id})   
             bom_result = production_obj.action_compute(cr, uid,
                     [produce_id], properties=[x.id for x in procurement.property_ids])
             wf_service.trg_validate(uid, 'mrp.production', produce_id, 'button_confirm', cr)
-            if res_id:
-                move_obj.write(cr, uid, [res_id],
-                        {'location_id': procurement.location_id.id})
         self.production_order_create_note(cr, uid, ids, context=context)
         return res
 
@@ -128,7 +130,3 @@ class procurement_order(osv.osv):
         for procurement in self.browse(cr, uid, ids, context=context):
             body = _("Manufacturing Order <em>%s</em> created.") % ( procurement.production_id.name,)
             self.message_post(cr, uid, [procurement.id], body=body, context=context)
-    
-procurement_order()
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

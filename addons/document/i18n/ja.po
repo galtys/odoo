@@ -1,21 +1,22 @@
-# Japanese translation for openobject-addons
-# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
-#
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+# * document
+# 
+# Translators:
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2013-06-07 19:36+0000\n"
-"PO-Revision-Date: 2012-12-21 23:00+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Japanese <ja@li.org>\n"
+"Project-Id-Version: Odoo 7.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-14 00:10+0000\n"
+"PO-Revision-Date: 2015-07-17 08:53+0000\n"
+"Last-Translator: Martin Trigaux\n"
+"Language-Team: Japanese (http://www.transifex.com/odoo/odoo-7/language/ja/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-07-11 05:56+0000\n"
-"X-Generator: Launchpad (build 16696)\n"
+"Content-Transfer-Encoding: \n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: document
 #: field:document.directory,parent_id:0
@@ -23,7 +24,7 @@ msgid "Parent Directory"
 msgstr "親ディレクトリ"
 
 #. module: document
-#: code:addons/document/document.py:350
+#: code:addons/document/document.py:348
 #, python-format
 msgid "Directory name contains special characters!"
 msgstr "ディレクトリ名に特殊文字が含まれています。"
@@ -56,8 +57,7 @@ msgid "Resources"
 msgstr "リソース"
 
 #. module: document
-#: field:document.directory,file_ids:0
-#: view:report.document.user:0
+#: field:document.directory,file_ids:0 view:report.document.user:0
 msgid "Files"
 msgstr "ファイル"
 
@@ -77,8 +77,7 @@ msgid "Expression"
 msgstr "表現"
 
 #. module: document
-#: view:document.directory:0
-#: field:document.directory,company_id:0
+#: view:document.directory:0 field:document.directory,company_id:0
 msgid "Company"
 msgstr "会社"
 
@@ -101,12 +100,8 @@ msgstr "文書管理"
 #: help:document.directory.dctx,expr:0
 msgid ""
 "A python expression used to evaluate the field.\n"
-"You can use 'dir_id' for current dir, 'res_id', 'res_model' as a reference "
-"to the current record, in dynamic folders"
-msgstr ""
-"項目を評価するためのPython表記\n"
-"ダイナミックフォルダの中の現在ディレクトには 'dir_id' を、現在レコードを参照するには 'res_id'、 'res_model' "
-"を使うことができます。"
+"You can use 'dir_id' for current dir, 'res_id', 'res_model' as a reference to the current record, in dynamic folders"
+msgstr "項目を評価するためのPython表記\nダイナミックフォルダの中の現在ディレクトには 'dir_id' を、現在レコードを参照するには 'res_id'、 'res_model' を使うことができます。"
 
 #. module: document
 #: help:document.directory.dctx,field:0
@@ -114,8 +109,7 @@ msgid "The name of the field."
 msgstr ""
 
 #. module: document
-#: code:addons/document/document.py:340
-#: code:addons/document/document.py:345
+#: code:addons/document/document.py:338 code:addons/document/document.py:343
 #, python-format
 msgid "Directory name must be unique!"
 msgstr "ディレクトリ名は固有でなければいけません。"
@@ -126,8 +120,7 @@ msgid "Filter on my documents"
 msgstr "ドキュメントのフィルタ"
 
 #. module: document
-#: view:ir.attachment:0
-#: field:ir.attachment,index_content:0
+#: view:ir.attachment:0 field:ir.attachment,index_content:0
 msgid "Indexed Content"
 msgstr "索引付き内容"
 
@@ -176,8 +169,7 @@ msgid "Knowledge Application Configuration"
 msgstr "知識アプリケーションの設定"
 
 #. module: document
-#: view:ir.attachment:0
-#: field:ir.attachment,partner_id:0
+#: view:ir.attachment:0 field:ir.attachment,partner_id:0
 msgid "Partner"
 msgstr "パートナ"
 
@@ -193,17 +185,15 @@ msgid ""
 "<p class=\"oe_view_nocontent_create\">\n"
 "            Click to create a new document. \n"
 "          </p><p>\n"
-"            The Documents repository gives you access to all attachments, "
-"such\n"
+"            The Documents repository gives you access to all attachments, such\n"
 "            as mails, project documents, invoices etc.\n"
 "          </p>\n"
 "        "
 msgstr ""
 
 #. module: document
-#: code:addons/document/document.py:340
-#: code:addons/document/document.py:345
-#: code:addons/document/document.py:350
+#: code:addons/document/document.py:338 code:addons/document/document.py:343
+#: code:addons/document/document.py:348
 #, python-format
 msgid "ValidateError"
 msgstr "検証エラー"
@@ -238,8 +228,7 @@ msgid "Content Type"
 msgstr "内容タイプ"
 
 #. module: document
-#: view:document.directory:0
-#: field:document.directory,type:0
+#: view:document.directory:0 field:document.directory,type:0
 msgid "Type"
 msgstr "タイプ"
 
@@ -249,11 +238,10 @@ msgid "The filename must be unique in a directory !"
 msgstr ""
 
 #. module: document
-#: code:addons/document/document.py:110
-#: code:addons/document/document.py:310
+#: code:addons/document/document.py:118 code:addons/document/document.py:308
 #, python-format
 msgid "%s (copy)"
-msgstr ""
+msgstr "%s（コピー）"
 
 #. module: document
 #: help:document.directory,ressource_type_id:0
@@ -284,8 +272,7 @@ msgid "Context fields"
 msgstr "文脈項目"
 
 #. module: document
-#: view:document.directory:0
-#: field:report.document.user,type:0
+#: view:document.directory:0 field:report.document.user,type:0
 msgid "Directory Type"
 msgstr "ディレクトリタイプ"
 
@@ -310,7 +297,7 @@ msgid "Virtual Files"
 msgstr "仮想ファイル"
 
 #. module: document
-#: code:addons/document/document.py:576
+#: code:addons/document/document.py:574
 #, python-format
 msgid "Error at doc write!"
 msgstr "文書の書込みエラー"
@@ -323,16 +310,15 @@ msgstr "生成されたファイル"
 #. module: document
 #: view:document.configuration:0
 msgid ""
-"When executing this wizard, it will configure your directories automatically "
-"according to modules installed."
+"When executing this wizard, it will configure your directories automatically"
+" according to modules installed."
 msgstr "これを実行すると、インストールされているモジュールがディレクトリを自動的に作成します。"
 
 #. module: document
 #: field:document.directory.content,directory_id:0
 #: field:document.directory.dctx,dir_id:0
 #: model:ir.actions.act_window,name:document.action_document_file_directory_form
-#: view:ir.attachment:0
-#: field:ir.attachment,parent_id:0
+#: view:ir.attachment:0 field:ir.attachment,parent_id:0
 #: model:ir.model,name:document.model_document_directory
 #: field:report.document.user,directory:0
 msgid "Directory"
@@ -344,8 +330,7 @@ msgid "Security"
 msgstr "セキュリティ"
 
 #. module: document
-#: field:document.directory,write_uid:0
-#: field:ir.attachment,write_uid:0
+#: field:document.directory,write_uid:0 field:ir.attachment,write_uid:0
 msgid "Last Modification User"
 msgstr "前回，修正したユーザ"
 
@@ -366,8 +351,7 @@ msgid "Domain"
 msgstr "ドメイン"
 
 #. module: document
-#: field:document.directory,write_date:0
-#: field:ir.attachment,write_date:0
+#: field:document.directory,write_date:0 field:ir.attachment,write_date:0
 msgid "Date Modified"
 msgstr "変更日"
 
@@ -398,8 +382,7 @@ msgid "Static Directory"
 msgstr "静的ディレクトリ"
 
 #. module: document
-#: field:report.document.file,month:0
-#: field:report.document.user,month:0
+#: field:report.document.file,month:0 field:report.document.user,month:0
 msgid "Month"
 msgstr "月"
 
@@ -416,13 +399,11 @@ msgstr "静的"
 #. module: document
 #: field:report.document.user,user:0
 msgid "unknown"
-msgstr ""
+msgstr "不明"
 
 #. module: document
-#: view:document.directory:0
-#: field:document.directory,user_id:0
-#: view:ir.attachment:0
-#: field:ir.attachment,user_id:0
+#: view:document.directory:0 field:document.directory,user_id:0
+#: view:ir.attachment:0 field:ir.attachment,user_id:0
 #: field:report.document.user,user_id:0
 msgid "Owner"
 msgstr "所有者"
@@ -446,12 +427,9 @@ msgstr "作成日"
 #. module: document
 #: help:document.directory.content,include_name:0
 msgid ""
-"Check this field if you want that the name of the file to contain the record "
-"name.\n"
+"Check this field if you want that the name of the file to contain the record name.\n"
 "If set, the directory will have to be a resource one."
-msgstr ""
-"ファイル名にレコード名を含めるのであれば、これをチェックして下さい。\n"
-"そうすると、ディレクトリはリソースディレクトリになります。"
+msgstr "ファイル名にレコード名を含めるのであれば、これをチェックして下さい。\nそうすると、ディレクトリはリソースディレクトリになります。"
 
 #. module: document
 #: view:document.configuration:0
@@ -472,8 +450,8 @@ msgstr "モデルID"
 #. module: document
 #: help:document.directory,ressource_tree:0
 msgid ""
-"Check this if you want to use the same tree structure as the object selected "
-"in the system."
+"Check this if you want to use the same tree structure as the object selected"
+" in the system."
 msgstr "選択したオブジェクトと同じようなツリー構造を使うのであれば、これをチェックして下さい。"
 
 #. module: document
@@ -488,7 +466,7 @@ msgstr "このIDは、親モデルの特定のレコードにこのフォルダ�
 #: code:addons/document/static/src/js/document.js:6
 #, python-format
 msgid "Attachment(s)"
-msgstr ""
+msgstr "添付"
 
 #. module: document
 #: selection:report.document.user,month:0
@@ -528,13 +506,11 @@ msgstr "11月"
 #. module: document
 #: help:document.directory,ressource_parent_type_id:0
 msgid ""
-"If you put an object here, this directory template will appear bellow all of "
-"these objects. Such directories are \"attached\" to the specific model or "
+"If you put an object here, this directory template will appear bellow all of"
+" these objects. Such directories are \"attached\" to the specific model or "
 "record, just like attachments. Don't put a parent directory if you select a "
 "parent model."
-msgstr ""
-"オブジェクトをここに置くと、これら全てのオブジェクトの下にディレクトリテンプレートが表示されます。そのディレクトリは特定のモデルあるいはレコードに添付され"
-"ます。親ディレクトを選んだ場合には、親ディレクトリを指定してはいけません。"
+msgstr "オブジェクトをここに置くと、これら全てのオブジェクトの下にディレクトリテンプレートが表示されます。そのディレクトリは特定のモデルあるいはレコードに添付されます。親ディレクトを選んだ場合には、親ディレクトリを指定してはいけません。"
 
 #. module: document
 #: view:document.directory:0
@@ -574,7 +550,7 @@ msgstr "ディレクトリ名は固有でなければいけません。"
 #. module: document
 #: view:ir.attachment:0
 msgid "Attachments"
-msgstr ""
+msgstr "添付"
 
 #. module: document
 #: field:document.directory,create_uid:0
@@ -588,9 +564,7 @@ msgid ""
 "documents. The virtual folder of a document can be used to manage the files "
 "attached to the document, or to print and download any report. This tool "
 "will create directories automatically according to modules installed."
-msgstr ""
-"OpenERPの文書管理システムは、仮想フォルダを文書でマッピングする機能を持っています。文書の仮想フォルダは、文書に添付されたファイルを管理したり、報告"
-"書を印刷したりダウンロードしたりするのに使うことができます。このツールは、インストールされたモデルによってディレクトリを自動的に作成します。"
+msgstr "OpenERPの文書管理システムは、仮想フォルダを文書でマッピングする機能を持っています。文書の仮想フォルダは、文書に添付されたファイルを管理したり、報告書を印刷したりダウンロードしたりするのに使うことができます。このツールは、インストールされたモデルによってディレクトリを自動的に作成します。"
 
 #. module: document
 #: model:ir.actions.act_window,name:document.action_view_files_by_month_graph
@@ -670,12 +644,10 @@ msgstr "ディレクトリ設定"
 msgid ""
 "Each directory can either have the type Static or be linked to another "
 "resource. A static directory, as with Operating Systems, is the classic "
-"directory that can contain a set of files. The directories linked to systems "
-"resources automatically possess sub-directories for each of resource types "
+"directory that can contain a set of files. The directories linked to systems"
+" resources automatically possess sub-directories for each of resource types "
 "defined in the parent directory."
-msgstr ""
-"各ディレクトリは静的タイプを持つか、他のリソースに連係することができます。静的ディレクトリは，オペレーティングシステムのものと同じように、ファイル群のディ"
-"レクトリです。システムリソースに連係されたディレクトリは、親ディレクトリで定義されたリソースタイプのサブディレクトリを持ちます。"
+msgstr "各ディレクトリは静的タイプを持つか、他のリソースに連係することができます。静的ディレクトリは，オペレーティングシステムのものと同じように、ファイル群のディレクトリです。システムリソースに連係されたディレクトリは、親ディレクトリで定義されたリソースタイプのサブディレクトリを持ちます。"
 
 #. module: document
 #: selection:report.document.user,month:0
@@ -698,8 +670,7 @@ msgid "April"
 msgstr "4月"
 
 #. module: document
-#: field:report.document.file,nbr:0
-#: field:report.document.user,nbr:0
+#: field:report.document.file,nbr:0 field:report.document.user,nbr:0
 msgid "# of Files"
 msgstr "ファイル数"
 

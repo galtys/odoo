@@ -19,22 +19,25 @@
 #
 ##############################################################################
 
-from datetime import datetime, timedelta
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 import time
 import logging
 
+import openerp
 from openerp import SUPERUSER_ID
 from openerp.osv import fields, osv
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
+from openerp.tools.safe_eval import safe_eval as eval
 
 _logger = logging.getLogger(__name__)
 
 DATE_RANGE_FUNCTION = {
-    'minutes': lambda interval: timedelta(minutes=interval),
-    'hour': lambda interval: timedelta(hours=interval),
-    'day': lambda interval: timedelta(days=interval),
-    'month': lambda interval: timedelta(months=interval),
-    False: lambda interval: timedelta(0),
+    'minutes': lambda interval: relativedelta(minutes=interval),
+    'hour': lambda interval: relativedelta(hours=interval),
+    'day': lambda interval: relativedelta(days=interval),
+    'month': lambda interval: relativedelta(months=interval),
+    False: lambda interval: relativedelta(0),
 }
 
 def get_datetime(date_str):
@@ -134,13 +137,13 @@ class base_action_rule(osv.osv):
         """ Return a wrapper around `old_create` calling both `old_create` and
             `_process`, in that order.
         """
-        def wrapper(cr, uid, vals, context=None):
+        def wrapper(cr, uid, vals, context=None, **kwargs):
             # avoid loops or cascading actions
             if context and context.get('action'):
                 return old_create(cr, uid, vals, context=context)
 
             context = dict(context or {}, action=True)
-            new_id = old_create(cr, uid, vals, context=context)
+            new_id = old_create(cr, uid, vals, context=context, **kwargs)
 
             # as it is a new record, we do not consider the actions that have a prefilter
             action_dom = [('model', '=', model), ('trg_date_id', '=', False), ('filter_pre_id', '=', False)]
@@ -158,10 +161,10 @@ class base_action_rule(osv.osv):
         """ Return a wrapper around `old_write` calling both `old_write` and
             `_process`, in that order.
         """
-        def wrapper(cr, uid, ids, vals, context=None):
+        def wrapper(cr, uid, ids, vals, context=None, **kwargs):
             # avoid loops or cascading actions
             if context and context.get('action'):
-                return old_write(cr, uid, ids, vals, context=context)
+                return old_write(cr, uid, ids, vals, context=context, **kwargs)
 
             context = dict(context or {}, action=True)
             ids = [ids] if isinstance(ids, (int, long, str)) else ids
@@ -177,7 +180,7 @@ class base_action_rule(osv.osv):
                 pre_ids[action] = self._filter(cr, uid, action, action.filter_pre_id, ids, context=context)
 
             # execute write
-            old_write(cr, uid, ids, vals, context=context)
+            old_write(cr, uid, ids, vals, context=context, **kwargs)
 
             # check postconditions, and execute actions on the records that satisfy them
             for action in actions:
@@ -192,27 +195,31 @@ class base_action_rule(osv.osv):
         """ Wrap the methods `create` and `write` of the models specified by
             the rules given by `ids` (or all existing rules if `ids` is `None`.)
         """
+        updated = False
         if ids is None:
             ids = self.search(cr, SUPERUSER_ID, [])
         for action_rule in self.browse(cr, SUPERUSER_ID, ids):
             model = action_rule.model_id.model
             model_obj = self.pool.get(model)
-            if not hasattr(model_obj, 'base_action_ruled'):
+            if model_obj and not hasattr(model_obj, 'base_action_ruled'):
                 model_obj.create = self._wrap_create(model_obj.create, model)
                 model_obj.write = self._wrap_write(model_obj.write, model)
                 model_obj.base_action_ruled = True
-        return True
+                updated = True
+        return updated
 
     def create(self, cr, uid, vals, context=None):
         res_id = super(base_action_rule, self).create(cr, uid, vals, context=context)
-        self._register_hook(cr, [res_id])
+        if self._register_hook(cr, [res_id]):
+            openerp.modules.registry.RegistryManager.signal_registry_change(cr.dbname)
         return res_id
 
     def write(self, cr, uid, ids, vals, context=None):
         if isinstance(ids, (int, long)):
             ids = [ids]
         super(base_action_rule, self).write(cr, uid, ids, vals, context=context)
-        self._register_hook(cr, ids)
+        if self._register_hook(cr, ids):
+            openerp.modules.registry.RegistryManager.signal_registry_change(cr.dbname)
         return True
 
     def onchange_model_id(self, cr, uid, ids, model_id, context=None):
@@ -230,7 +237,10 @@ class base_action_rule(osv.osv):
         action_ids = self.search(cr, uid, action_dom, context=context)
         for action in self.browse(cr, uid, action_ids, context=context):
             now = datetime.now()
-            last_run = get_datetime(action.last_run) if action.last_run else False
+            if action.last_run:
+                last_run = get_datetime(action.last_run)
+            else:
+                last_run = datetime.utcfromtimestamp(0)
 
             # retrieve all the records that satisfy the action's condition
             model = self.pool.get(action.model_id.model)
@@ -239,6 +249,13 @@ class base_action_rule(osv.osv):
             if action.filter_id:
                 domain = eval(action.filter_id.domain)
                 ctx.update(eval(action.filter_id.context))
+                if 'lang' not in ctx:
+                    # Filters might be language-sensitive, attempt to reuse creator lang
+                    # as we are usually running this as super-user in background
+                    [filter_meta] = action.filter_id.perm_read()
+                    user_id = filter_meta['write_uid'] and filter_meta['write_uid'][0] or \
+                                    filter_meta['create_uid'][0]
+                    ctx['lang'] = self.pool['res.users'].browse(cr, uid, user_id).lang
             record_ids = model.search(cr, uid, domain, context=ctx)
 
             # determine when action should occur for the records
@@ -256,11 +273,16 @@ class base_action_rule(osv.osv):
                 if not record_dt:
                     continue
                 action_dt = get_datetime(record_dt) + delay
-                if last_run and (last_run <= action_dt < now) or (action_dt < now):
+                if last_run <= action_dt < now:
                     try:
+                        context = dict(context or {}, action=True)
                         self._process(cr, uid, action, [record.id], context=context)
                     except Exception:
                         import traceback
                         _logger.error(traceback.format_exc())
 
             action.write({'last_run': now.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+
+            if automatic:
+                # auto-commit for batch processing
+                cr.commit()

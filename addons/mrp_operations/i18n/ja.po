@@ -1,29 +1,29 @@
-# Japanese translation for openobject-addons
-# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
-#
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+# * mrp_operations
+# 
+# Translators:
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2013-06-07 19:37+0000\n"
-"PO-Revision-Date: 2012-12-21 23:00+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Japanese <ja@li.org>\n"
+"Project-Id-Version: Odoo 7.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-14 00:10+0000\n"
+"PO-Revision-Date: 2015-05-29 13:15+0000\n"
+"Last-Translator: Martin Trigaux\n"
+"Language-Team: Japanese (http://www.transifex.com/odoo/odoo-7/language/ja/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-07-11 06:10+0000\n"
-"X-Generator: Launchpad (build 16696)\n"
+"Content-Transfer-Encoding: \n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: mrp_operations
 #: model:ir.actions.act_window,name:mrp_operations.mrp_production_wc_action_form
 #: model:ir.ui.menu,name:mrp_operations.menu_mrp_production_wc_order
-#: view:mrp.production.workcenter.line:0
-#: view:mrp.workorder:0
+#: view:mrp.production.workcenter.line:0 view:mrp.workorder:0
 msgid "Work Orders"
-msgstr "作業オーダー"
+msgstr "作業オーダ"
 
 #. module: mrp_operations
 #: code:addons/mrp_operations/mrp_operations.py:484
@@ -42,20 +42,19 @@ msgid "mrp_operations.operation.code"
 msgstr ""
 
 #. module: mrp_operations
-#: view:mrp.production.workcenter.line:0
-#: view:mrp.workorder:0
+#: view:mrp.production.workcenter.line:0 view:mrp.workorder:0
 msgid "Group By..."
 msgstr "グループ化…"
 
 #. module: mrp_operations
 #: model:process.node,note:mrp_operations.process_node_workorder0
 msgid "Information from the routing definition."
-msgstr "経路定義からの情報"
+msgstr "工順定義からの情報"
 
 #. module: mrp_operations
 #: field:mrp.production.workcenter.line,uom:0
 msgid "Unit of Measure"
-msgstr ""
+msgstr "単位"
 
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
@@ -65,11 +64,10 @@ msgstr "3月"
 #. module: mrp_operations
 #: model:ir.actions.act_window,name:mrp_operations.mrp_production_wc_resource_planning
 msgid "Work Centers"
-msgstr "作業センタ"
+msgstr "作業区"
 
 #. module: mrp_operations
-#: view:mrp.production:0
-#: view:mrp.production.workcenter.line:0
+#: view:mrp.production:0 view:mrp.production.workcenter.line:0
 #: selection:mrp_operations.operation.code,start_stop:0
 msgid "Resume"
 msgstr "再開"
@@ -97,7 +95,7 @@ msgstr "自由な直列化"
 #. module: mrp_operations
 #: model:ir.model,name:mrp_operations.model_mrp_production
 msgid "Manufacturing Order"
-msgstr "製造オーダー"
+msgstr "製造オーダ"
 
 #. module: mrp_operations
 #: model:process.process,name:mrp_operations.process_process_mrpoperationprocess0
@@ -105,8 +103,13 @@ msgid "Mrp Operations"
 msgstr "MRP操作"
 
 #. module: mrp_operations
-#: view:mrp.workorder:0
-#: field:mrp.workorder,day:0
+#: code:addons/mrp_operations/mrp_operations.py:134
+#, python-format
+msgid "Manufacturing order cannot be started in state \"%s\"!"
+msgstr ""
+
+#. module: mrp_operations
+#: view:mrp.workorder:0 field:mrp.workorder,day:0
 msgid "Day"
 msgstr "日"
 
@@ -118,7 +121,7 @@ msgstr "オーダーのキャンセル"
 #. module: mrp_operations
 #: model:process.node,name:mrp_operations.process_node_productionorder0
 msgid "Production Order"
-msgstr "製造オーダー"
+msgstr "製造オーダ"
 
 #. module: mrp_operations
 #: selection:mrp.production.workcenter.line,production_state:0
@@ -128,12 +131,12 @@ msgstr "例外の集荷"
 #. module: mrp_operations
 #: model:process.transition,name:mrp_operations.process_transition_productionstart0
 msgid "Creation of the work order"
-msgstr "作業オーダーの作成"
+msgstr "作業オーダ作成"
 
 #. module: mrp_operations
 #: model:process.transition,note:mrp_operations.process_transition_productionstart0
 msgid "The work orders are created on the basis of the production order."
-msgstr "作業オーダーは製造オーダーを元にして作成されます。"
+msgstr "作業オーダは製造オーダを元にして作成されます。"
 
 #. module: mrp_operations
 #: code:addons/mrp_operations/mrp_operations.py:134
@@ -198,6 +201,16 @@ msgstr "ドラフト"
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0
 msgid "Actual Production Date"
+msgstr "製造実績"
+
+#. module: mrp_operations
+#: help:mrp.production.workcenter.line,state:0
+msgid ""
+"* When a work order is created it is set in 'Draft' status.\n"
+"* When user sets work order in start mode that time it will be set in 'In Progress' status.\n"
+"* When work order is in running mode, during that time if user wants to stop or to make changes in order then can set in 'Pending' status.\n"
+"* When the user cancels the work order it will be set in 'Canceled' status.\n"
+"* When order is completely processed that time it is set in 'Finished' status."
 msgstr ""
 
 #. module: mrp_operations
@@ -221,24 +234,24 @@ msgstr "製造中"
 #: model:ir.actions.act_window,name:mrp_operations.action_report_mrp_workorder
 #: model:ir.model,name:mrp_operations.model_mrp_production_workcenter_line
 msgid "Work Order"
-msgstr "作業オーダー"
+msgstr "作業オーダ"
 
 #. module: mrp_operations
 #: model:process.transition,note:mrp_operations.process_transition_workstartoperation0
 msgid ""
 "There is 1 work order per work center. The information about the number of "
 "cycles or the cycle time."
-msgstr "作業センタごとに１つの作業オーダーがあります。サイクルの数あるいはサイクル時間についての情報です。"
+msgstr "作業区ごとに１つの作業オーダーがあります。サイクルの数あるいはサイクル時間についての情報です。"
 
 #. module: mrp_operations
 #: model:ir.ui.menu,name:mrp_operations.menu_report_mrp_workorders_tree
 msgid "Work Order Analysis"
-msgstr "作業オーダー分析"
+msgstr "作業オーダ分析"
 
 #. module: mrp_operations
 #: model:ir.ui.menu,name:mrp_operations.menu_mrp_production_wc_action_planning
 msgid "Work Orders By Resource"
-msgstr ""
+msgstr "リソース別作業オーダ"
 
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0
@@ -246,16 +259,9 @@ msgid "Planned Date"
 msgstr "予定日"
 
 #. module: mrp_operations
-#: view:mrp.workorder:0
-#: field:mrp.workorder,product_qty:0
+#: view:mrp.workorder:0 field:mrp.workorder,product_qty:0
 msgid "Product Qty"
 msgstr "製品数量"
-
-#. module: mrp_operations
-#: code:addons/mrp_operations/mrp_operations.py:134
-#, python-format
-msgid "Manufacturing order cannot start in state \"%s\"!"
-msgstr "製造オーダーは %s 状態であるため開始できません。"
 
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
@@ -269,8 +275,7 @@ msgstr "操作名"
 
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0
-#: field:mrp.production.workcenter.line,state:0
-#: view:mrp.workorder:0
+#: field:mrp.production.workcenter.line,state:0 view:mrp.workorder:0
 #: field:mrp.workorder,state:0
 #: field:mrp_operations.operation.code,start_stop:0
 msgid "Status"
@@ -289,7 +294,7 @@ msgstr "オーダー日"
 #. module: mrp_operations
 #: model:ir.actions.act_window,name:mrp_operations.mrp_production_wc_draft_action
 msgid "Future Work Orders"
-msgstr "将来の作業オーダー"
+msgstr "将来の作業オーダ"
 
 #. module: mrp_operations
 #: view:mrp.production:0
@@ -306,8 +311,7 @@ msgid ""
 "            manufacturing order. Once you start the first work order of a\n"
 "            manufacturing order, the manufacturing order is automatically\n"
 "            marked as started. Once you finish the latest operation of a\n"
-"            manufacturing order, the MO is automatically done and the "
-"related\n"
+"            manufacturing order, the MO is automatically done and the related\n"
 "            products are produced.\n"
 "          </p>\n"
 "        "
@@ -316,7 +320,7 @@ msgstr ""
 #. module: mrp_operations
 #: help:mrp.production.workcenter.line,delay:0
 msgid "The elapsed time between operation start and stop in this Work Center"
-msgstr "この作業センタでの操作の開始と終了の間の経過時間"
+msgstr "この作業区での操作の開始と終了の間の経過時間"
 
 #. module: mrp_operations
 #: model:process.node,name:mrp_operations.process_node_canceloperation0
@@ -326,7 +330,7 @@ msgstr "操作はキャンセルされました。"
 #. module: mrp_operations
 #: view:mrp.production:0
 msgid "Pause Work Order"
-msgstr "作業オーダーの中断"
+msgstr "作業オーダ停止"
 
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
@@ -339,8 +343,7 @@ msgid "December"
 msgstr "12月"
 
 #. module: mrp_operations
-#: view:mrp.workorder:0
-#: field:mrp.workorder,month:0
+#: view:mrp.workorder:0 field:mrp.workorder,month:0
 msgid "Month"
 msgstr "月"
 
@@ -357,7 +360,7 @@ msgstr ""
 #. module: mrp_operations
 #: model:ir.model,name:mrp_operations.model_mrp_workorder
 msgid "Work Order Report"
-msgstr "作業オーダーレポート"
+msgstr "作業オーダレポート"
 
 #. module: mrp_operations
 #: field:mrp.production.workcenter.line,date_start:0
@@ -368,12 +371,12 @@ msgstr "開始日"
 #. module: mrp_operations
 #: selection:mrp.production.workcenter.line,production_state:0
 msgid "Waiting Goods"
-msgstr "待機商品"
+msgstr "部材待ち"
 
 #. module: mrp_operations
 #: field:mrp.production.workcenter.line,production_state:0
 msgid "Production Status"
-msgstr ""
+msgstr "製造ステータス"
 
 #. module: mrp_operations
 #: selection:mrp.workorder,state:0
@@ -402,8 +405,7 @@ msgid "In order to Resume the operation, it must be in the Pause state!"
 msgstr "操作を再開するには、一時停止状態でなければなりません。"
 
 #. module: mrp_operations
-#: view:mrp.production:0
-#: view:mrp.production.workcenter.line:0
+#: view:mrp.production:0 view:mrp.production.workcenter.line:0
 #: selection:mrp_operations.operation.code,start_stop:0
 msgid "Start"
 msgstr "開始"
@@ -418,17 +420,15 @@ msgstr "カレンダービュー"
 msgid ""
 "When the operation needs to be cancelled, you can do it in the work order "
 "form."
-msgstr "操作をキャンセルする必要がある時、作業オーダーフォームの中で行うことができます。"
+msgstr "操作のキャンセルは作業オーダフォームにて行うことができます。"
 
 #. module: mrp_operations
-#: view:mrp.production:0
-#: view:mrp.production.workcenter.line:0
+#: view:mrp.production:0 view:mrp.production.workcenter.line:0
 msgid "Set Draft"
 msgstr "ドラフトにセット"
 
 #. module: mrp_operations
-#: view:mrp.production:0
-#: view:mrp.production.workcenter.line:0
+#: view:mrp.production:0 view:mrp.production.workcenter.line:0
 #: selection:mrp.production.workcenter.line,state:0
 msgid "Pending"
 msgstr "保留中"
@@ -472,8 +472,7 @@ msgid "June"
 msgstr "6月"
 
 #. module: mrp_operations
-#: view:mrp.workorder:0
-#: field:mrp.workorder,total_cycles:0
+#: view:mrp.workorder:0 field:mrp.workorder,total_cycles:0
 msgid "Total Cycles"
 msgstr "合計サイクル"
 
@@ -490,11 +489,10 @@ msgstr "子の移動"
 #. module: mrp_operations
 #: model:ir.actions.act_window,name:mrp_operations.mrp_production_wc_action_planning
 msgid "Work Orders Planning"
-msgstr "作業オーダー計画"
+msgstr "作業オーダ計画"
 
 #. module: mrp_operations
-#: view:mrp.production.workcenter.line:0
-#: field:mrp.workorder,date:0
+#: view:mrp.production.workcenter.line:0 field:mrp.workorder,date:0
 msgid "Date"
 msgstr "日付"
 
@@ -521,7 +519,7 @@ msgstr "1月"
 #. module: mrp_operations
 #: view:mrp.production:0
 msgid "Resume Work Order"
-msgstr "作業オーダーの再開"
+msgstr "作業オーダ再開"
 
 #. module: mrp_operations
 #: model:process.node,note:mrp_operations.process_node_doneoperation0
@@ -529,15 +527,9 @@ msgid "Finish the operation."
 msgstr "操作の終了"
 
 #. module: mrp_operations
-#: code:addons/mrp_operations/mrp_operations.py:454
-#, python-format
-msgid "Operation is not started yet !"
-msgstr "操作はまだ開始されていません。"
-
-#. module: mrp_operations
 #: model:process.node,note:mrp_operations.process_node_productionorder0
 msgid "Information from the production order."
-msgstr "製造オーダーからの情報"
+msgstr "製造オーダからの情報"
 
 #. module: mrp_operations
 #: code:addons/mrp_operations/mrp_operations.py:454
@@ -562,7 +554,7 @@ msgstr "コード"
 #. module: mrp_operations
 #: model:ir.actions.act_window,name:mrp_operations.mrp_production_wc_confirm_action
 msgid "Confirmed Work Orders"
-msgstr "確認済作業オーダー"
+msgstr "確認済作業オーダ"
 
 #. module: mrp_operations
 #: model:ir.actions.act_window,name:mrp_operations.mrp_production_code_action
@@ -581,8 +573,7 @@ msgstr "操作完了"
 
 #. module: mrp_operations
 #: selection:mrp.production.workcenter.line,production_state:0
-#: view:mrp.workorder:0
-#: selection:mrp_operations.operation.code,start_stop:0
+#: view:mrp.workorder:0 selection:mrp_operations.operation.code,start_stop:0
 msgid "Done"
 msgstr "完了"
 
@@ -597,16 +588,9 @@ msgid "Cancel"
 msgstr "キャンセル"
 
 #. module: mrp_operations
-#: help:mrp.production.workcenter.line,state:0
-msgid ""
-"* When a work order is created it is set in 'Draft' status.\n"
-"* When user sets work order in start mode that time it will be set in 'In "
-"Progress' status.\n"
-"* When work order is in running mode, during that time if user wants to stop "
-"or to make changes in order then can set in 'Pending' status.\n"
-"* When the user cancels the work order it will be set in 'Canceled' status.\n"
-"* When order is completely processed that time it is set in 'Finished' "
-"status."
+#: code:addons/mrp_operations/mrp_operations.py:454
+#, python-format
+msgid "Operation is not started yet!"
 msgstr ""
 
 #. module: mrp_operations
@@ -626,10 +610,8 @@ msgid ""
 "            Click to start a new work order.\n"
 "          </p><p>\n"
 "            To manufacture or assemble products, and use raw materials and\n"
-"            finished products you must also handle manufacturing "
-"operations.\n"
-"            Manufacturing operations are often called Work Orders. The "
-"various\n"
+"            finished products you must also handle manufacturing operations.\n"
+"            Manufacturing operations are often called Work Orders. The various\n"
 "            operations will have different impacts on the costs of\n"
 "            manufacturing and planning depending on the available workload.\n"
 "          </p>\n"
@@ -639,7 +621,7 @@ msgstr ""
 #. module: mrp_operations
 #: model:ir.actions.report.xml,name:mrp_operations.report_wc_barcode
 msgid "Work Centers Barcode"
-msgstr "作業センターバーコード"
+msgstr "作業区バーコード"
 
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0
@@ -652,8 +634,7 @@ msgid "Delay"
 msgstr "遅延"
 
 #. module: mrp_operations
-#: view:mrp.production.workcenter.line:0
-#: view:mrp.workorder:0
+#: view:mrp.production.workcenter.line:0 view:mrp.workorder:0
 #: field:mrp.workorder,production_id:0
 #: field:mrp_operations.operation,production_id:0
 msgid "Production"
@@ -662,16 +643,15 @@ msgstr "製造"
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0
 msgid "Search Work Orders"
-msgstr "作業オーダーの検索"
+msgstr "作業オーダ検索"
 
 #. module: mrp_operations
-#: view:mrp.production.workcenter.line:0
-#: view:mrp.workorder:0
+#: view:mrp.production.workcenter.line:0 view:mrp.workorder:0
 #: field:mrp.workorder,workcenter_id:0
 #: field:mrp_operations.operation,workcenter_id:0
 #: model:process.node,name:mrp_operations.process_node_workorder0
 msgid "Work Center"
-msgstr "作業センタ"
+msgstr "作業区"
 
 #. module: mrp_operations
 #: field:mrp.production.workcenter.line,date_planned:0
@@ -679,15 +659,13 @@ msgid "Scheduled Date"
 msgstr "予定日"
 
 #. module: mrp_operations
-#: field:mrp.production.workcenter.line,product:0
-#: view:mrp.workorder:0
+#: field:mrp.production.workcenter.line,product:0 view:mrp.workorder:0
 #: field:mrp.workorder,product_id:0
 msgid "Product"
 msgstr "製品"
 
 #. module: mrp_operations
-#: view:mrp.workorder:0
-#: field:mrp.workorder,total_hours:0
+#: view:mrp.workorder:0 field:mrp.workorder,total_hours:0
 msgid "Total Hours"
 msgstr "合計時間"
 
@@ -696,7 +674,7 @@ msgstr "合計時間"
 msgid ""
 "Check this to be able to move independently all production orders, without "
 "moving dependent ones."
-msgstr "依存する物を動かすことなく、全ての製造オーダー独立して移動させるためにはこれをチェックして下さい。"
+msgstr ""
 
 #. module: mrp_operations
 #: selection:mrp.workorder,month:0
@@ -704,8 +682,7 @@ msgid "May"
 msgstr "5月"
 
 #. module: mrp_operations
-#: view:mrp.production:0
-#: view:mrp.production.workcenter.line:0
+#: view:mrp.production:0 view:mrp.production.workcenter.line:0
 #: selection:mrp.production.workcenter.line,state:0
 #: selection:mrp.workorder,state:0
 msgid "Finished"
@@ -714,7 +691,7 @@ msgstr "完了"
 #. module: mrp_operations
 #: view:mrp.production.workcenter.line:0
 msgid "Hours by Work Center"
-msgstr "作業センター毎の時間"
+msgstr "作業区毎の時間"
 
 #. module: mrp_operations
 #: field:mrp.production.workcenter.line,delay:0
@@ -764,18 +741,17 @@ msgstr "作業開始"
 #. module: mrp_operations
 #: model:process.transition,note:mrp_operations.process_transition_startdoneoperation0
 msgid ""
-"When the operation is finished, the operator updates the system by finishing "
-"the work order."
-msgstr "操作が完了した時、操作者は作業オーダーを終えるとシステムを更新します。"
+"When the operation is finished, the operator updates the system by finishing"
+" the work order."
+msgstr "操作完了時、オペレータは作業オーダの終了にてシステムを更新します。"
 
 #. module: mrp_operations
 #: model:process.transition,name:mrp_operations.process_transition_workstartoperation0
 msgid "Details of the work order"
-msgstr "作業オーダーの詳細"
+msgstr "作業オーダ詳細"
 
 #. module: mrp_operations
-#: view:mrp.workorder:0
-#: field:mrp.workorder,year:0
+#: view:mrp.workorder:0 field:mrp.workorder,year:0
 msgid "Year"
 msgstr "年"
 

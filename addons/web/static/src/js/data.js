@@ -428,11 +428,32 @@ instance.web.DataSet =  instance.web.Class.extend(instance.web.PropertiesMixin, 
      * @returns {$.Deferred}
      */
     read_ids: function (ids, fields, options) {
+        if (_.isEmpty(ids))
+            return $.Deferred().resolve([]);
+
         options = options || {};
-        // TODO: reorder results to match ids list
-        return this._model.call('read',
-            [ids, fields || false],
-            {context: this.get_context(options.context)});
+        var method = 'read';
+        var ids_arg = ids;
+        var context = this.get_context(options.context);
+        if (options.check_access_rule === true){
+            method = 'search_read';
+            ids_arg = [['id', 'in', ids]];
+            context = new instance.web.CompoundContext(context, {active_test: false});
+        }
+        return this._model.call(method,
+                [ids_arg, fields || false],
+                {context: context})
+            .then(function (records) {
+                if (records.length <= 1) { return records; }
+                var indexes = {};
+                for (var i = 0; i < ids.length; i++) {
+                    indexes[ids[i]] = i;
+                }
+                records.sort(function (a, b) {
+                    return indexes[a.id] - indexes[b.id];
+                });
+                return records;
+        });
     },
     /**
      * Read a slice of the records represented by this DataSet, based on its
@@ -724,7 +745,7 @@ instance.web.DataSetSearch =  instance.web.DataSet.extend({
         });
     },
     get_domain: function (other_domain) {
-        this._model.domain(other_domain);
+        return this._model.domain(other_domain);
     },
     alter_ids: function (ids) {
         this._super(ids);
@@ -761,6 +782,7 @@ instance.web.BufferedDataSet = instance.web.DataSetStatic.extend({
         this._super.apply(this, arguments);
         this.reset_ids([]);
         this.last_default_get = {};
+        this.running_reads = [];
     },
     default_get: function(fields, options) {
         var self = this;
@@ -827,6 +849,9 @@ instance.web.BufferedDataSet = instance.web.DataSetStatic.extend({
         this.to_write = [];
         this.cache = [];
         this.delete_all = false;
+        _.each(_.clone(this.running_reads), function(el) {
+            el.reject();
+        });
     },
     read_ids: function (ids, fields, options) {
         var self = this;
@@ -842,10 +867,10 @@ instance.web.BufferedDataSet = instance.web.DataSetStatic.extend({
                     to_get.push(id);
             }
         });
-        var completion = $.Deferred();
         var return_records = function() {
             var records = _.map(ids, function(id) {
-                return _.extend({}, _.detect(self.cache, function(c) {return c.id === id;}).values, {"id": id});
+                var c = _.find(self.cache, function(c) {return c.id === id;});
+                return _.isUndefined(c) ? c : _.extend({}, c.values, {"id": id});
             });
             if (self.debug_mode) {
                 if (_.include(records, undefined)) {
@@ -873,14 +898,30 @@ instance.web.BufferedDataSet = instance.web.DataSetStatic.extend({
                             sign = -1;
                             field = field.slice(1);
                         }
+                        if(!a[field] && a[field] !== 0){ return sign}
+                        if(!b[field] && b[field] !== 0){ return (sign == -1) ? 1 : -1}
+                        //m2o should be searched based on value[1] not based whole value(i.e. [id, value])
+                        if(_.isArray(a[field]) && a[field].length == 2 && _.isString(a[field][1])){
+                            return sign * compare(a[field][1], b[field][1]);
+                        }
                         return sign * compare(a[field], b[field]);
                     }, 0);
                 });
             }
-            completion.resolve(records);
+            return $.when(records);
         };
         if(to_get.length > 0) {
-            var rpc_promise = this._super(to_get, fields, options).done(function(records) {
+            var def = $.Deferred();
+            self.running_reads.push(def);
+            def.always(function() {
+                self.running_reads = _.without(self.running_reads, def);
+            });
+            this._super(to_get, fields, options).then(function() {
+                def.resolve.apply(def, arguments);
+            }, function() {
+                def.reject.apply(def, arguments);
+            });
+            return def.then(function(records) {
                 _.each(records, function(record, index) {
                     var id = to_get[index];
                     var cached = _.detect(self.cache, function(x) {return x.id === id;});
@@ -891,13 +932,11 @@ instance.web.BufferedDataSet = instance.web.DataSetStatic.extend({
                         cached.values = _.defaults(_.clone(cached.values), record);
                     }
                 });
-                return_records();
+                return return_records();
             });
-            $.when(rpc_promise).fail(function() {completion.reject();});
         } else {
-            return_records();
+            return return_records();
         }
-        return completion.promise();
     },
     /**
      * Invalidates caching of a record in the dataset to ensure the next read
@@ -909,6 +948,15 @@ instance.web.BufferedDataSet = instance.web.DataSetStatic.extend({
      * @param {Object} id record to remove from the BDS's cache
      */
     evict_record: function (id) {
+        // Don't evict records which haven't yet been saved: there is no more
+        // recent data on the server (and there potentially isn't any data),
+        // and this breaks the assumptions of other methods (that the data
+        // for new and altered records is both in the cache and in the to_write
+        // or to_create collection)
+        if (_(this.to_create.concat(this.to_write)).find(function (record) {
+                return record.id === id; })) {
+            return;
+        }
         for(var i=0, len=this.cache.length; i<len; ++i) {
             var record = this.cache[i];
             // if record we call the button upon is in the cache

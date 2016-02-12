@@ -1,4 +1,7 @@
 import unittest2
+
+import openerp.osv.expression as expression
+from openerp.osv.expression import get_unaccent_wrapper
 from openerp.osv.orm import BaseModel
 import openerp.tests.common as common
 
@@ -123,6 +126,7 @@ class test_expression(common.TransactionCase):
 
     def test_20_auto_join(self):
         registry, cr, uid = self.registry, self.cr, self.uid
+        unaccent = get_unaccent_wrapper(cr)
 
         # Get models
         partner_obj = registry('res.partner')
@@ -179,8 +183,11 @@ class test_expression(common.TransactionCase):
         sql_query = self.query_list[0].get_sql()
         self.assertIn('res_partner_bank', sql_query[0],
             "_auto_join off: ('bank_ids.name', 'like', '..') first query incorrect main table")
-        self.assertIn('"res_partner_bank"."name" like %s', sql_query[1],
+
+        expected = "%s::text like %s" % (unaccent('"res_partner_bank"."name"'), unaccent('%s'))
+        self.assertIn(expected, sql_query[1],
             "_auto_join off: ('bank_ids.name', 'like', '..') first query incorrect where condition")
+        
         self.assertEqual(set(['%' + name_test + '%']), set(sql_query[2]),
             "_auto_join off: ('bank_ids.name', 'like', '..') first query incorrect parameter")
         sql_query = self.query_list[2].get_sql()
@@ -216,8 +223,11 @@ class test_expression(common.TransactionCase):
             "_auto_join on: ('bank_ids.name', 'like', '..') query incorrect main table")
         self.assertIn('"res_partner_bank" as "res_partner__bank_ids"', sql_query[0],
             "_auto_join on: ('bank_ids.name', 'like', '..') query incorrect join")
-        self.assertIn('"res_partner__bank_ids"."name" like %s', sql_query[1],
+
+        expected = "%s::text like %s" % (unaccent('"res_partner__bank_ids"."name"'), unaccent('%s'))
+        self.assertIn(expected, sql_query[1],
             "_auto_join on: ('bank_ids.name', 'like', '..') query incorrect where condition")
+        
         self.assertIn('"res_partner"."id"="res_partner__bank_ids"."partner_id"', sql_query[1],
             "_auto_join on: ('bank_ids.name', 'like', '..') query incorrect join condition")
         self.assertEqual(set(['%' + name_test + '%']), set(sql_query[2]),
@@ -295,8 +305,11 @@ class test_expression(common.TransactionCase):
         sql_query = self.query_list[0].get_sql()
         self.assertIn('"res_country"', sql_query[0],
             "_auto_join on for state_id: ('state_id.country_id.code', 'like', '..') query 1 incorrect main table")
-        self.assertIn('"res_country"."code" like %s', sql_query[1],
+
+        expected = "%s::text like %s" % (unaccent('"res_country"."code"'), unaccent('%s'))
+        self.assertIn(expected, sql_query[1],
             "_auto_join on for state_id: ('state_id.country_id.code', 'like', '..') query 1 incorrect where condition")
+
         self.assertEqual(['%' + name_test + '%'], sql_query[2],
             "_auto_join on for state_id: ('state_id.country_id.code', 'like', '..') query 1 incorrect parameter")
         sql_query = self.query_list[1].get_sql()
@@ -326,8 +339,11 @@ class test_expression(common.TransactionCase):
             "_auto_join on for country_id: ('state_id.country_id.code', 'like', '..') query 1 incorrect main table")
         self.assertIn('"res_country" as "res_country_state__country_id"', sql_query[0],
             "_auto_join on for country_id: ('state_id.country_id.code', 'like', '..') query 1 incorrect join")
-        self.assertIn('"res_country_state__country_id"."code" like %s', sql_query[1],
+
+        expected = "%s::text like %s" % (unaccent('"res_country_state__country_id"."code"'), unaccent('%s'))
+        self.assertIn(expected, sql_query[1],
             "_auto_join on for country_id: ('state_id.country_id.code', 'like', '..') query 1 incorrect where condition")
+        
         self.assertIn('"res_country_state"."country_id"="res_country_state__country_id"."id"', sql_query[1],
             "_auto_join on for country_id: ('state_id.country_id.code', 'like', '..') query 1 incorrect join condition")
         self.assertEqual(['%' + name_test + '%'], sql_query[2],
@@ -357,8 +373,11 @@ class test_expression(common.TransactionCase):
             "_auto_join on: ('state_id.country_id.code', 'like', '..') query incorrect join")
         self.assertIn('"res_country" as "res_partner__state_id__country_id"', sql_query[0],
             "_auto_join on: ('state_id.country_id.code', 'like', '..') query incorrect join")
-        self.assertIn('"res_partner__state_id__country_id"."code" like %s', sql_query[1],
+
+        expected = "%s::text like %s" % (unaccent('"res_partner__state_id__country_id"."code"'), unaccent('%s'))
+        self.assertIn(expected, sql_query[1],
             "_auto_join on: ('state_id.country_id.code', 'like', '..') query incorrect where condition")
+        
         self.assertIn('"res_partner"."state_id"="res_partner__state_id"."id"', sql_query[1],
             "_auto_join on: ('state_id.country_id.code', 'like', '..') query incorrect join condition")
         self.assertIn('"res_partner__state_id"."country_id"="res_partner__state_id__country_id"."id"', sql_query[1],
@@ -384,7 +403,9 @@ class test_expression(common.TransactionCase):
             "_auto_join on one2many with domains incorrect result")
         # Test produced queries that domains effectively present
         sql_query = self.query_list[0].get_sql()
-        self.assertIn('"res_partner__child_ids__bank_ids"."acc_number" like %s', sql_query[1],
+        
+        expected = "%s::text like %s" % (unaccent('"res_partner__child_ids__bank_ids"."acc_number"'), unaccent('%s'))
+        self.assertIn(expected, sql_query[1],
             "_auto_join on one2many with domains incorrect result")
         # TDE TODO: check first domain has a correct table name
         self.assertIn('"res_partner__child_ids"."name" = %s', sql_query[1],
@@ -438,6 +459,38 @@ class test_expression(common.TransactionCase):
         partner_state_id_col._auto_join = False
         partner_parent_id_col._auto_join = False
         state_country_id_col._auto_join = False
+
+    def test_40_negating_long_expression(self):
+        source = ['!','&',('user_id','=',4),('partner_id','in',[1,2])]
+        expect = ['|',('user_id','!=',4),('partner_id','not in',[1,2])]
+        self.assertEqual(expression.distribute_not(source), expect,
+            "distribute_not on expression applied wrongly")
+
+        pos_leaves = [[('a', 'in', [])], [('d', '!=', 3)]]
+        neg_leaves = [[('a', 'not in', [])], [('d', '=', 3)]]
+
+        source = expression.OR([expression.AND(pos_leaves)] * 1000)
+        expect = source
+        self.assertEqual(expression.distribute_not(source), expect,
+            "distribute_not on long expression without negation operator should not alter it")
+
+        source = ['!'] + source
+        expect = expression.AND([expression.OR(neg_leaves)] * 1000)
+        self.assertEqual(expression.distribute_not(source), expect,
+            "distribute_not on long expression applied wrongly")
+
+    def test_translate_search(self):
+        Country = self.registry('res.country')
+        be = self.ref('base.be')
+        domains = [
+            [('name', '=', 'Belgium')],
+            [('name', 'ilike', 'Belgi')],
+            [('name', 'in', ['Belgium', 'Care Bears'])],
+        ]
+
+        for domain in domains:
+            ids = Country.search(self.cr, self.uid, domain)
+            self.assertListEqual([be], ids)
 
 if __name__ == '__main__':
     unittest2.main()

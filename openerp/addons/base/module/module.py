@@ -30,6 +30,7 @@ import shutil
 import tempfile
 import urllib
 import urllib2
+import urlparse
 import zipfile
 import zipimport
 
@@ -39,10 +40,12 @@ except ImportError:
     from StringIO import StringIO   # NOQA
 
 import openerp
+import openerp.exceptions
 from openerp import modules, pooler, tools, addons
 from openerp.modules.db import create_categories
 from openerp.tools.parse_version import parse_version
 from openerp.tools.translate import _
+from openerp.tools import html_sanitize
 from openerp.osv import fields, osv, orm
 
 _logger = logging.getLogger(__name__)
@@ -152,9 +155,10 @@ class module(osv.osv):
     def _get_desc(self, cr, uid, ids, field_name=None, arg=None, context=None):
         res = dict.fromkeys(ids, '')
         for module in self.browse(cr, uid, ids, context=context):
-            overrides = dict(embed_stylesheet=False, doctitle_xform=False, output_encoding='unicode')
+            overrides = dict(embed_stylesheet=False, doctitle_xform=False,
+                             output_encoding='unicode', xml_declaration=False)
             output = publish_string(source=module.description, settings_overrides=overrides, writer=MyWriter())
-            res[module.id] = output
+            res[module.id] = html_sanitize(output)
         return res
 
     def _get_latest_version(self, cr, uid, ids, field_name=None, arg=None, context=None):
@@ -432,13 +436,9 @@ class module(osv.osv):
         including the deletion of all database structures created by the module:
         tables, columns, constraints, etc."""
         ir_model_data = self.pool.get('ir.model.data')
-        ir_model_constraint = self.pool.get('ir.model.constraint')
         modules_to_remove = [m.name for m in self.browse(cr, uid, ids, context)]
-        modules_to_remove_ids = [m.id for m in self.browse(cr, uid, ids, context)]
-        constraint_ids = ir_model_constraint.search(cr, uid, [('module', 'in', modules_to_remove_ids)])
-        ir_model_constraint._module_data_uninstall(cr, uid, constraint_ids, context)
         ir_model_data._module_data_uninstall(cr, uid, modules_to_remove, context)
-        self.write(cr, uid, ids, {'state': 'uninstalled'})
+        self.write(cr, uid, ids, {'state': 'uninstalled', 'latest_version': False})
         return True
 
     def downstream_dependencies(self, cr, uid, ids, known_dep_ids=None,
@@ -487,6 +487,7 @@ class module(osv.osv):
             'params': {'menu_id': menu_ids and menu_ids[0] or False}
         }
 
+    #TODO remove me in master, not called anymore
     def button_immediate_uninstall(self, cr, uid, ids, context=None):
         """
         Uninstall the selected module(s) immediately and fully,
@@ -619,40 +620,14 @@ class module(osv.osv):
         return res
 
     def download(self, cr, uid, ids, download=True, context=None):
-        res = []
-        default_version = modules.adapt_version('1.0')
-        for mod in self.browse(cr, uid, ids, context=context):
-            if not mod.url:
-                continue
-            match = re.search('-([a-zA-Z0-9\._-]+)(\.zip)', mod.url, re.I)
-            version = default_version
-            if match:
-                version = match.group(1)
-            if parse_version(mod.installed_version) >= parse_version(version):
-                continue
-            res.append(mod.url)
-            if not download:
-                continue
-            zip_content = urllib.urlopen(mod.url).read()
-            fname = modules.get_module_path(str(mod.name) + '.zip', downloaded=True)
-            try:
-                with open(fname, 'wb') as fp:
-                    fp.write(zip_content)
-            except Exception:
-                _logger.exception('Error when trying to create module '
-                                  'file %s', fname)
-                raise orm.except_orm(_('Error'), _('Can not create the module file:\n %s') % (fname,))
-            terp = self.get_module_info(mod.name)
-            self.write(cr, uid, mod.id, self.get_values_from_terp(terp))
-            cr.execute('DELETE FROM ir_module_module_dependency WHERE module_id = %s', (mod.id,))
-            self._update_dependencies(cr, uid, mod, terp.get('depends', []))
-            self._update_category(cr, uid, mod, terp.get('category', 'Uncategorized'))
-            # Import module
-            zimp = zipimport.zipimporter(fname)
-            zimp.load_module(mod.name)
-        return res
+        return []
 
     def install_from_urls(self, cr, uid, urls, context=None):
+        if not self.pool['res.users'].has_group(cr, uid, 'base.group_system'):
+            raise openerp.exceptions.AccessDenied()
+
+        apps_server = urlparse.urlparse(self.get_apps_server(cr, uid, context=context))
+
         OPENERP = 'openerp'
         tmp = tempfile.mkdtemp()
         _logger.debug('Install from url: %r', urls)
@@ -661,6 +636,11 @@ class module(osv.osv):
             for module_name, url in urls.items():
                 if not url:
                     continue    # nothing to download, local version is already the last one
+
+                up = urlparse.urlparse(url)
+                if up.scheme != apps_server.scheme or up.netloc != apps_server.netloc:
+                    raise openerp.exceptions.AccessDenied()
+
                 try:
                     _logger.info('Downloading module `%s` from OpenERP Apps', module_name)
                     content = urllib2.urlopen(url).read()
@@ -725,8 +705,8 @@ class module(osv.osv):
         finally:
             shutil.rmtree(tmp)
 
-    def install_by_names(self, cr, uid, names, context=None):
-        raise NotImplementedError('# TODO')
+    def get_apps_server(self, cr, uid, context=None):
+        return tools.config.get('apps_server', 'https://apps.openerp.com/apps')
 
     def _update_dependencies(self, cr, uid, mod_browse, depends=None):
         if depends is None:

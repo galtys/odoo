@@ -1,21 +1,22 @@
-# Mongolian translation for openobject-addons
-# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
-#
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+# * project_long_term
+# 
+# Translators:
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Project-Id-Version: Odoo 7.0\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-07 19:37+0000\n"
-"PO-Revision-Date: 2013-02-15 01:54+0000\n"
-"Last-Translator: gobi <Unknown>\n"
-"Language-Team: Mongolian <mn@li.org>\n"
+"PO-Revision-Date: 2015-05-29 13:15+0000\n"
+"Last-Translator: Martin Trigaux\n"
+"Language-Team: Mongolian (http://www.transifex.com/odoo/odoo-7/language/mn/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-07-11 06:18+0000\n"
-"X-Generator: Launchpad (build 16696)\n"
+"Content-Transfer-Encoding: \n"
+"Language: mn\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. module: project_long_term
 #: help:project.phase,constraint_date_end:0
@@ -23,8 +24,7 @@ msgid "force the phase to finish before this date"
 msgstr "энэ огнооны өмнө шатыг хүчээр дуусгах"
 
 #. module: project_long_term
-#: view:project.phase:0
-#: selection:project.phase,state:0
+#: view:project.phase:0 selection:project.phase,state:0
 msgid "In Progress"
 msgstr "Хийгдэж байна"
 
@@ -38,8 +38,7 @@ msgstr "Шатууд"
 #. module: project_long_term
 #: model:ir.actions.act_window,name:project_long_term.act_resouce_allocation
 #: model:ir.ui.menu,name:project_long_term.menu_resouce_allocation
-#: view:project.phase:0
-#: view:project.user.allocation:0
+#: view:project.phase:0 view:project.user.allocation:0
 msgid "Team Planning"
 msgstr "Багийн төлөвлөлт"
 
@@ -49,8 +48,7 @@ msgid "Assigned Users"
 msgstr "Оноогдсон Хэрэглэгчид"
 
 #. module: project_long_term
-#: view:project.phase:0
-#: field:project.phase,next_phase_ids:0
+#: view:project.phase:0 field:project.phase,next_phase_ids:0
 msgid "Next Phases"
 msgstr "Дараагийн Шатууд"
 
@@ -67,13 +65,9 @@ msgstr "Төслийн Даалгаврууд"
 #. module: project_long_term
 #: model:ir.actions.act_window,help:project_long_term.action_project_compute_phases
 msgid ""
-"To schedule phases of all or a specified project. It then open a gantt "
-"view.\n"
+"To schedule phases of all or a specified project. It then open a gantt view.\n"
 "               "
-msgstr ""
-"Бүх төслийн эсвэл тухайлсан төслийн шатыг товыг гаргах. Дараа нь Гантт "
-"харагдацаар нээгдэнэ.\n"
-"               "
+msgstr "Бүх төслийн эсвэл тухайлсан төслийн шатыг товыг гаргах. Дараа нь Гантт харагдацаар нээгдэнэ.\n               "
 
 #. module: project_long_term
 #: field:project.phase,task_ids:0
@@ -85,7 +79,7 @@ msgstr "Төслийн даалгаврууд"
 #: model:ir.ui.menu,name:project_long_term.menu_compute_phase
 #: view:project.compute.phases:0
 msgid "Schedule Phases"
-msgstr "Шатуудыг Товыг Гаргах"
+msgstr "Шатуудыг Товлох"
 
 #. module: project_long_term
 #: field:project.phase,sequence:0
@@ -113,14 +107,12 @@ msgid "Draft"
 msgstr "Ноорог"
 
 #. module: project_long_term
-#: view:project.compute.phases:0
-#: view:project.compute.tasks:0
+#: view:project.compute.phases:0 view:project.compute.tasks:0
 msgid "C_ompute"
 msgstr "Тооцоолох"
 
 #. module: project_long_term
-#: view:project.phase:0
-#: selection:project.phase,state:0
+#: view:project.phase:0 selection:project.phase,state:0
 msgid "New"
 msgstr "Шинэ"
 
@@ -135,8 +127,7 @@ msgid "Resource Leaves"
 msgstr "Нөөцийн Амралт, Чөлөө"
 
 #. module: project_long_term
-#: view:project.phase:0
-#: selection:project.phase,state:0
+#: view:project.phase:0 selection:project.phase,state:0
 msgid "Pending"
 msgstr "Хүлээгдэж буй"
 
@@ -160,11 +151,10 @@ msgstr "%s (хуулбар)"
 #: code:addons/project_long_term/wizard/project_compute_phases.py:48
 #, python-format
 msgid "Please specify a project to schedule."
-msgstr "Төслийн товийг зааж өгнө үү."
+msgstr "Товлох төслийг зааж өгнө үү."
 
 #. module: project_long_term
-#: view:project.phase:0
-#: view:project.user.allocation:0
+#: view:project.phase:0 view:project.user.allocation:0
 msgid "Group By..."
 msgstr "Бүлэглэх..."
 
@@ -193,28 +183,21 @@ msgstr "Төслийн нөөц нь товлогчоор автоматаар �
 #. module: project_long_term
 #: view:project.phase:0
 msgid "Cancel Phase"
-msgstr ""
+msgstr "Шатыг Цуцлах"
 
 #. module: project_long_term
 #: help:account.analytic.account,use_phases:0
 msgid "Check this field if you plan to use phase-based scheduling"
-msgstr ""
-"Хэрэв шат дээр суурилсан төлөвлөлтийг хэрэглэхээр бол энэ талбарыг сонгоно"
+msgstr "Хэрэв шат дээр суурилсан төлөвлөлтийг хэрэглэхээр бол энэ талбарыг сонгоно"
 
 #. module: project_long_term
 #: help:project.phase,state:0
 msgid ""
 "If the phase is created the status 'Draft'.\n"
 " If the phase is started, the status becomes 'In Progress'.\n"
-" If review is needed the phase is in 'Pending' status.                       "
-"           \n"
+" If review is needed the phase is in 'Pending' status.                                  \n"
 " If the phase is over, the status is set to 'Done'."
-msgstr ""
-"Шат үүсгэгдсэн даруйдаа 'Ноорог' төлөвтэй байна.\n"
-" Шат эхлэмэгцээ 'Хийгдэж буй' төлөвтэй болно.\n"
-" Хэрэв шат ревюү хийгдэх шаардлагатай бол 'Хүлээгдэж буй' төлөвтэй болно.    "
-"                              \n"
-" Хэрэв шат дууссанм бол 'Хийгдсэн' төлөвтэй болно."
+msgstr "Шат үүсгэгдсэн даруйдаа 'Ноорог' төлөвтэй байна.\n Шат эхлэмэгцээ 'Хийгдэж буй' төлөвтэй болно.\n Хэрэв шат ревюү хийгдэх шаардлагатай бол 'Хүлээгдэж буй' төлөвтэй болно.                                  \n Хэрэв шат дууссанм бол 'Хийгдсэн' төлөвтэй болно."
 
 #. module: project_long_term
 #: field:project.phase,progress:0
@@ -233,15 +216,14 @@ msgid "My Projects"
 msgstr "Миний төслүүд"
 
 #. module: project_long_term
-#: view:project.project:0
-#: view:project.user.allocation:0
+#: view:project.project:0 view:project.user.allocation:0
 msgid "Phase"
 msgstr "Шат"
 
 #. module: project_long_term
 #: help:project.phase,duration:0
 msgid "By default in days"
-msgstr "Анхныхаар өдрөөр"
+msgstr "Анхныхаараа өдрөөр"
 
 #. module: project_long_term
 #: model:ir.ui.menu,name:project_long_term.menu_view_resource_calendar
@@ -269,8 +251,7 @@ msgid "Start Month"
 msgstr "Эхлэх Сар"
 
 #. module: project_long_term
-#: field:project.phase,date_end:0
-#: field:project.user.allocation,date_end:0
+#: field:project.phase,date_end:0 field:project.user.allocation,date_end:0
 msgid "End Date"
 msgstr "Дуусах огноо"
 
@@ -288,13 +269,7 @@ msgid ""
 "scheduling. Use the long term planning in order to planify your available "
 "users, convert your phases into a series of tasks when you start working on "
 "the project."
-msgstr ""
-"Төсөл нь ялгаатай шатуудад хуваагдаж болно. Шат бүрт хэрэглэгчдийн "
-"хуваарьлалтыг хийж болно. Шатуудад даалгавруудыг онооно. Шатуудыг өмнөх, "
-"хойдох шаттай нь холбож болно. Шатуудад автомат товлолтыг хийх огнооны "
-"хяналтуудыг нэмэх боломжтой. Урт хугацааны төлөвлөлтийг байгаа хэрэглэгчид "
-"төлөвлөхдөө хэрэглэж төслийг эхлэхдээ шатуудыг бүлэг даалгаврууд руу "
-"хөрвүүлэх замаар эхлүүлнэ."
+msgstr "Төсөл нь ялгаатай шатуудад хуваагдаж болно. Шат бүрт хэрэглэгчдийн хуваарьлалтыг хийж болно. Шатуудад даалгавруудыг онооно. Шатуудыг өмнөх, хойдох шаттай нь холбож болно. Шатуудад автомат товлолтыг хийх огнооны хяналтуудыг нэмэх боломжтой. Урт хугацааны төлөвлөлтийг байгаа хэрэглэгчид төлөвлөхдөө хэрэглэж төслийг эхлэхдээ шатуудыг бүлэг даалгаврууд руу хөрвүүлэх замаар эхлүүлнэ."
 
 #. module: project_long_term
 #: selection:project.compute.phases,target_project:0
@@ -302,8 +277,7 @@ msgid "Compute a Single Project"
 msgstr "Нэг төслийг Тооцоолох"
 
 #. module: project_long_term
-#: view:project.phase:0
-#: field:project.phase,previous_phase_ids:0
+#: view:project.phase:0 field:project.phase,previous_phase_ids:0
 msgid "Previous Phases"
 msgstr "Өмнөх Шатууд"
 
@@ -325,9 +299,9 @@ msgstr "Нээлттэй Шатууд"
 #. module: project_long_term
 #: help:project.phase,date_end:0
 msgid ""
-" It's computed by the scheduler according to the start date and the duration."
-msgstr ""
-" Энэ нь эхлэх огноо, үргэлжлэх хугацааны дагуу товлогчоор тооцоологддог."
+" It's computed by the scheduler according to the start date and the "
+"duration."
+msgstr " Энэ нь эхлэх огноо, үргэлжлэх хугацааны дагуу товлогчоор тооцоологддог."
 
 #. module: project_long_term
 #: constraint:project.phase:0
@@ -335,26 +309,21 @@ msgid "Loops in phases not allowed"
 msgstr "Шатанд давталт зөвшөөрөгдөхгүй"
 
 #. module: project_long_term
-#: view:project.user.allocation:0
-#: field:project.user.allocation,user_id:0
+#: view:project.user.allocation:0 field:project.user.allocation,user_id:0
 msgid "User"
 msgstr "Хэрэглэгч"
 
 #. module: project_long_term
 #: model:ir.model,name:project_long_term.model_project_project
 #: field:project.compute.phases,project_id:0
-#: field:project.compute.tasks,project_id:0
-#: view:project.phase:0
-#: field:project.phase,project_id:0
-#: view:project.task:0
-#: view:project.user.allocation:0
-#: field:project.user.allocation,project_id:0
+#: field:project.compute.tasks,project_id:0 view:project.phase:0
+#: field:project.phase,project_id:0 view:project.task:0
+#: view:project.user.allocation:0 field:project.user.allocation,project_id:0
 msgid "Project"
 msgstr "Төсөл"
 
 #. module: project_long_term
-#: view:project.compute.phases:0
-#: view:project.compute.tasks:0
+#: view:project.compute.phases:0 view:project.compute.tasks:0
 msgid "Cancel"
 msgstr "Цуцлах"
 
@@ -365,9 +334,7 @@ msgstr "Төслийн Хэрэглэгчид"
 
 #. module: project_long_term
 #: model:ir.model,name:project_long_term.model_project_phase
-#: view:project.phase:0
-#: view:project.task:0
-#: field:project.task,phase_id:0
+#: view:project.phase:0 view:project.task:0 field:project.task,phase_id:0
 #: field:project.user.allocation,phase_id:0
 msgid "Project Phase"
 msgstr "Төслийн Шат"
@@ -398,19 +365,17 @@ msgid "Project Compute Phases"
 msgstr "Төслийн Шатыг Тооцоолох"
 
 #. module: project_long_term
-#: field:project.phase,date_start:0
-#: field:project.user.allocation,date_start:0
+#: field:project.phase,date_start:0 field:project.user.allocation,date_start:0
 msgid "Start Date"
 msgstr "Эхлэх огноо"
 
 #. module: project_long_term
 #: view:project.phase:0
 msgid "Constraints"
-msgstr "Хяналт"
+msgstr "Хязгаарлалт"
 
 #. module: project_long_term
-#: view:project.phase:0
-#: field:project.phase,state:0
+#: view:project.phase:0 field:project.phase,state:0
 msgid "Status"
 msgstr "Төлөв"
 
@@ -438,19 +403,16 @@ msgstr "Алдаа!"
 #. module: project_long_term
 #: help:project.phase,date_start:0
 msgid ""
-"It's computed by the scheduler according the project date or the end date of "
-"the previous phase."
-msgstr ""
-"төслийн эхлэх огноо эсвэл өмнөх шатын дуусах огнооны дагуу товлогчоор "
-"автоматаар энэ нь тооцоологддог."
+"It's computed by the scheduler according the project date or the end date of"
+" the previous phase."
+msgstr "төслийн эхлэх огноо эсвэл өмнөх шатын дуусах огнооны дагуу товлогчоор автоматаар энэ нь тооцоологддог."
 
 #. module: project_long_term
 #: model:ir.actions.act_window,name:project_long_term.act_project_phase
 #: model:ir.actions.act_window,name:project_long_term.act_project_phase_list
 #: model:ir.ui.menu,name:project_long_term.menu_project_phase
 #: model:ir.ui.menu,name:project_long_term.menu_project_phase_list
-#: view:project.phase:0
-#: field:project.project,phase_ids:0
+#: view:project.phase:0 field:project.project,phase_ids:0
 msgid "Project Phases"
 msgstr "Төслийн шатууд"
 
@@ -487,8 +449,7 @@ msgid "Schedule Tasks"
 msgstr "Даалгавруудыг Товлох"
 
 #. module: project_long_term
-#: view:project.phase:0
-#: selection:project.phase,state:0
+#: view:project.phase:0 selection:project.phase,state:0
 msgid "Done"
 msgstr "Хийгдсэн"
 
@@ -503,8 +464,7 @@ msgid "Force Assigned Users"
 msgstr "Оноогдсон хэрэглэгчдийг албадах"
 
 #. module: project_long_term
-#: view:project.phase:0
-#: field:project.phase,duration:0
+#: view:project.phase:0 field:project.phase,duration:0
 msgid "Duration"
 msgstr "Үргэлжлэх хугацаа"
 
@@ -519,7 +479,6 @@ msgid "Name"
 msgstr "Нэр"
 
 #. module: project_long_term
-#: view:project.compute.phases:0
-#: view:project.compute.tasks:0
+#: view:project.compute.phases:0 view:project.compute.tasks:0
 msgid "or"
 msgstr "эсвэл"

@@ -145,8 +145,9 @@ class hr_contract(osv.osv):
         @param contract_ids: list of contracts
         @return: the structures linked to the given contracts, ordered by hierachy (parent=False first, then first level children and so on) and without duplicata
         """
-        all_structures = []
-        structure_ids = [contract.struct_id.id for contract in self.browse(cr, uid, contract_ids, context=context)]
+        structure_ids = [contract.struct_id.id for contract in self.browse(cr, uid, contract_ids, context=context) if contract.struct_id]
+        if not structure_ids:
+            return []
         return list(set(self.pool.get('hr.payroll.structure')._get_parent_structure(cr, uid, structure_ids, context=context)))
 
 hr_contract()
@@ -385,7 +386,7 @@ class hr_payslip(osv.osv):
         #OR if it starts between the given dates
         clause_2 = ['&',('date_start', '<=', date_to),('date_start','>=', date_from)]
         #OR if it starts before the date_from and finish after the date_end (or never finish)
-        clause_3 = [('date_start','<=', date_from),'|',('date_end', '=', False),('date_end','>=', date_to)]
+        clause_3 = ['&',('date_start','<=', date_from),'|',('date_end', '=', False),('date_end','>=', date_to)]
         clause_final =  [('employee_id', '=', employee.id),'|','|'] + clause_1 + clause_2 + clause_3
         contract_ids = contract_obj.search(cr, uid, clause_final, context=context)
         return contract_ids
@@ -577,7 +578,7 @@ class hr_payslip(osv.osv):
         payslip_obj = Payslips(self.pool, cr, uid, payslip.employee_id.id, payslip)
         rules_obj = BrowsableObject(self.pool, cr, uid, payslip.employee_id.id, rules)
 
-        localdict = {'categories': categories_obj, 'rules': rules_obj, 'payslip': payslip_obj, 'worked_days': worked_days_obj, 'inputs': input_obj}
+        baselocaldict = {'categories': categories_obj, 'rules': rules_obj, 'payslip': payslip_obj, 'worked_days': worked_days_obj, 'inputs': input_obj}
         #get the ids of the structures on the contracts and their parent id as well
         structure_ids = self.pool.get('hr.contract').get_all_structures(cr, uid, contract_ids, context=context)
         #get the rules of the structure and thier children
@@ -587,11 +588,12 @@ class hr_payslip(osv.osv):
 
         for contract in self.pool.get('hr.contract').browse(cr, uid, contract_ids, context=context):
             employee = contract.employee_id
-            localdict.update({'employee': employee, 'contract': contract})
+            localdict = dict(baselocaldict, employee=employee, contract=contract)
             for rule in obj_rule.browse(cr, uid, sorted_rule_ids, context=context):
                 key = rule.code + '-' + str(contract.id)
                 localdict['result'] = None
                 localdict['result_qty'] = 1.0
+                localdict['result_rate'] = 100
                 #check if the rule can be applied
                 if obj_rule.satisfy_condition(cr, uid, rule.id, localdict, context=context) and rule.id not in blacklist:
                     #compute the amount of the rule
@@ -866,18 +868,20 @@ result = rules.NET > categories.NET * 0.10''',
         rule = self.browse(cr, uid, rule_id, context=context)
         if rule.amount_select == 'fix':
             try:
-                return rule.amount_fix, eval(rule.quantity, localdict), 100.0
+                return rule.amount_fix, float(eval(rule.quantity, localdict)), 100.0
             except:
                 raise osv.except_osv(_('Error!'), _('Wrong quantity defined for salary rule %s (%s).')% (rule.name, rule.code))
         elif rule.amount_select == 'percentage':
             try:
-                return eval(rule.amount_percentage_base, localdict), eval(rule.quantity, localdict), rule.amount_percentage
+                return (float(eval(rule.amount_percentage_base, localdict)),
+                        float(eval(rule.quantity, localdict)),
+                        rule.amount_percentage)
             except:
                 raise osv.except_osv(_('Error!'), _('Wrong percentage base or quantity defined for salary rule %s (%s).')% (rule.name, rule.code))
         else:
             try:
                 eval(rule.amount_python_compute, localdict, mode='exec', nocopy=True)
-                return localdict['result'], 'result_qty' in localdict and localdict['result_qty'] or 1.0, 'result_rate' in localdict and localdict['result_rate'] or 100.0
+                return float(localdict['result']), 'result_qty' in localdict and localdict['result_qty'] or 1.0, 'result_rate' in localdict and localdict['result_rate'] or 100.0
             except:
                 raise osv.except_osv(_('Error!'), _('Wrong python code defined for salary rule %s (%s).')% (rule.name, rule.code))
 
@@ -971,7 +975,7 @@ class hr_employee(osv.osv):
         current_date = datetime.now().strftime('%Y-%m-%d')
         for employee in self.browse(cr, uid, ids, context=context):
             if not employee.contract_ids:
-                res[employee.id] = {'basic': 0.0}
+                res[employee.id] = 0.0
                 continue
             cr.execute( 'SELECT SUM(wage) '\
                         'FROM hr_contract '\
@@ -980,7 +984,7 @@ class hr_employee(osv.osv):
                         'AND (date_end > %s OR date_end is NULL)',
                          (employee.id, current_date, current_date))
             result = dict(cr.dictfetchone())
-            res[employee.id] = {'basic': result['sum']}
+            res[employee.id] = result['sum']
         return res
 
     _columns = {

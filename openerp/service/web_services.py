@@ -97,6 +97,24 @@ def _initialize_db(serv, id, db_name, demo, lang, user_password):
         if cr:
             cr.close()
 
+def _drop_conn(cr, db_name):
+    # Try to terminate all other connections that might prevent
+    # dropping the database
+    try:
+
+        # PostgreSQL 9.2 renamed pg_stat_activity.procpid to pid:
+        # http://www.postgresql.org/docs/9.2/static/release-9-2.html#AEN110389
+        pid_col = 'pid' if cr._cnx.server_version >= 90200 else 'procpid'
+
+        cr.execute("""SELECT pg_terminate_backend(%(pid_col)s)
+                          FROM pg_stat_activity
+                          WHERE datname = %%s AND
+                                %(pid_col)s != pg_backend_pid()""" % {
+        'pid_col': pid_col},
+                   (db_name,))
+    except Exception:
+        pass
+
 class db(netsvc.ExportService):
     def __init__(self, name="db"):
         netsvc.ExportService.__init__(self, name)
@@ -175,6 +193,7 @@ class db(netsvc.ExportService):
         cr = db.cursor()
         try:
             cr.autocommit(True) # avoid transaction block
+            _drop_conn(cr, db_original_name)
             cr.execute("""CREATE DATABASE "%s" ENCODING 'unicode' TEMPLATE "%s" """ % (db_name, db_original_name))
         finally:
             cr.close()
@@ -196,30 +215,16 @@ class db(netsvc.ExportService):
                 raise Exception, e
 
     def exp_drop(self, db_name):
-        if not self.exp_db_exist(db_name):
+        if db_name not in self.exp_list(True):
             return False
         openerp.modules.registry.RegistryManager.delete(db_name)
         sql_db.close_db(db_name)
 
         db = sql_db.db_connect('postgres')
         cr = db.cursor()
-        cr.autocommit(True) # avoid transaction block
         try:
-            # Try to terminate all other connections that might prevent
-            # dropping the database
-            try:
-
-                # PostgreSQL 9.2 renamed pg_stat_activity.procpid to pid:
-                # http://www.postgresql.org/docs/9.2/static/release-9-2.html#AEN110389
-                pid_col = 'pid' if cr._cnx.server_version >= 90200 else 'procpid'
-
-                cr.execute("""SELECT pg_terminate_backend(%(pid_col)s)
-                              FROM pg_stat_activity
-                              WHERE datname = %%s AND 
-                                    %(pid_col)s != pg_backend_pid()""" % {'pid_col': pid_col},
-                           (db_name,))
-            except Exception:
-                pass
+            cr.autocommit(True) # avoid transaction block
+            _drop_conn(cr, db_name)
 
             try:
                 cr.execute('DROP DATABASE "%s"' % db_name)
@@ -329,8 +334,9 @@ class db(netsvc.ExportService):
 
         db = sql_db.db_connect('postgres')
         cr = db.cursor()
-        cr.autocommit(True) # avoid transaction block
         try:
+            cr.autocommit(True) # avoid transaction block
+            _drop_conn(cr, old_name)
             try:
                 cr.execute('ALTER DATABASE "%s" RENAME TO "%s"' % (old_name, new_name))
             except Exception, e:
@@ -371,7 +377,7 @@ class db(netsvc.ExportService):
                     cr.execute("select datname from pg_database where datdba=(select usesysid from pg_user where usename=%s) and datname not in %s order by datname", (db_user, templates_list))
                 else:
                     cr.execute("select datname from pg_database where datname not in %s order by datname", (templates_list,))
-                res = [str(name) for (name,) in cr.fetchall()]
+                res = [tools.ustr(name) for (name,) in cr.fetchall()]
             except Exception:
                 res = []
         finally:

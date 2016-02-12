@@ -8,6 +8,8 @@ class test_base(common.TransactionCase):
     def setUp(self):
         super(test_base,self).setUp()
         self.res_partner = self.registry('res.partner')
+        self.res_users = self.registry('res.users')
+        self.res_partner_title = self.registry('res.partner.title')
 
         # samples use effective TLDs from the Mozilla public suffix
         # list at http://publicsuffix.org
@@ -39,6 +41,20 @@ class test_base(common.TransactionCase):
         new_id2 = self.res_partner.find_or_create(cr, uid, self.samples[2][0])
         self.assertTrue(new_id2 > new_id, 'find_or_create failed - should have created new one again')
 
+    def test_15_res_partner_name_search(self):
+        cr,uid = self.cr, self.uid
+        for name, active in [
+            ('"A Raoul Grosbedon" <raoul@chirurgiens-dentistes.fr>', False),
+            ('B Raoul chirurgiens-dentistes.fr', True),
+            ("C Raoul O'hara  <!@historicalsociety.museum>", True),
+            ('ryu+giga-Sushi@aizubange.fukushima.jp', True),
+        ]:
+            partner_id, dummy = self.res_partner.name_create(cr, uid, name, context={'default_active': active})
+        partners = self.res_partner.name_search(cr, uid, 'Raoul')
+        self.assertEqual(len(partners), 2, 'Incorrect search number result for name_search')
+        partners = self.res_partner.name_search(cr, uid, 'Raoul', limit=1)
+        self.assertEqual(len(partners), 1, 'Incorrect search number result for name_search with a limit')
+        self.assertEqual(partners[0][1], 'B Raoul chirurgiens-dentistes.fr', 'Incorrect partner returned, should be the first active')
 
     def test_20_res_partner_address_sync(self):
         cr, uid = self.cr, self.uid
@@ -234,20 +250,24 @@ class test_base(common.TransactionCase):
                                                                        'parent_id': p1.id}))
         p2 = self.res_partner.browse(cr, uid, self.res_partner.search(cr, uid,
                                                                       [('email', '=', 'agr@sunhelm.com')])[0])
+        self.res_partner.write(cr, uid, sunhelm.id, {'child_ids': [(0, 0, {'name': 'Ulrik Greenthorn',
+                                                                           'email': 'ugr@sunhelm.com'})]})
+        p3 = self.res_partner.browse(cr, uid, self.res_partner.search(cr, uid,
+                                                                      [('email', '=', 'ugr@sunhelm.com')])[0])
 
-        for p in (p0, p1, p11, p2):
+        for p in (p0, p1, p11, p2, p3):
             p.refresh()
             self.assertEquals(p.commercial_partner_id, sunhelm, 'Incorrect commercial entity resolution')
             self.assertEquals(p.vat, sunhelm.vat, 'Commercial fields must be automatically synced')
         sunhelmvat = 'BE0123456789'
         sunhelm.write({'vat': sunhelmvat})
-        for p in (p0, p1, p11, p2):
+        for p in (p0, p1, p11, p2, p3):
             p.refresh()
             self.assertEquals(p.vat, sunhelmvat, 'Commercial fields must be automatically and recursively synced')
 
         p1vat = 'BE0987654321'
         p1.write({'vat': p1vat})
-        for p in (sunhelm, p0, p11, p2):
+        for p in (sunhelm, p0, p11, p2, p3):
             p.refresh()
             self.assertEquals(p.vat, sunhelmvat, 'Sync to children should only work downstream and on commercial entities')
 
@@ -267,6 +287,102 @@ class test_base(common.TransactionCase):
         self.assertEquals(p1.vat, p1vat, 'Setting is_company should stop auto-sync of commercial fields')
         p0.refresh()
         self.assertEquals(p0.vat, sunhelmvat2, 'Commercial fields must be automatically synced')
+
+    def test_60_read_group(self):
+        cr, uid = self.cr, self.uid
+        title_sir = self.res_partner_title.create(cr, uid, {'name': 'Sir', 'domain': 'contact'})
+        title_lady = self.res_partner_title.create(cr, uid, {'name': 'Lady', 'domain': 'contact'})
+        test_users = [
+            {'name': 'Alice', 'login': 'alice', 'color': 1, 'function': 'Friend', 'date': '2015-03-28', 'title': title_lady},
+            {'name': 'Alice', 'login': 'alice2', 'color': 0, 'function': 'Friend',  'date': '2015-01-28', 'title': title_lady},
+            {'name': 'Bob', 'login': 'bob', 'color': 2, 'function': 'Friend', 'date': '2015-03-02', 'title': title_sir},
+            {'name': 'Eve', 'login': 'eve', 'color': 3, 'function': 'Eavesdropper', 'date': '2015-03-20', 'title': title_lady},
+            {'name': 'Nab', 'login': 'nab', 'color': -3, 'function': '5$ Wrench', 'date': '2014-09-10', 'title': title_sir},
+            {'name': 'Nab', 'login': 'nab-she', 'color': 6, 'function': '5$ Wrench', 'date': '2014-01-02', 'title': title_lady},
+        ]
+        ids = [self.res_users.create(cr, uid, u) for u in test_users]
+        domain = [('id', 'in', ids)]
+
+        # group on local char field without domain and without active_test (-> empty WHERE clause)
+        groups_data = self.res_users.read_group(cr, uid, [], fields=['login'], groupby=['login'], orderby='login DESC', context={'active_test': False})
+        self.assertGreater(len(groups_data), 6, "Incorrect number of results when grouping on a field")
+
+        # group on local char field with limit
+        groups_data = self.res_users.read_group(cr, uid, domain, fields=['login'], groupby=['login'], orderby='login DESC', limit=3, offset=3)
+        self.assertEqual(len(groups_data), 3, "Incorrect number of results when grouping on a field with limit")
+        self.assertEqual(['bob', 'alice2', 'alice'], [g['login'] for g in groups_data], 'Result mismatch')
+
+        # group on inherited char field, aggregate on int field (second groupby ignored on purpose)
+        groups_data = self.res_users.read_group(cr, uid, domain, fields=['name', 'color', 'function'], groupby=['function', 'login'])
+        self.assertEqual(len(groups_data), 3, "Incorrect number of results when grouping on a field")
+        self.assertEqual(['5$ Wrench', 'Eavesdropper', 'Friend'], [g['function'] for g in groups_data], 'incorrect read_group order')
+        for group_data in groups_data:
+            self.assertIn('color', group_data, "Aggregated data for the column 'color' is not present in read_group return values")
+            self.assertEqual(group_data['color'], 3, "Incorrect sum for aggregated data for the column 'color'")
+
+        # group on inherited char field, reverse order
+        groups_data = self.res_users.read_group(cr, uid, domain, fields=['name', 'color'], groupby='name', orderby='name DESC')
+        self.assertEqual(['Nab', 'Eve', 'Bob', 'Alice'], [g['name'] for g in groups_data], 'Incorrect ordering of the list')
+
+        # group on int field, default ordering
+        groups_data = self.res_users.read_group(cr, uid, domain, fields=['color'], groupby='color')
+        self.assertEqual([-3, 0, 1, 2, 3, 6], [g['color'] for g in groups_data], 'Incorrect ordering of the list')
+
+        # multi group, second level is int field, should still be summed in first level grouping
+        groups_data = self.res_users.read_group(cr, uid, domain, fields=['name', 'color'], groupby=['name', 'color'], orderby='name DESC')
+        self.assertEqual(['Nab', 'Eve', 'Bob', 'Alice'], [g['name'] for g in groups_data], 'Incorrect ordering of the list')
+        self.assertEqual([3, 3, 2, 1], [g['color'] for g in groups_data], 'Incorrect ordering of the list')
+
+        # group on inherited char field, multiple orders with directions
+        groups_data = self.res_users.read_group(cr, uid, domain, fields=['name', 'color'], groupby='name', orderby='color DESC, name')
+        self.assertEqual(len(groups_data), 4, "Incorrect number of results when grouping on a field")
+        self.assertEqual(['Eve', 'Nab', 'Bob', 'Alice'], [g['name'] for g in groups_data], 'Incorrect ordering of the list')
+        self.assertEqual([1, 2, 1, 2], [g['name_count'] for g in groups_data], 'Incorrect number of results')
+
+        # group on inherited date column (res_partner.date) -> Year-Month, default ordering
+        groups_data = self.res_users.read_group(cr, uid, domain, fields=['function', 'color', 'date'], groupby=['date'])
+        self.assertEqual(len(groups_data), 4, "Incorrect number of results when grouping on a field")
+        self.assertEqual(['January 2014', 'September 2014', 'January 2015', 'March 2015'], [g['date'] for g in groups_data], 'Incorrect ordering of the list')
+        self.assertEqual([1, 1, 1, 3], [g['date_count'] for g in groups_data], 'Incorrect number of results')
+
+        # group on inherited date column (res_partner.date) -> Year-Month, custom order
+        groups_data = self.res_users.read_group(cr, uid, domain, fields=['function', 'color', 'date'], groupby=['date'], orderby='date DESC')
+        self.assertEqual(len(groups_data), 4, "Incorrect number of results when grouping on a field")
+        self.assertEqual(['March 2015', 'January 2015', 'September 2014', 'January 2014'], [g['date'] for g in groups_data], 'Incorrect ordering of the list')
+        self.assertEqual([3, 1, 1, 1], [g['date_count'] for g in groups_data], 'Incorrect number of results')
+
+        # group on inherited many2one (res_partner.title), default order
+        groups_data = self.res_users.read_group(cr, uid, domain, fields=['function', 'color', 'title'], groupby=['title'])
+        self.assertEqual(len(groups_data), 2, "Incorrect number of results when grouping on a field")
+        # m2o is returned as a (id, label) pair
+        self.assertEqual([(title_lady, 'Lady'), (title_sir, 'Sir')], [g['title'] for g in groups_data], 'Incorrect ordering of the list')
+        self.assertEqual([4, 2], [g['title_count'] for g in groups_data], 'Incorrect number of results')
+        self.assertEqual([10, -1], [g['color'] for g in groups_data], 'Incorrect aggregation of int column')
+
+        # group on inherited many2one (res_partner.title), reversed natural order
+        groups_data = self.res_users.read_group(cr, uid, domain, fields=['function', 'color', 'title'], groupby=['title'], orderby="title desc")
+        self.assertEqual(len(groups_data), 2, "Incorrect number of results when grouping on a field")
+        # m2o is returned as a (id, label) pair
+        self.assertEqual([(title_sir, 'Sir'), (title_lady, 'Lady')], [g['title'] for g in groups_data], 'Incorrect ordering of the list')
+        self.assertEqual([2, 4], [g['title_count'] for g in groups_data], 'Incorrect number of results')
+        self.assertEqual([-1, 10], [g['color'] for g in groups_data], 'Incorrect aggregation of int column')
+
+        # group on inherited many2one (res_partner.title), multiple orders with m2o in second position
+        groups_data = self.res_users.read_group(cr, uid, domain, fields=['function', 'color', 'title'], groupby=['title'], orderby="color desc, title desc")
+        self.assertEqual(len(groups_data), 2, "Incorrect number of results when grouping on a field")
+        # m2o is returned as a (id, label) pair
+        self.assertEqual([(title_lady, 'Lady'), (title_sir, 'Sir')], [g['title'] for g in groups_data], 'Incorrect ordering of the result')
+        self.assertEqual([4, 2], [g['title_count'] for g in groups_data], 'Incorrect number of results')
+        self.assertEqual([10, -1], [g['color'] for g in groups_data], 'Incorrect aggregation of int column')
+
+        # group on inherited many2one (res_partner.title), ordered by other inherited field (color)
+        groups_data = self.res_users.read_group(cr, uid, domain, fields=['function', 'color', 'title'], groupby=['title'], orderby='color')
+        self.assertEqual(len(groups_data), 2, "Incorrect number of results when grouping on a field")
+        # m2o is returned as a (id, label) pair
+        self.assertEqual([(title_sir, 'Sir'), (title_lady, 'Lady')], [g['title'] for g in groups_data], 'Incorrect ordering of the list')
+        self.assertEqual([2, 4], [g['title_count'] for g in groups_data], 'Incorrect number of results')
+        self.assertEqual([-1, 10], [g['color'] for g in groups_data], 'Incorrect aggregation of int column')
+
 
 class test_partner_recursion(common.TransactionCase):
 
@@ -303,6 +419,48 @@ class test_partner_recursion(common.TransactionCase):
         """ multi-write on several partners in same hierarchy must not trigger a false cycle detection """
         cr, uid, p1, p2, p3 = self.cr, self.uid, self.p1, self.p2, self.p3
         self.assertTrue(self.res_partner.write(cr, uid, [p1,p2,p3], {'phone': '123456'}))
+
+class test_translation(common.TransactionCase):
+
+    def setUp(self):
+        super(test_translation, self).setUp()
+        self.res_category = self.registry('res.partner.category')
+        self.ir_translation = self.registry('ir.translation')
+        cr, uid = self.cr, self.uid
+        self.registry('ir.translation').load(cr, ['base'], ['fr_FR'])
+        self.cat_id = self.res_category.create(cr, uid, {'name': 'Customers'})
+        self.ir_translation.create(cr, uid, {'name': 'res.partner.category,name', 'module':'base', 
+            'value': 'Clients', 'res_id': self.cat_id, 'lang':'fr_FR', 'state':'translated', 'type': 'model'})
+
+    def test_101_create_translated_record(self):
+        cr, uid = self.cr, self.uid
+        
+        no_context_cat = self.res_category.browse(cr, uid, self.cat_id)
+        self.assertEqual(no_context_cat.name, 'Customers', "Error in basic name_get")
+
+        fr_context_cat = self.res_category.browse(cr, uid, self.cat_id, context={'lang':'fr_FR'})
+        self.assertEqual(fr_context_cat.name, 'Clients', "Translation not found")
+
+    def test_102_duplicate_record(self):
+        cr, uid = self.cr, self.uid
+        self.new_cat_id = self.res_category.copy(cr, uid, self.cat_id, context={'lang':'fr_FR'})
+
+        no_context_cat = self.res_category.browse(cr, uid, self.new_cat_id)
+        self.assertEqual(no_context_cat.name, 'Customers', "Duplication did not set untranslated value")
+
+        fr_context_cat = self.res_category.browse(cr, uid, self.new_cat_id, context={'lang':'fr_FR'})
+        self.assertEqual(fr_context_cat.name, 'Clients', "Did not found translation for initial value")
+
+    def test_103_duplicate_record_fr(self):
+        cr, uid = self.cr, self.uid
+        self.new_fr_cat_id = self.res_category.copy(cr, uid, self.cat_id, default={'name': 'Clients (copie)'}, context={'lang':'fr_FR'})
+
+        no_context_cat = self.res_category.browse(cr, uid, self.new_fr_cat_id)
+        self.assertEqual(no_context_cat.name, 'Customers', "Duplication erased original untranslated value")
+
+        fr_context_cat = self.res_category.browse(cr, uid, self.new_fr_cat_id, context={'lang':'fr_FR'})
+        self.assertEqual(fr_context_cat.name, 'Clients (copie)', "Did not used default value for translated value")
+
 
 if __name__ == '__main__':
     unittest2.main()

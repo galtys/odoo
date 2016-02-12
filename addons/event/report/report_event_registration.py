@@ -37,7 +37,7 @@ class report_event_registration(osv.osv):
         'draft_state': fields.integer(' # No of Draft Registrations', size=20),
         'confirm_state': fields.integer(' # No of Confirmed Registrations', size=20),
         'register_max': fields.integer('Maximum Registrations'),
-        'nbevent': fields.integer('Number Of Events'),
+        'nbevent': fields.integer('Number of Registrations'),
         'event_type': fields.many2one('event.type', 'Event Type'),
         'registration_state': fields.selection([('draft', 'Draft'), ('confirm', 'Confirmed'), ('done', 'Attended'), ('cancel', 'Cancelled')], 'Registration State', readonly=True, required=True),
         'event_state': fields.selection([('draft', 'Draft'), ('confirm', 'Confirmed'), ('done', 'Done'), ('cancel', 'Cancelled')], 'Event State', readonly=True, required=True),
@@ -58,7 +58,7 @@ class report_event_registration(osv.osv):
         # TOFIX this request won't select events that have no registration
         cr.execute(""" CREATE VIEW report_event_registration AS (
             SELECT
-                e.id::char || '/' || coalesce(r.id::char,'') AS id,
+                e.id::varchar || '/' || coalesce(r.id::varchar,'') AS id,
                 e.id AS event_id,
                 e.user_id AS user_id,
                 r.user_id AS user_id_registration,
@@ -68,7 +68,7 @@ class report_event_registration(osv.osv):
                 to_char(e.date_begin, 'YYYY-MM-DD') AS event_date,
                 to_char(e.date_begin, 'YYYY') AS year,
                 to_char(e.date_begin, 'MM') AS month,
-                count(e.id) AS nbevent,
+                count(r.id) AS nbevent,
                 CASE WHEN r.state IN ('draft') THEN r.nb_register ELSE 0 END AS draft_state,
                 CASE WHEN r.state IN ('open','done') THEN r.nb_register ELSE 0 END AS confirm_state,
                 e.type AS event_type,

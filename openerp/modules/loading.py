@@ -213,7 +213,7 @@ def load_module_graph(cr, graph, status=None, perform_checks=True, skip_modules=
             # Set new modules and dependencies
             modobj.write(cr, SUPERUSER_ID, [module_id], {'state': 'installed', 'latest_version': ver})
             # Update translations for all installed languages
-            modobj.update_translations(cr, SUPERUSER_ID, [module_id], None)
+            modobj.update_translations(cr, SUPERUSER_ID, [module_id], None, {'overwrite': openerp.tools.config["overwrite_existing_translations"]})
 
             package.state = 'installed'
             for kind in ('init', 'demo', 'update'):
@@ -277,6 +277,7 @@ def load_modules(db, force_demo=False, status=None, update_module=False):
         if not openerp.modules.db.is_initialized(cr):
             _logger.info("init db")
             openerp.modules.db.initialize(cr)
+            update_module = True # process auto-installed modules
             tools.config["init"]["all"] = 1
             tools.config['update']['all'] = 1
             if not tools.config['without_demo']:
@@ -363,7 +364,7 @@ def load_modules(db, force_demo=False, status=None, update_module=False):
             cr.execute("""select model,name from ir_model where id NOT IN (select distinct model_id from ir_model_access)""")
             for (model, name) in cr.fetchall():
                 model_obj = pool.get(model)
-                if model_obj and not model_obj.is_transient():
+                if model_obj and not model_obj.is_transient() and not isinstance(model_obj, openerp.osv.orm.AbstractModel):
                     _logger.warning('The model %s has no access rules, consider adding one. E.g. access_%s,access_%s,model_%s,,1,1,1,1',
                         model, model.replace('.', '_'), model.replace('.', '_'), model.replace('.', '_'))
 

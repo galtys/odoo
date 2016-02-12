@@ -29,6 +29,7 @@ import openerp
 from openerp import SUPERUSER_ID
 from openerp import pooler, tools
 from openerp.osv import osv, fields
+from openerp.osv.expression import get_unaccent_wrapper
 from openerp.tools.translate import _
 from openerp.tools.yaml_import import is_comment
 
@@ -67,6 +68,10 @@ class format_address(object):
                 doc = etree.fromstring(arch)
                 for node in doc.xpath("//div[@class='address_format']"):
                     tree = etree.fromstring(v)
+                    for child in node.xpath("//field"):
+                        if child.attrib.get('modifiers'):
+                            for field in tree.xpath("//field[@name='%s']" % child.attrib.get('name')):
+                                field.attrib['modifiers'] = child.attrib.get('modifiers')
                     node.getparent().replace(node, tree)
                 arch = etree.tostring(doc)
                 break
@@ -216,7 +221,8 @@ class res_partner(osv.osv, format_address):
         'name': fields.char('Name', size=128, required=True, select=True),
         'date': fields.date('Date', select=1),
         'title': fields.many2one('res.partner.title', 'Title'),
-        'parent_id': fields.many2one('res.partner', 'Related Company'),
+        'parent_id': fields.many2one('res.partner', 'Related Company', select=True),
+        'parent_name': fields.related('parent_id', 'name', type='char', readonly=True, string='Parent name'),
         'child_ids': fields.one2many('res.partner', 'parent_id', 'Contacts', domain=[('active','=',True)]), # force "active_test" domain to bypass _search() override    
         'ref': fields.char('Reference', size=64, select=1),
         'lang': fields.selection(_lang_get, 'Language',
@@ -310,13 +316,14 @@ class res_partner(osv.osv, format_address):
         if (not view_id) and (view_type=='form') and context and context.get('force_email', False):
             view_id = self.pool.get('ir.model.data').get_object_reference(cr, user, 'base', 'view_partner_simple_form')[1]
         res = super(res_partner,self).fields_view_get(cr, user, view_id, view_type, context, toolbar=toolbar, submenu=submenu)
-        if view_type == 'form':
-            res['arch'] = self.fields_view_get_address(cr, user, res['arch'], context=context)
+        #if view_type == 'form':
+        #    res['arch'] = self.fields_view_get_address(cr, user, res['arch'], context=context)
         return res
 
     _defaults = {
         'active': True,
-        'lang': lambda self, cr, uid, ctx: ctx.get('lang', 'en_US'),
+        #'lang': lambda self, cr, uid, ctx: ctx.get('lang', 'en_US'),
+        'lang': '',
         'tz': lambda self, cr, uid, ctx: ctx.get('tz', False),
         'customer': True,
         'category_id': _default_category,
@@ -343,6 +350,7 @@ class res_partner(osv.osv, format_address):
         value = {}
         value['title'] = False
         if is_company:
+            value['use_parent_address'] = False
             domain = {'title': [('domain', '=', 'partner')]}
         else:
             domain = {'title': [('domain', '=', 'contact')]}
@@ -362,9 +370,10 @@ class res_partner(osv.osv, format_address):
                                                       'was never correctly set. If an existing contact starts working for a new '
                                                       'company then a new contact should be created under that new '
                                                       'company. You can use the "Discard" button to abandon this change.')}
-            parent = self.browse(cr, uid, parent_id, context=context)
-            address_fields = self._address_fields(cr, uid, context=context)
-            result['value'] = dict((key, value_or_id(parent[key])) for key in address_fields)
+            if use_parent_address:
+                parent = self.browse(cr, uid, parent_id, context=context)
+                address_fields = self._address_fields(cr, uid, context=context)
+                result['value'] = dict((key, value_or_id(parent[key])) for key in address_fields)
         else:
             result['value'] = {'use_parent_address': False}
         return result
@@ -430,17 +439,31 @@ class res_partner(osv.osv, format_address):
     def _commercial_sync_from_company(self, cr, uid, partner, context=None):
         """ Handle sync of commercial fields when a new parent commercial entity is set,
         as if they were related fields """
-        if partner.commercial_partner_id != partner:
+        commercial_partner = partner.commercial_partner_id
+        if not commercial_partner:
+            # On child partner creation of a parent partner,
+            # the commercial_partner_id is not yet computed
+            commercial_partner_id = self._commercial_partner_compute(
+                cr, uid, [partner.id], 'commercial_partner_id', [], context=context)[partner.id]
+            commercial_partner = self.browse(cr, uid, commercial_partner_id, context=context)
+        if commercial_partner != partner:
             commercial_fields = self._commercial_fields(cr, uid, context=context)
-            sync_vals = self._update_fields_values(cr, uid, partner.commercial_partner_id,
-                                                        commercial_fields, context=context)
+            sync_vals = self._update_fields_values(cr, uid, commercial_partner,
+                                                   commercial_fields, context=context)
             partner.write(sync_vals)
 
     def _commercial_sync_to_children(self, cr, uid, partner, context=None):
         """ Handle sync of commercial fields to descendants """
         commercial_fields = self._commercial_fields(cr, uid, context=context)
-        sync_vals = self._update_fields_values(cr, uid, partner.commercial_partner_id,
-                                                   commercial_fields, context=context)
+        commercial_partner = partner.commercial_partner_id
+        if not commercial_partner:
+            # On child partner creation of a parent partner,
+            # the commercial_partner_id is not yet computed
+            commercial_partner_id = self._commercial_partner_compute(
+                cr, uid, [partner.id], 'commercial_partner_id', [], context=context)[partner.id]
+            commercial_partner = self.browse(cr, uid, commercial_partner_id, context=context)
+        sync_vals = self._update_fields_values(cr, uid, commercial_partner,
+                                               commercial_fields, context=context)
         sync_children = [c for c in partner.child_ids if not c.is_company]
         for child in sync_children:
             self._commercial_sync_to_children(cr, uid, child, context=context)
@@ -490,6 +513,14 @@ class res_partner(osv.osv, format_address):
             if not parent.is_company:
                 parent.write({'is_company': True})
 
+    def unlink(self, cr, uid, ids, context=None):
+        orphan_contact_ids = self.search(cr, uid,
+            [('parent_id', 'in', ids), ('id', 'not in', ids), ('use_parent_address', '=', True)], context=context)
+        if orphan_contact_ids:
+            # no longer have a parent address
+            self.write(cr, uid, orphan_contact_ids, {'use_parent_address': False}, context=context)
+        return super(res_partner, self).unlink(cr, uid, ids, context=context)
+
     def write(self, cr, uid, ids, vals, context=None):
         if isinstance(ids, (int, long)):
             ids = [ids]
@@ -497,6 +528,9 @@ class res_partner(osv.osv, format_address):
         #is the same as the company of all users that inherit from this partner
         #(this is to allow the code from res_users to write to the partner!) or
         #if setting the company_id to False (this is compatible with any user company)
+        #if 'lang' in vals:
+        #TODO!!!!!
+        vals['lang']=''
         if vals.get('company_id'):
             for partner in self.browse(cr, uid, ids, context=context):
                 if partner.user_ids:
@@ -509,6 +543,7 @@ class res_partner(osv.osv, format_address):
         return result
 
     def create(self, cr, uid, vals, context=None):
+        vals['lang']=''
         new_id = super(res_partner, self).create(cr, uid, vals, context=context)
         partner = self.browse(cr, uid, new_id, context=context)
         self._fields_sync(cr, uid, partner, vals, context)
@@ -544,7 +579,7 @@ class res_partner(osv.osv, format_address):
         for record in self.browse(cr, uid, ids, context=context):
             name = record.name
             if record.parent_id and not record.is_company:
-                name =  "%s, %s" % (record.parent_id.name, name)
+                name = "%s, %s" % (record.parent_name, name)
             if context.get('show_address'):
                 name = name + "\n" + self._display_address(cr, uid, record, without_company=True, context=context)
                 name = name.replace('\n\n','\n')
@@ -558,7 +593,7 @@ class res_partner(osv.osv, format_address):
         """ Supported syntax:
             - 'Raoul <raoul@grosbedon.fr>': will find name and email address
             - otherwise: default, everything is set as the name """
-        emails = tools.email_split(text)
+        emails = tools.email_split(text.replace(' ',','))
         if emails:
             email = emails[0]
             name = text[:text.index(email)].replace('"', '').replace('<', '').strip()
@@ -592,46 +627,65 @@ class res_partner(osv.osv, format_address):
         return super(res_partner, self)._search(cr, user, args, offset=offset, limit=limit, order=order, context=context,
                                                 count=count, access_rights_uid=access_rights_uid)
 
+    def _get_display_name(self, unaccent):
+        # TODO: simplify this in trunk with `display_name`, once it is stored
+        # Perf note: a CTE expression (WITH ...) seems to have an even higher cost
+        #            than this query with duplicated CASE expressions. The bulk of
+        #            the cost is the ORDER BY, and it is inevitable if we want
+        #            relevant results for the next step, otherwise we'd return
+        #            a random selection of `limit` results.
+
+        return """CASE WHEN company.id IS NULL OR res_partner.is_company
+                       THEN {partner_name}
+                       ELSE {company_name} || ', ' || {partner_name}
+                  END""".format(partner_name=unaccent('res_partner.name'),
+                                company_name=unaccent('company.name'))
+
     def name_search(self, cr, uid, name, args=None, operator='ilike', context=None, limit=100):
         if not args:
             args = []
         if name and operator in ('=', 'ilike', '=ilike', 'like', '=like'):
+
+            self.check_access_rights(cr, uid, 'read')
+            where_query = self._where_calc(cr, uid, args, context=context)
+            self._apply_ir_rules(cr, uid, where_query, 'read', context=context)
+            from_clause, where_clause, where_clause_params = where_query.get_sql()
+            where_str = where_clause and (" WHERE %s AND " % where_clause) or ' WHERE '
+
             # search on the name of the contacts and of its company
             search_name = name
             if operator in ('ilike', 'like'):
                 search_name = '%%%s%%' % name
             if operator in ('=ilike', '=like'):
                 operator = operator[1:]
-            query_args = {'name': search_name}
-            # TODO: simplify this in trunk with `display_name`, once it is stored
-            # Perf note: a CTE expression (WITH ...) seems to have an even higher cost
-            #            than this query with duplicated CASE expressions. The bulk of
-            #            the cost is the ORDER BY, and it is inevitable if we want
-            #            relevant results for the next step, otherwise we'd return
-            #            a random selection of `limit` results.
-            query = ('''SELECT partner.id FROM res_partner partner
-                                          LEFT JOIN res_partner company
-                                               ON partner.parent_id = company.id
-                        WHERE partner.email ''' + operator + ''' %(name)s OR
-                              CASE
-                                   WHEN company.id IS NULL OR partner.is_company
-                                       THEN partner.name
-                                   ELSE company.name || ', ' || partner.name
-                              END ''' + operator + ''' %(name)s
-                        ORDER BY
-                              CASE
-                                   WHEN company.id IS NULL OR partner.is_company
-                                       THEN partner.name
-                                   ELSE company.name || ', ' || partner.name
-                              END''')
+
+            unaccent = get_unaccent_wrapper(cr)
+
+            display_name = self._get_display_name(unaccent)
+
+            query = """SELECT res_partner.id
+                         FROM res_partner
+                    LEFT JOIN res_partner company
+                           ON res_partner.parent_id = company.id
+                      {where} ({email} {operator} {percent}
+                           OR {display_name} {operator} {percent})
+                     ORDER BY {display_name}
+                    """.format(where=where_str, operator=operator,
+                               email=unaccent('res_partner.email'),
+                               percent=unaccent('%s'),
+                               display_name=display_name)
+
+            where_clause_params += [search_name, search_name]
             if limit:
-                query += ' limit %(limit)s'
-                query_args['limit'] = limit
-            cr.execute(query, query_args)
+                query += ' limit %s'
+                where_clause_params.append(limit)
+            cr.execute(query, where_clause_params)
             ids = map(lambda x: x[0], cr.fetchall())
-            ids = self.search(cr, uid, [('id', 'in', ids)] + args, limit=limit, context=context)
+
             if ids:
                 return self.name_get(cr, uid, ids, context)
+            else:
+                return []
         return super(res_partner,self).name_search(cr, uid, name, args, operator=operator, context=context, limit=limit)
 
     def find_or_create(self, cr, uid, email, context=None):
@@ -743,7 +797,7 @@ class res_partner(osv.osv, format_address):
             'state_name': address.state_id and address.state_id.name or '',
             'country_code': address.country_id and address.country_id.code or '',
             'country_name': address.country_id and address.country_id.name or '',
-            'company_name': address.parent_id and address.parent_id.name or '',
+            'company_name': address.parent_id and address.parent_name or '',
         }
         for field in self._address_fields(cr, uid, context=context):
             args[field] = getattr(address, field) or ''

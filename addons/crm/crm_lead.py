@@ -165,6 +165,11 @@ class crm_lead(base_stage, format_address, osv.osv):
         return result, fold
 
     def fields_view_get(self, cr, user, view_id=None, view_type='form', context=None, toolbar=False, submenu=False):
+        if view_type == 'form' and context and context.get('opportunity_id'):
+            # TODO: replace by get_formview_action call
+            lead_type = self.browse(cr, user, context['opportunity_id'], context=context).type
+            view_lead_xml_id = 'crm_case_form_view_oppor' if lead_type == 'opportunity' else 'crm_case_form_view_leads'
+            _, view_id = self.pool['ir.model.data'].get_object_reference(cr, user, 'crm', view_lead_xml_id)
         res = super(crm_lead,self).fields_view_get(cr, user, view_id, view_type, context, toolbar=toolbar, submenu=submenu)
         if view_type == 'form':
             res['arch'] = self.fields_view_get_address(cr, user, res['arch'], context=context)
@@ -264,10 +269,10 @@ class crm_lead(base_stage, format_address, osv.osv):
         'opt_out': fields.boolean('Opt-Out', oldname='optout',
             help="If opt-out is checked, this contact has refused to receive emails for mass mailing and marketing campaign. "
                     "Filter 'Available for Mass Mailing' allows users to filter the leads when performing mass mailing."),
-        'type':fields.selection([ ('lead','Lead'), ('opportunity','Opportunity'), ],'Type', help="Type is used to separate Leads and Opportunities"),
+        'type': fields.selection([ ('lead','Lead'), ('opportunity','Opportunity'), ],'Type', select=True, help="Type is used to separate Leads and Opportunities"),
         'priority': fields.selection(crm.AVAILABLE_PRIORITIES, 'Priority', select=True),
         'date_closed': fields.datetime('Closed', readonly=True),
-        'stage_id': fields.many2one('crm.case.stage', 'Stage', track_visibility='onchange',
+        'stage_id': fields.many2one('crm.case.stage', 'Stage', track_visibility='onchange', select=True,
                         domain="['&', '&', ('fold', '=', False), ('section_ids', '=', section_id), '|', ('type', '=', type), ('type', '=', 'both')]"),
         'user_id': fields.many2one('res.users', 'Salesperson', select=True, track_visibility='onchange'),
         'referred': fields.char('Referred By', size=64),
@@ -277,7 +282,7 @@ class crm_lead(base_stage, format_address, osv.osv):
         'day_close': fields.function(_compute_day, string='Days to Close', \
                                 multi='day_close', type="float", store=True),
         'state': fields.related('stage_id', 'state', type="selection", store=True,
-                selection=crm.AVAILABLE_STATES, string="Status", readonly=True,
+                selection=crm.AVAILABLE_STATES, string="Status", readonly=True, select=True,
                 help='The Status is set to \'Draft\', when a case is created. If the case is in progress the Status is set to \'Open\'. When the case is over, the Status is set to \'Done\'. If the case needs to be reviewed then the Status is  set to \'Pending\'.'),
 
         # Only used for type opportunity
@@ -339,12 +344,12 @@ class crm_lead(base_stage, format_address, osv.osv):
         return {'value':{'probability': stage.probability}}
 
     def on_change_partner(self, cr, uid, ids, partner_id, context=None):
-        result = {}
         values = {}
         if partner_id:
             partner = self.pool.get('res.partner').browse(cr, uid, partner_id, context=context)
             values = {
                 'partner_name' : partner.name,
+                'title': partner.title and partner.title.id or False,
                 'street' : partner.street,
                 'street2' : partner.street2,
                 'city' : partner.city,
@@ -354,6 +359,8 @@ class crm_lead(base_stage, format_address, osv.osv):
                 'phone' : partner.phone,
                 'mobile' : partner.mobile,
                 'fax' : partner.fax,
+                'zip': partner.zip,
+                'function': partner.function,
             }
         return {'value' : values}
 
@@ -440,7 +447,7 @@ class crm_lead(base_stage, format_address, osv.osv):
         for lead in self.browse(cr, uid, ids):
             stage_id = self.stage_find(cr, uid, [lead], lead.section_id.id or False, [('probability', '=', 0.0),('on_change','=',True)], context=context)
             if stage_id:
-                self.case_set(cr, uid, [lead.id], values_to_update={'probability': 0.0}, new_stage_id=stage_id, context=context)
+                self.case_set(cr, uid, [lead.id], values_to_update={'probability': 0.0, 'date_closed': fields.datetime.now()}, new_stage_id=stage_id, context=context)
         return True
 
     def case_mark_won(self, cr, uid, ids, context=None):
@@ -448,7 +455,7 @@ class crm_lead(base_stage, format_address, osv.osv):
         for lead in self.browse(cr, uid, ids):
             stage_id = self.stage_find(cr, uid, [lead], lead.section_id.id or False, [('probability', '=', 100.0),('on_change','=',True)], context=context)
             if stage_id:
-                self.case_set(cr, uid, [lead.id], values_to_update={'probability': 100.0}, new_stage_id=stage_id, context=context)
+                self.case_set(cr, uid, [lead.id], values_to_update={'probability': 100.0, 'date_closed': fields.datetime.now()}, new_stage_id=stage_id, context=context)
         return True
 
     def set_priority(self, cr, uid, ids, priority):
@@ -621,6 +628,13 @@ class crm_lead(base_stage, format_address, osv.osv):
                 attachment.write(values)
         return True
 
+    def _merge_opportunity_phonecalls(self, cr, uid, opportunity_id, opportunities, context=None):
+        phonecall_obj = self.pool['crm.phonecall']
+        for opportunity in opportunities:
+            for phonecall_id in phonecall_obj.search(cr, uid, [('opportunity_id', '=', opportunity.id)], context=context):
+                phonecall_obj.write(cr, uid, phonecall_id, {'opportunity_id': opportunity_id}, context=context)
+        return True
+
     def merge_opportunity(self, cr, uid, ids, context=None):
         """
         Different cases of merge:
@@ -658,6 +672,7 @@ class crm_lead(base_stage, format_address, osv.osv):
         # Merge messages and attachements into the first opportunity
         self._merge_opportunity_history(cr, uid, highest.id, tail_opportunities, context=context)
         self._merge_opportunity_attachments(cr, uid, highest.id, tail_opportunities, context=context)
+        self._merge_opportunity_phonecalls(cr, uid, highest.id, tail_opportunities, context=context)
 
         # Merge notifications about loss of information
         opportunities = [highest]
@@ -836,9 +851,11 @@ class crm_lead(base_stage, format_address, osv.osv):
         model_data = self.pool.get('ir.model.data')
         phonecall_dict = {}
         if not categ_id:
-            res_id = model_data._get_id(cr, uid, 'crm', 'categ_phone2')
-            if res_id:
+            try:
+                res_id = model_data._get_id(cr, uid, 'crm', 'categ_phone2')
                 categ_id = model_data.browse(cr, uid, res_id, context=context).res_id
+            except ValueError:
+                pass
         for lead in self.browse(cr, uid, ids, context=context):
             if not section_id:
                 section_id = lead.section_id and lead.section_id.id or False
@@ -913,6 +930,7 @@ class crm_lead(base_stage, format_address, osv.osv):
         opportunity = self.browse(cr, uid, ids[0], context)
         res = self.pool.get('ir.actions.act_window').for_xml_id(cr, uid, 'base_calendar', 'action_crm_meeting', context)
         res['context'] = {
+            'search_default_opportunity_id': opportunity.id,
             'default_opportunity_id': opportunity.id,
             'default_partner_id': opportunity.partner_id and opportunity.partner_id.id or False,
             'default_partner_ids' : opportunity.partner_id and [opportunity.partner_id.id] or False,
@@ -924,12 +942,32 @@ class crm_lead(base_stage, format_address, osv.osv):
         return res
 
     def write(self, cr, uid, ids, vals, context=None):
-        if vals.get('stage_id') and not vals.get('probability'):
-            # change probability of lead(s) if required by stage
+        if vals.get('stage_id'):
             stage = self.pool.get('crm.case.stage').browse(cr, uid, vals['stage_id'], context=context)
-            if stage.on_change:
+            if not vals.get('probability') and stage.on_change:
+                # change probability of lead(s) if required by stage
                 vals['probability'] = stage.probability
+            # set closed date when won or lost
+            if not vals.get('date_closed') and (vals.get('probability', 0) >= 100 or stage.state == 'canceled'):
+                vals['date_closed'] = fields.datetime.now()
         return super(crm_lead, self).write(cr, uid, ids, vals, context=context)
+
+    def copy(self, cr, uid, id, default=None, context=None):
+        if not default:
+            default = {}
+        if not context:
+            context = {}
+        lead = self.browse(cr, uid, id, context=context)
+        local_context = dict(context)
+        local_context.setdefault('default_type', lead.type)
+        local_context.setdefault('default_section_id', lead.section_id)
+        if lead.type == 'opportunity':
+            default['date_open'] = fields.datetime.now()
+        else:
+            default['date_open'] = False
+        default['date_closed'] = False
+        default['stage_id'] = self._get_default_stage_id(cr, uid, local_context)
+        return super(crm_lead, self).copy(cr, uid, id, default, context=context)
 
     def new_mail_send(self, cr, uid, ids, context=None):
         '''
@@ -1042,11 +1080,13 @@ class crm_lead(base_stage, format_address, osv.osv):
     def schedule_phonecall_send_note(self, cr, uid, ids, phonecall_id, action, context=None):
         phonecall = self.pool.get('crm.phonecall').browse(cr, uid, [phonecall_id], context=context)[0]
         if action == 'log':
-            prefix = 'Logged'
+            message = _('Logged a call for %(date)s. %(description)s')
         else:
-            prefix = 'Scheduled'
-        suffix = ' %s' % phonecall.description
-        message = _("%s a call for %s.%s") % (prefix, phonecall.date, suffix)
+            message = _('Scheduled a call for %(date)s. %(description)s')
+        phonecall_date = datetime.strptime(phonecall.date, tools.DEFAULT_SERVER_DATETIME_FORMAT)
+        phonecall_usertime = fields.datetime.context_timestamp(cr, uid, phonecall_date, context=context).strftime(tools.DEFAULT_SERVER_DATETIME_FORMAT)
+        html_time = "<time datetime='%s+00:00'>%s</time>" % (phonecall.date, phonecall_usertime)
+        message = message % dict(date=html_time, description=phonecall.description)
         return self.message_post(cr, uid, ids, body=message, context=context)
 
     def log_meeting(self, cr, uid, ids, meeting_subject, meeting_date, duration, context=None):

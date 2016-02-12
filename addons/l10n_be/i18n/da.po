@@ -1,21 +1,22 @@
-# Danish translation for openobject-addons
-# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
-#
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+# * l10n_be
+# 
+# Translators:
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Project-Id-Version: Odoo 7.0\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-24 02:53+0000\n"
-"PO-Revision-Date: 2012-12-21 23:00+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Danish <da@li.org>\n"
+"PO-Revision-Date: 2015-05-29 13:15+0000\n"
+"Last-Translator: Martin Trigaux\n"
+"Language-Team: Danish (http://www.transifex.com/odoo/odoo-7/language/da/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-07-11 06:04+0000\n"
-"X-Generator: Launchpad (build 16696)\n"
+"Content-Transfer-Encoding: \n"
+"Language: da\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_appro_mbsd3
@@ -25,7 +26,7 @@ msgstr ""
 #. module: l10n_be
 #: field:vat.listing.clients,turnover:0
 msgid "Base Amount"
-msgstr ""
+msgstr "Basis beløb"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_rmunrationschargessocialesetpensions2
@@ -40,7 +41,7 @@ msgstr ""
 #. module: l10n_be
 #: field:l1on_be.vat.declaration,tax_code_id:0
 msgid "Tax Code"
-msgstr ""
+msgstr "Momskode"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_produitsetchargesdexploitation1
@@ -53,14 +54,11 @@ msgid "Charges financières"
 msgstr ""
 
 #. module: l10n_be
-#: view:l1on_be.vat.declaration:0
-#: field:l1on_be.vat.declaration,comments:0
-#: view:partner.vat.intra:0
-#: field:partner.vat.intra,comments:0
-#: view:partner.vat.list:0
-#: field:partner.vat.list,comments:0
+#: view:l1on_be.vat.declaration:0 field:l1on_be.vat.declaration,comments:0
+#: view:partner.vat.intra:0 field:partner.vat.intra,comments:0
+#: view:partner.vat.list:0 field:partner.vat.list,comments:0
 msgid "Comments"
-msgstr ""
+msgstr "Bemærkninger"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_primesdmission2
@@ -103,14 +101,13 @@ msgstr ""
 #. module: l10n_be
 #: model:ir.ui.menu,name:l10n_be.menu_account_report_be_bs
 msgid "Balance Sheet"
-msgstr ""
+msgstr "Balance"
 
 #. module: l10n_be
-#: view:l1on_be.vat.declaration:0
-#: view:partner.vat.intra:0
+#: view:l1on_be.vat.declaration:0 view:partner.vat.intra:0
 #: field:partner.vat.intra,tax_code_id:0
 msgid "Company"
-msgstr ""
+msgstr "Firma"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_immobilisationsincorporelles1
@@ -126,7 +123,7 @@ msgstr ""
 #: code:addons/l10n_be/wizard/l10n_be_partner_vat_listing.py:317
 #, python-format
 msgid "No record to print."
-msgstr ""
+msgstr "Ingen post at printe"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_rserves2
@@ -178,14 +175,14 @@ msgstr ""
 #: code:addons/l10n_be/wizard/l10n_be_vat_intra.py:111
 #, python-format
 msgid "insufficient data!"
-msgstr ""
+msgstr "Utilstrækkelige data!"
 
 #. module: l10n_be
 #: code:addons/l10n_be/wizard/l10n_be_partner_vat_listing.py:317
 #: code:addons/l10n_be/wizard/l10n_be_vat_intra.py:116
 #, python-format
 msgid "Error!"
-msgstr ""
+msgstr "Fejl!"
 
 #. module: l10n_be
 #: code:addons/l10n_be/wizard/l10n_be_account_vat_declaration.py:112
@@ -200,7 +197,7 @@ msgstr ""
 #: code:addons/l10n_be/wizard/l10n_be_vat_intra.py:246
 #, python-format
 msgid "Insufficient Data!"
-msgstr ""
+msgstr "Utilstrækkelige data!"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_effetspayer4
@@ -225,7 +222,7 @@ msgstr ""
 #. module: l10n_be
 #: field:vat.listing.clients,vat:0
 msgid "VAT"
-msgstr ""
+msgstr "Moms"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_transfertauximptsdiffrs1
@@ -246,13 +243,12 @@ msgstr ""
 #. module: l10n_be
 #: field:partner.vat.intra,mand_id:0
 msgid "Reference"
-msgstr ""
+msgstr "Reference"
 
 #. module: l10n_be
 #: help:partner.vat.intra,period_code:0
 msgid ""
-"This is where you have to set the period code for the intracom declaration "
-"using the format: ppyyyy\n"
+"This is where you have to set the period code for the intracom declaration using the format: ppyyyy\n"
 "      PP can stand for a month: from '01' to '12'.\n"
 "      PP can stand for a trimester: '31','32','33','34'\n"
 "          The first figure means that it is a trimester,\n"
@@ -275,7 +271,7 @@ msgstr ""
 #. module: l10n_be
 #: field:partner.vat.intra,period_code:0
 msgid "Period Code"
-msgstr ""
+msgstr "Periode kode"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_dettescommerciales5
@@ -286,13 +282,13 @@ msgstr ""
 #. module: l10n_be
 #: field:partner.vat.intra,period_ids:0
 msgid "Period (s)"
-msgstr ""
+msgstr "Periode (r)"
 
 #. module: l10n_be
 #: code:addons/l10n_be/wizard/l10n_be_partner_vat_listing.py:94
 #, python-format
 msgid "No data found for the selected year."
-msgstr ""
+msgstr "Ingen data fundet for det valgte år."
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_actifsimmobilises0
@@ -329,7 +325,7 @@ msgstr ""
 #: code:addons/l10n_be/wizard/l10n_be_partner_vat_listing.py:265
 #, python-format
 msgid "Data Insufficient!"
-msgstr ""
+msgstr "utilstrækkelige data!"
 
 #. module: l10n_be
 #: help:partner.vat.list,partner_ids:0
@@ -351,7 +347,7 @@ msgstr ""
 #: code:addons/l10n_be/wizard/l10n_be_vat_intra.py:258
 #, python-format
 msgid "Save"
-msgstr ""
+msgstr "Gem"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_reduc_cmd_encours2g
@@ -364,7 +360,7 @@ msgstr ""
 #: code:addons/l10n_be/wizard/l10n_be_vat_intra.py:116
 #, python-format
 msgid "Period code is not valid."
-msgstr ""
+msgstr "Periode kode er ikke gyldig."
 
 #. module: l10n_be
 #: help:partner.vat.intra,no_vat:0
@@ -376,7 +372,7 @@ msgstr ""
 #. module: l10n_be
 #: field:partner.vat.intra,no_vat:0
 msgid "Partner With No VAT"
-msgstr ""
+msgstr "Partner  uden moms"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_acomptesreussurcommandes6
@@ -388,7 +384,7 @@ msgstr ""
 #: code:addons/l10n_be/wizard/l10n_be_vat_intra.py:123
 #, python-format
 msgid "No partner has a VAT number asociated with him."
-msgstr ""
+msgstr "Ingen partner har momsnummer tilknyttet."
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_provisionspourrisquesetcharges2
@@ -402,10 +398,9 @@ msgstr ""
 
 #. module: l10n_be
 #: field:l1on_be.vat.declaration,file_save:0
-#: field:partner.vat.intra,file_save:0
-#: field:partner.vat.list,file_save:0
+#: field:partner.vat.intra,file_save:0 field:partner.vat.list,file_save:0
 msgid "Save File"
-msgstr ""
+msgstr "Gem fil"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_rservesimmunises3_A
@@ -421,13 +416,13 @@ msgstr ""
 #: code:addons/l10n_be/wizard/l10n_be_vat_intra.py:119
 #, python-format
 msgid "Please select at least one Period."
-msgstr ""
+msgstr "Vælg mindst én periode."
 
 #. module: l10n_be
 #: code:addons/l10n_be/wizard/l10n_be_account_vat_declaration.py:201
 #, python-format
 msgid "Save XML For Vat declaration"
-msgstr ""
+msgstr "Gem XML for momsafregning"
 
 #. module: l10n_be
 #: help:partner.vat.intra,test_xml:0
@@ -483,7 +478,7 @@ msgstr ""
 #. module: l10n_be
 #: view:l1on_be.vat.declaration:0
 msgid "Save xml"
-msgstr ""
+msgstr "Gem xml"
 
 #. module: l10n_be
 #: code:addons/l10n_be/wizard/l10n_be_account_vat_declaration.py:114
@@ -491,7 +486,7 @@ msgstr ""
 #: code:addons/l10n_be/wizard/l10n_be_vat_intra.py:149
 #, python-format
 msgid "No phone associated with the company."
-msgstr ""
+msgstr "Ingen telefonnr. tilknyttet dette firma."
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_dettesplusdunan2
@@ -503,7 +498,7 @@ msgstr ""
 #: code:addons/l10n_be/wizard/l10n_be_vat_intra.py:111
 #, python-format
 msgid "No VAT number associated with your company."
-msgstr ""
+msgstr "Intet momsnummer knyttet til dit firma."
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_rservesimmunises3_B
@@ -521,18 +516,15 @@ msgid "Bénéfice (Perte) de l'excercice avant impôts"
 msgstr ""
 
 #. module: l10n_be
-#: view:partner.vat.intra:0
-#: field:partner.vat.intra,country_ids:0
+#: view:partner.vat.intra:0 field:partner.vat.intra,country_ids:0
 msgid "European Countries"
-msgstr ""
+msgstr "Europæiske lande"
 
 #. module: l10n_be
-#: view:l1on_be.vat.declaration:0
-#: view:partner.vat:0
-#: view:partner.vat.intra:0
+#: view:l1on_be.vat.declaration:0 view:partner.vat:0 view:partner.vat.intra:0
 #: view:partner.vat.list:0
 msgid "or"
-msgstr ""
+msgstr "eller"
 
 #. module: l10n_be
 #: view:partner.vat.intra:0
@@ -553,7 +545,7 @@ msgstr ""
 #. module: l10n_be
 #: field:vat.listing.clients,vat_amount:0
 msgid "VAT Amount"
-msgstr ""
+msgstr "Moms beløb"
 
 #. module: l10n_be
 #: code:addons/l10n_be/wizard/l10n_be_vat_intra.py:246
@@ -574,7 +566,7 @@ msgstr ""
 #. module: l10n_be
 #: model:ir.model,name:l10n_be.model_partner_vat_list
 msgid "partner.vat.list"
-msgstr ""
+msgstr "Partner.moms.liste"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_rservelgale3
@@ -593,15 +585,14 @@ msgid "No belgian contact with a VAT number in your database."
 msgstr ""
 
 #. module: l10n_be
-#: field:l1on_be.vat.declaration,msg:0
-#: field:partner.vat.intra,msg:0
+#: field:l1on_be.vat.declaration,msg:0 field:partner.vat.intra,msg:0
 msgid "File created"
-msgstr ""
+msgstr "Fil oprettet"
 
 #. module: l10n_be
 #: view:partner.vat.list:0
 msgid "Customers"
-msgstr ""
+msgstr "Kunder"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_chargesexceptionnelles1
@@ -622,7 +613,7 @@ msgstr ""
 #: code:addons/l10n_be/wizard/l10n_be_partner_vat_listing.py:296
 #, python-format
 msgid "XML File has been Created"
-msgstr ""
+msgstr "XML fil oprettet"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_belgium_bs
@@ -685,7 +676,7 @@ msgstr ""
 #: code:addons/l10n_be/wizard/l10n_be_partner_vat_listing.py:69
 #, python-format
 msgid "Error"
-msgstr ""
+msgstr "Fejl!"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_capitalsouscrit3
@@ -710,7 +701,7 @@ msgstr ""
 #. module: l10n_be
 #: field:l1on_be.vat.declaration,period_id:0
 msgid "Period"
-msgstr ""
+msgstr "Periode"
 
 #. module: l10n_be
 #: model:ir.actions.act_window,name:l10n_be.action_vat_declaration
@@ -727,7 +718,7 @@ msgstr ""
 #. module: l10n_be
 #: view:partner.vat.intra:0
 msgid "General Information"
-msgstr ""
+msgstr "Generelle oplysninger"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_immobilisationsfinancires1
@@ -737,7 +728,7 @@ msgstr ""
 #. module: l10n_be
 #: view:partner.vat.intra:0
 msgid "Periods"
-msgstr ""
+msgstr "Perioder"
 
 #. module: l10n_be
 #: view:partner.vat:0
@@ -747,12 +738,10 @@ msgid ""
 msgstr ""
 
 #. module: l10n_be
-#: view:l1on_be.vat.declaration:0
-#: view:partner.vat:0
-#: view:partner.vat.intra:0
+#: view:l1on_be.vat.declaration:0 view:partner.vat:0 view:partner.vat.intra:0
 #: view:partner.vat.list:0
 msgid "Cancel"
-msgstr ""
+msgstr "Annullér"
 
 #. module: l10n_be
 #: code:addons/l10n_be/wizard/l10n_be_account_vat_declaration.py:112
@@ -763,8 +752,7 @@ msgid "No email address associated with the company."
 msgstr ""
 
 #. module: l10n_be
-#: view:l1on_be.vat.declaration:0
-#: view:partner.vat.list:0
+#: view:l1on_be.vat.declaration:0 view:partner.vat.list:0
 msgid "Create XML"
 msgstr ""
 
@@ -797,7 +785,7 @@ msgstr ""
 #. module: l10n_be
 #: model:ir.ui.menu,name:l10n_be.menu_account_report_be_pl
 msgid "Profit And Loss"
-msgstr ""
+msgstr "Tab & vind"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_passif0
@@ -807,7 +795,7 @@ msgstr ""
 #. module: l10n_be
 #: view:partner.vat.list:0
 msgid "Print"
-msgstr ""
+msgstr "Udskriv"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_fournisseurs4
@@ -830,8 +818,7 @@ msgid "Capital"
 msgstr ""
 
 #. module: l10n_be
-#: view:l1on_be.vat.declaration:0
-#: view:partner.vat.intra:0
+#: view:l1on_be.vat.declaration:0 view:partner.vat.intra:0
 #: view:partner.vat.list:0
 msgid "Save the File with '.xml' extension."
 msgstr ""
@@ -859,7 +846,8 @@ msgstr ""
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_charges_expl_pr_restruct2
 msgid ""
-"Charges d'exploitation portées à l'actif au titre de frais de restructuration"
+"Charges d'exploitation portées à l'actif au titre de frais de "
+"restructuration"
 msgstr ""
 
 #. module: l10n_be
@@ -978,11 +966,10 @@ msgid "No VAT number associated with the company."
 msgstr ""
 
 #. module: l10n_be
-#: field:l1on_be.vat.declaration,name:0
-#: field:partner.vat.intra,name:0
+#: field:l1on_be.vat.declaration,name:0 field:partner.vat.intra,name:0
 #: field:partner.vat.list,name:0
 msgid "File Name"
-msgstr ""
+msgstr "Filnavn"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_etablissementcredits4
@@ -997,7 +984,7 @@ msgstr ""
 #. module: l10n_be
 #: field:partner.vat,year:0
 msgid "Year"
-msgstr ""
+msgstr "År"
 
 #. module: l10n_be
 #: model:account.financial.report,name:l10n_be.account_financial_report_rservesindisponibles3

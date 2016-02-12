@@ -27,6 +27,9 @@ import re
 
 from openerp import tools
 from openerp.osv import fields,osv
+from openerp import SUPERUSER_ID
+from openerp.osv.orm import except_orm
+from openerp.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
@@ -105,7 +108,9 @@ class ir_attachment(osv.osv):
         return fname
 
     def _file_delete(self, cr, uid, location, fname):
-        count = self.search(cr, 1, [('store_fname','=',fname)], count=True)
+        # using SQL to include files hidden through unlink or due to record rules
+        cr.execute("SELECT COUNT(*) FROM ir_attachment WHERE store_fname = %s", (fname,))
+        count = cr.fetchone()[0]
         if count <= 1:
             full_path = self._full_path(cr, uid, location, fname)
             try:
@@ -120,13 +125,16 @@ class ir_attachment(osv.osv):
         if context is None:
             context = {}
         result = {}
-        location = self.pool.get('ir.config_parameter').get_param(cr, uid, 'ir_attachment.location')
+        location = self.pool.get('ir.config_parameter').get_param(cr, SUPERUSER_ID, 'ir_attachment.location')
         bin_size = context.get('bin_size')
         for attach in self.browse(cr, uid, ids, context=context):
             if location and attach.store_fname:
                 result[attach.id] = self._file_read(cr, uid, location, attach.store_fname, bin_size)
             else:
                 result[attach.id] = attach.db_datas
+                if bin_size:
+                    result[attach.id] = int(result[attach.id] or 0)
+
         return result
 
     def _data_set(self, cr, uid, id, name, value, arg, context=None):
@@ -135,16 +143,17 @@ class ir_attachment(osv.osv):
             return True
         if context is None:
             context = {}
-        location = self.pool.get('ir.config_parameter').get_param(cr, uid, 'ir_attachment.location')
+        location = self.pool.get('ir.config_parameter').get_param(cr, SUPERUSER_ID, 'ir_attachment.location')
         file_size = len(value.decode('base64'))
         if location:
             attach = self.browse(cr, uid, id, context=context)
             if attach.store_fname:
                 self._file_delete(cr, uid, location, attach.store_fname)
             fname = self._file_write(cr, uid, location, value)
-            super(ir_attachment, self).write(cr, uid, [id], {'store_fname': fname, 'file_size': file_size}, context=context)
+            # SUPERUSER_ID as probably don't have write access, trigger during create
+            super(ir_attachment, self).write(cr, SUPERUSER_ID, [id], {'store_fname': fname, 'file_size': file_size}, context=context)
         else:
-            super(ir_attachment, self).write(cr, uid, [id], {'db_datas': value, 'file_size': file_size}, context=context)
+            super(ir_attachment, self).write(cr, SUPERUSER_ID, [id], {'db_datas': value, 'file_size': file_size}, context=context)
         return True
 
     _name = 'ir.attachment'
@@ -186,28 +195,37 @@ class ir_attachment(osv.osv):
         In the 'document' module, it is overriden to relax this hard rule, since
         more complex ones apply there.
         """
-        if not ids:
-            return
         res_ids = {}
+        require_employee = False
         if ids:
             if isinstance(ids, (int, long)):
                 ids = [ids]
-            cr.execute('SELECT DISTINCT res_model, res_id FROM ir_attachment WHERE id = ANY (%s)', (ids,))
-            for rmod, rid in cr.fetchall():
+            cr.execute('SELECT DISTINCT res_model, res_id, create_uid FROM ir_attachment WHERE id = ANY (%s)', (ids,))
+            for rmod, rid, create_uid in cr.fetchall():
                 if not (rmod and rid):
+                    if create_uid != uid:
+                        require_employee = True
                     continue
                 res_ids.setdefault(rmod,set()).add(rid)
         if values:
-            if values.get('res_model') and 'res_id' in values:
+            if values.get('res_model') and values.get('res_id'):
                 res_ids.setdefault(values['res_model'],set()).add(values['res_id'])
 
         ima = self.pool.get('ir.model.access')
         for model, mids in res_ids.items():
             # ignore attachments that are not attached to a resource anymore when checking access rights
             # (resource was deleted but attachment was not)
-            mids = self.pool.get(model).exists(cr, uid, mids)
+            if not self.pool.get(model):
+                require_employee = True
+                continue
+            existing_ids = self.pool.get(model).exists(cr, uid, mids)
+            if len(existing_ids) != len(mids):
+                require_employee = True
             ima.check(cr, uid, model, mode)
-            self.pool.get(model).check_access_rule(cr, uid, mids, mode, context=context)
+            self.pool.get(model).check_access_rule(cr, uid, existing_ids, mode, context=context)
+        if require_employee:
+            if not self.pool['res.users'].has_group(cr, uid, 'base.group_user'):
+                raise except_orm(_('Access Denied'), _("Sorry, you are not allowed to access this document."))
 
     def _search(self, cr, uid, args, offset=0, limit=None, order=None, context=None, count=False, access_rights_uid=None):
         ids = super(ir_attachment, self)._search(cr, uid, args, offset=offset,
@@ -242,6 +260,8 @@ class ir_attachment(osv.osv):
         # performed in batch as much as possible.
         ima = self.pool.get('ir.model.access')
         for model, targets in model_attachments.iteritems():
+            if not self.pool.get(model):
+                continue
             if not ima.check(cr, uid, model, 'read', False):
                 # remove all corresponding attachment ids
                 for attach_id in itertools.chain(*targets.values()):
@@ -282,7 +302,7 @@ class ir_attachment(osv.osv):
         if isinstance(ids, (int, long)):
             ids = [ids]
         self.check(cr, uid, ids, 'unlink', context=context)
-        location = self.pool.get('ir.config_parameter').get_param(cr, uid, 'ir_attachment.location')
+        location = self.pool.get('ir.config_parameter').get_param(cr, SUPERUSER_ID, 'ir_attachment.location')
         if location:
             for attach in self.browse(cr, uid, ids, context=context):
                 if attach.store_fname:
@@ -290,7 +310,7 @@ class ir_attachment(osv.osv):
         return super(ir_attachment, self).unlink(cr, uid, ids, context)
 
     def create(self, cr, uid, values, context=None):
-        self.check(cr, uid, [], mode='create', context=context, values=values)
+        self.check(cr, uid, [], mode='write', context=context, values=values)
         if 'file_size' in values:
             del values['file_size']
         return super(ir_attachment, self).create(cr, uid, values, context)

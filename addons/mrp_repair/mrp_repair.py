@@ -109,10 +109,12 @@ class mrp_repair(osv.osv):
         return res
 
     def _get_lines(self, cr, uid, ids, context=None):
-        result = {}
-        for line in self.pool.get('mrp.repair.line').browse(cr, uid, ids, context=context):
-            result[line.repair_id.id] = True
-        return result.keys()
+        return self.pool['mrp.repair'].search(
+            cr, uid, [('operations', 'in', ids)], context=context)
+
+    def _get_fee_lines(self, cr, uid, ids, context=None):
+        return self.pool['mrp.repair'].search(
+            cr, uid, [('fees_lines', 'in', ids)], context=context)
 
     _columns = {
         'name': fields.char('Repair Reference',size=24, required=True, states={'confirmed':[('readonly',True)]}),
@@ -161,18 +163,21 @@ class mrp_repair(osv.osv):
         'repaired': fields.boolean('Repaired', readonly=True),
         'amount_untaxed': fields.function(_amount_untaxed, string='Untaxed Amount',
             store={
-                'mrp.repair': (lambda self, cr, uid, ids, c={}: ids, ['operations'], 10),
+                'mrp.repair': (lambda self, cr, uid, ids, c={}: ids, ['operations', 'fees_lines'], 10),
                 'mrp.repair.line': (_get_lines, ['price_unit', 'price_subtotal', 'product_id', 'tax_id', 'product_uom_qty', 'product_uom'], 10),
+                'mrp.repair.fee': (_get_fee_lines, ['price_unit', 'price_subtotal', 'product_id', 'tax_id', 'product_uom_qty', 'product_uom'], 10),
             }),
         'amount_tax': fields.function(_amount_tax, string='Taxes',
             store={
-                'mrp.repair': (lambda self, cr, uid, ids, c={}: ids, ['operations'], 10),
+                'mrp.repair': (lambda self, cr, uid, ids, c={}: ids, ['operations', 'fees_lines'], 10),
                 'mrp.repair.line': (_get_lines, ['price_unit', 'price_subtotal', 'product_id', 'tax_id', 'product_uom_qty', 'product_uom'], 10),
+                'mrp.repair.fee': (_get_fee_lines, ['price_unit', 'price_subtotal', 'product_id', 'tax_id', 'product_uom_qty', 'product_uom'], 10),
             }),
         'amount_total': fields.function(_amount_total, string='Total',
             store={
-                'mrp.repair': (lambda self, cr, uid, ids, c={}: ids, ['operations'], 10),
+                'mrp.repair': (lambda self, cr, uid, ids, c={}: ids, ['operations', 'fees_lines'], 10),
                 'mrp.repair.line': (_get_lines, ['price_unit', 'price_subtotal', 'product_id', 'tax_id', 'product_uom_qty', 'product_uom'], 10),
+                'mrp.repair.fee': (_get_fee_lines, ['price_unit', 'price_subtotal', 'product_id', 'tax_id', 'product_uom_qty', 'product_uom'], 10),
             }),
     }
 
@@ -350,7 +355,8 @@ class mrp_repair(osv.osv):
         return self.write(cr,uid,ids,{'state':'cancel'})
 
     def wkf_invoice_create(self, cr, uid, ids, *args):
-        return self.action_invoice_create(cr, uid, ids)
+        self.action_invoice_create(cr, uid, ids)
+        return True
 
     def action_invoice_create(self, cr, uid, ids, group=False, context=None):
         """ Creates invoice(s) for repair order.
@@ -389,7 +395,7 @@ class mrp_repair(osv.osv):
                         'origin':repair.name,
                         'type': 'out_invoice',
                         'account_id': account_id,
-                        'partner_id': repair.partner_id.id,
+                        'partner_id': repair.partner_invoice_id.id or repair.partner_id.id,
                         'currency_id': repair.pricelist_id.currency_id.id,
                         'comment': repair.quotation_notes,
                         'fiscal_position': repair.partner_id.property_account_position.id

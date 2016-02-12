@@ -204,7 +204,7 @@ Normal - the campaign runs normally and automatically sends all emails and repor
     def _get_partner_for(self, campaign, record):
         partner_field = campaign.partner_field_id.name
         if partner_field:
-            return getattr(record, partner_field)
+            return record[partner_field]
         elif campaign.object_id.model == 'res.partner':
             return record
         return None
@@ -494,11 +494,9 @@ class marketing_campaign_activity(osv.osv):
                               active_ids=[workitem.res_id],
                               active_model=workitem.object_id.model,
                               workitem=workitem)
-        res = server_obj.run(cr, uid, [activity.server_action_id.id],
+        server_obj.run(cr, uid, [activity.server_action_id.id],
                              context=action_context)
-        # server action return False if the action is performed
-        # except client_action, other and python code
-        return res == False and True or res
+        return True
 
     def process(self, cr, uid, act_id, wi_id, context=None):
         activity = self.browse(cr, uid, act_id, context=context)

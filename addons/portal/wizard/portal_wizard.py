@@ -24,7 +24,7 @@ import random
 
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
-from openerp.tools import email_re
+from openerp.tools import email_split
 from openerp import SUPERUSER_ID
 
 _logger = logging.getLogger(__name__)
@@ -53,8 +53,8 @@ http://www.openerp.com
 
 def extract_email(email):
     """ extract the email address from a user-friendly email address """
-    m = email_re.search(email or "")
-    return m and m.group(0) or ""
+    addresses = email_split(email)
+    return addresses[0] if addresses else ''
 
 
 
@@ -116,7 +116,7 @@ class wizard_user(osv.osv_memory):
     _description = 'Portal User Config'
 
     _columns = {
-        'wizard_id': fields.many2one('portal.wizard', string='Wizard', required=True),
+        'wizard_id': fields.many2one('portal.wizard', string='Wizard', required=True, ondelete="cascade"),
         'partner_id': fields.many2one('res.partner', string='Contact', required=True, readonly=True),
         'email': fields.char(size=240, string='Email'),
         'in_portal': fields.boolean('In Portal'),

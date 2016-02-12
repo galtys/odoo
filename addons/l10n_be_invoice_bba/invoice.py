@@ -141,7 +141,7 @@ class account_invoice(osv.osv):
                 elif algorithm == 'random':
                     if not self.check_bbacomm(reference):
                         base = random.randint(1, 9999999999)
-                        bbacomm = str(base).rjust(7, '0')
+                        bbacomm = str(base).rjust(10, '0')
                         base = int(bbacomm)
                         mod = base % 97 or 97
                         mod = str(mod).rjust(2, '0')
@@ -190,13 +190,10 @@ class account_invoice(osv.osv):
                 reference_type = vals['reference_type']
             else:
                 reference_type = inv.reference_type or ''
-            if reference_type == 'bba':
-                if vals.has_key('reference'):
-                    bbacomm = vals['reference']
-                else:
-                    bbacomm = inv.reference or ''
-                if self.check_bbacomm(bbacomm):
-                    reference = re.sub('\D', '', bbacomm)
+
+            if reference_type == 'bba' and 'reference' in vals:
+                if self.check_bbacomm(vals['reference']):
+                    reference = re.sub('\D', '', vals['reference'])
                     vals['reference'] = '+++' + reference[0:3] + '/' + reference[3:7] + '/' + reference[7:] + '+++'
                     same_ids = self.search(cr, uid,
                         [('id', '!=', inv.id), ('type', '=', 'out_invoice'),

@@ -1,42 +1,43 @@
-# Slovenian translation for openobject-addons
-# Copyright (c) 2013 Rosetta Contributors and Canonical Ltd 2013
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
-#
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+# * marketing_campaign
+# 
+# Translators:
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2013-06-07 19:37+0000\n"
-"PO-Revision-Date: 2013-10-25 07:24+0000\n"
-"Last-Translator: Darja Zorman <darja.zorman@mentis.si>\n"
-"Language-Team: Slovenian <sl@li.org>\n"
+"Project-Id-Version: Odoo 7.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-14 00:10+0000\n"
+"PO-Revision-Date: 2015-06-30 08:25+0000\n"
+"Last-Translator: Martin Trigaux\n"
+"Language-Team: Slovenian (http://www.transifex.com/odoo/odoo-7/language/sl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-10-26 06:25+0000\n"
-"X-Generator: Launchpad (build 16810)\n"
+"Content-Transfer-Encoding: \n"
+"Language: sl\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);\n"
 
 #. module: marketing_campaign
 #: view:marketing.campaign:0
 msgid "Manual Mode"
-msgstr ""
+msgstr "Ročni način"
 
 #. module: marketing_campaign
 #: field:marketing.campaign.transition,activity_from_id:0
 msgid "Previous Activity"
-msgstr "Predhodna dejavnost"
+msgstr "Predhodna aktivnost"
 
 #. module: marketing_campaign
-#: code:addons/marketing_campaign/marketing_campaign.py:819
+#: code:addons/marketing_campaign/marketing_campaign.py:817
 #, python-format
 msgid "The current step for this item has no email or report to preview."
-msgstr ""
+msgstr "Na obstoječi fazi ni elektronskih sporočil ali poročil za pregled."
 
 #. module: marketing_campaign
 #: constraint:marketing.campaign.transition:0
 msgid "The To/From Activity of transition must be of the same Campaign "
-msgstr ""
+msgstr "Aktivnost prehoda od/do mora biti v isti kampanji "
 
 #. module: marketing_campaign
 #: selection:marketing.campaign.transition,trigger:0
@@ -46,13 +47,11 @@ msgstr "Čas"
 #. module: marketing_campaign
 #: selection:marketing.campaign.activity,type:0
 msgid "Custom Action"
-msgstr ""
+msgstr "Prilagojena aktivnost"
 
 #. module: marketing_campaign
-#: view:campaign.analysis:0
-#: view:marketing.campaign:0
-#: view:marketing.campaign.segment:0
-#: view:marketing.campaign.workitem:0
+#: view:campaign.analysis:0 view:marketing.campaign:0
+#: view:marketing.campaign.segment:0 view:marketing.campaign.workitem:0
 msgid "Group By..."
 msgstr "Združeno po..."
 
@@ -62,7 +61,7 @@ msgid ""
 "Set an expected revenue if you consider that every campaign item that has "
 "reached this point has generated a certain revenue. You can get revenue "
 "statistics in the Reporting section"
-msgstr ""
+msgstr "Določite pričakovani prihodek, če menite, da je vsaka enota kampanje, ki je dosegla to točko, ustvarila določen prihodek. V poročilih lahko vidite statistiko prihodkov."
 
 #. module: marketing_campaign
 #: field:marketing.campaign.transition,trigger:0
@@ -72,21 +71,20 @@ msgstr "Sprožilec"
 #. module: marketing_campaign
 #: view:marketing.campaign:0
 msgid "Follow-Up"
-msgstr "Navezava"
+msgstr "Sledenje"
 
 #. module: marketing_campaign
 #: field:campaign.analysis,count:0
 msgid "# of Actions"
-msgstr ""
+msgstr "# aktivnosti"
 
 #. module: marketing_campaign
 #: view:marketing.campaign:0
 msgid "Campaign Editor"
-msgstr ""
+msgstr "Urejevalnik kampanj"
 
 #. module: marketing_campaign
-#: view:marketing.campaign:0
-#: selection:marketing.campaign,state:0
+#: view:marketing.campaign:0 selection:marketing.campaign,state:0
 #: view:marketing.campaign.segment:0
 #: selection:marketing.campaign.segment,state:0
 msgid "Running"
@@ -95,9 +93,9 @@ msgstr "V teku"
 #. module: marketing_campaign
 #: model:email.template,body_html:marketing_campaign.email_template_3
 msgid ""
-"Hi, we are delighted to let you know that you have entered the select circle "
-"of our Gold Partners"
-msgstr ""
+"Hi, we are delighted to let you know that you have entered the select circle"
+" of our Gold Partners"
+msgstr "Pozdravljeni, veseli smo, da vas lahko obvestimo, da ste postali naš Zlati partner"
 
 #. module: marketing_campaign
 #: selection:campaign.analysis,month:0
@@ -112,32 +110,21 @@ msgstr "Predmet"
 #. module: marketing_campaign
 #: view:marketing.campaign.segment:0
 msgid "Sync mode: only records created after last sync"
-msgstr ""
+msgstr "Sinhronizacijski način: samo zapisi, kreirani po zadnji sinhronizaciji"
 
 #. module: marketing_campaign
 #: help:marketing.campaign.activity,condition:0
 msgid ""
-"Python expression to decide whether the activity can be executed, otherwise "
-"it will be deleted or cancelled.The expression may use the following "
-"[browsable] variables:\n"
+"Python expression to decide whether the activity can be executed, otherwise it will be deleted or cancelled.The expression may use the following [browsable] variables:\n"
 "   - activity: the campaign activity\n"
 "   - workitem: the campaign workitem\n"
 "   - resource: the resource object this campaign item represents\n"
 "   - transitions: list of campaign transitions outgoing from this activity\n"
 "...- re: Python regular expression module"
-msgstr ""
-"Python izraz za odločitev, ali se naj aktivnost izvede, v nasprotnem primeru "
-"bo izbrisana ali preklicana. Izraz lahko vsebuje naslednje spremenljive (ki "
-"jih izberemo):\n"
-"   - aktivnost: aktivnost kampanje\n"
-"   - objekt: objekt kampanje\n"
-"   - vir: izvorni objekt, ki ga predstavlja objekt kampanje\n"
-"   - prehod: seznam prehodov kampanje, ki izhajajo iz te aktivnosti\n"
-"...-re: Python običajni izrazni modul"
+msgstr "Python izraz za odločitev, ali se naj aktivnost izvede, v nasprotnem primeru bo izbrisana ali preklicana. Izraz lahko vsebuje naslednje spremenljive (ki jih izberemo):\n   - aktivnost: aktivnost kampanje\n   - objekt: objekt kampanje\n   - vir: izvorni objekt, ki ga predstavlja objekt kampanje\n   - prehod: seznam prehodov kampanje, ki izhajajo iz te aktivnosti\n...-re: Python običajni izrazni modul"
 
 #. module: marketing_campaign
-#: view:marketing.campaign:0
-#: view:marketing.campaign.segment:0
+#: view:marketing.campaign:0 view:marketing.campaign.segment:0
 msgid "Set to Draft"
 msgstr "Nastavi kot osnutek"
 
@@ -153,29 +140,28 @@ msgstr "Naslednja dejanja"
 msgid ""
 "The campaign cannot be started. It does not have any starting activity. "
 "Modify campaign's activities to mark one as the starting point."
-msgstr ""
+msgstr "Kampanje ne morete pričeti. Nima nobenih začetnih aktivnosti. Spremenite aktivnosti kampanje tako, da eno označite kot začetno točko."
 
 #. module: marketing_campaign
 #: help:marketing.campaign.activity,email_template_id:0
 msgid "The email to send when this activity is activated"
-msgstr ""
+msgstr "Elektronsko sporočilo, ki se naj pošlje ob aktiviranju te aktivnsti"
 
 #. module: marketing_campaign
 #: view:marketing.campaign.segment:0
 #: field:marketing.campaign.segment,date_run:0
 msgid "Launch Date"
-msgstr ""
+msgstr "Začetni datum"
 
 #. module: marketing_campaign
-#: view:campaign.analysis:0
-#: field:campaign.analysis,day:0
+#: view:campaign.analysis:0 field:campaign.analysis,day:0
 msgid "Day"
 msgstr "Dan"
 
 #. module: marketing_campaign
 #: view:marketing.campaign.activity:0
 msgid "Outgoing Transitions"
-msgstr ""
+msgstr "Izhodni prehodi"
 
 #. module: marketing_campaign
 #: view:marketing.campaign.workitem:0
@@ -185,17 +171,17 @@ msgstr "Ponastavi"
 #. module: marketing_campaign
 #: help:marketing.campaign,object_id:0
 msgid "Choose the resource on which you want this campaign to be run"
-msgstr ""
+msgstr "Izberite vir, za katerega želite izvesti to kampanjo"
 
 #. module: marketing_campaign
 #: model:ir.actions.client,name:marketing_campaign.action_client_marketing_menu
 msgid "Open Marketing Menu"
-msgstr ""
+msgstr "Odpri meni marketing"
 
 #. module: marketing_campaign
 #: field:marketing.campaign.segment,sync_last_date:0
 msgid "Last Synchronization"
-msgstr ""
+msgstr "Zadnja sinhronizacija"
 
 #. module: marketing_campaign
 #: selection:marketing.campaign.transition,interval_type:0
@@ -205,18 +191,17 @@ msgstr "Let"
 #. module: marketing_campaign
 #: help:marketing.campaign.segment,date_run:0
 msgid "Initial start date of this segment."
-msgstr ""
+msgstr "Izvirni začetni datum tega segmenta"
 
 #. module: marketing_campaign
 #: help:marketing.campaign.segment,sync_last_date:0
 msgid ""
 "Date on which this segment was synchronized last time (automatically or "
 "manually)"
-msgstr ""
+msgstr "Datum, ko je bil ta segment zadnjič sinhroniziran (avtomatsko ali ročno)"
 
 #. module: marketing_campaign
-#: selection:campaign.analysis,state:0
-#: selection:marketing.campaign,state:0
+#: selection:campaign.analysis,state:0 selection:marketing.campaign,state:0
 #: selection:marketing.campaign.segment,state:0
 #: selection:marketing.campaign.workitem,state:0
 msgid "Cancelled"
@@ -230,20 +215,16 @@ msgstr "Samodejno"
 #. module: marketing_campaign
 #: help:marketing.campaign,mode:0
 msgid ""
-"Test - It creates and process all the activities directly (without waiting "
-"for the delay on transitions) but does not send emails or produce reports.\n"
-"Test in Realtime - It creates and processes all the activities directly but "
-"does not send emails or produce reports.\n"
-"With Manual Confirmation - the campaigns runs normally, but the user has to "
-"validate all workitem manually.\n"
-"Normal - the campaign runs normally and automatically sends all emails and "
-"reports (be very careful with this mode, you're live!)"
-msgstr ""
+"Test - It creates and process all the activities directly (without waiting for the delay on transitions) but does not send emails or produce reports.\n"
+"Test in Realtime - It creates and processes all the activities directly but does not send emails or produce reports.\n"
+"With Manual Confirmation - the campaigns runs normally, but the user has to validate all workitem manually.\n"
+"Normal - the campaign runs normally and automatically sends all emails and reports (be very careful with this mode, you're live!)"
+msgstr "Test - kreira in izvede vse aktivnosti direktno (brez čakanja ob zamikih pri prehodih), vendar ne pošlje elektronskih sporočil ali pripravi poročil.\nTest v realnem času - kreira in izvede vse aktivnosti direktno, vendar ne pošlje elektronskih sporočil ali pripravi poročil.\nZ ročnim potrjevanjem - kampanja teče normalno, vendar mora uporabnik potrditi vse korake ročno.\nNormalno - kampanja se izvede normalno in avtomatsko pošlje vsa elektronska sporočila in poročila (bodite zelo pozorni s tem načinom, gre v živo!)"
 
 #. module: marketing_campaign
 #: view:marketing.campaign.segment:0
 msgid "Cancel Segment"
-msgstr ""
+msgstr "Prekliči segment"
 
 #. module: marketing_campaign
 #: view:res.partner:0
@@ -251,10 +232,8 @@ msgid "False"
 msgstr "Napačno"
 
 #. module: marketing_campaign
-#: view:campaign.analysis:0
-#: field:campaign.analysis,campaign_id:0
-#: view:marketing.campaign:0
-#: field:marketing.campaign.activity,campaign_id:0
+#: view:campaign.analysis:0 field:campaign.analysis,campaign_id:0
+#: view:marketing.campaign:0 field:marketing.campaign.activity,campaign_id:0
 #: view:marketing.campaign.segment:0
 #: field:marketing.campaign.segment,campaign_id:0
 #: view:marketing.campaign.workitem:0
@@ -265,13 +244,11 @@ msgstr "Kampanija"
 #. module: marketing_campaign
 #: model:email.template,body_html:marketing_campaign.email_template_1
 msgid "Hello, you will receive your welcome pack via email shortly."
-msgstr ""
+msgstr "Pozdravljeni, kmalu boste prejeli paket dobrodošlice po elektronski pošti."
 
 #. module: marketing_campaign
-#: view:campaign.analysis:0
-#: field:campaign.analysis,segment_id:0
-#: view:marketing.campaign.segment:0
-#: view:marketing.campaign.workitem:0
+#: view:campaign.analysis:0 field:campaign.analysis,segment_id:0
+#: view:marketing.campaign.segment:0 view:marketing.campaign.workitem:0
 #: field:marketing.campaign.workitem,segment_id:0
 msgid "Segment"
 msgstr "Odsek"
@@ -280,24 +257,22 @@ msgstr "Odsek"
 #: code:addons/marketing_campaign/marketing_campaign.py:214
 #, python-format
 msgid "You cannot duplicate a campaign, Not supported yet."
-msgstr ""
+msgstr "Kampanje ne morete podvojiti. Ta funkcionalnost še ni podprta."
 
 #. module: marketing_campaign
 #: help:marketing.campaign.activity,type:0
 msgid ""
 "The type of action to execute when an item enters this activity, such as:\n"
 "   - Email: send an email using a predefined email template\n"
-"   - Report: print an existing Report defined on the resource item and save "
-"it into a specific directory\n"
-"   - Custom Action: execute a predefined action, e.g. to modify the fields "
-"of the resource record\n"
+"   - Report: print an existing Report defined on the resource item and save it into a specific directory\n"
+"   - Custom Action: execute a predefined action, e.g. to modify the fields of the resource record\n"
 "  "
-msgstr ""
+msgstr "Tip aktivnosti, ki se izvede, ko zadeva pride v to aktivnost, kot so:\n   - elektronska pošta: pošlje elektronsko sporočilo na osnovi določenega osnutka\n   - poročilo: natisni obstoječe poročilo, določeno na zadevi in ga shrani v določeno mapo\n   - prilagojena aktivnost: izvede v naprej določeno aktivnost, npr. za spremembo polj na zapisu vira\n  "
 
 #. module: marketing_campaign
 #: help:marketing.campaign.segment,date_next_sync:0
 msgid "Next time the synchronization job is scheduled to run automatically"
-msgstr ""
+msgstr "Naslednjič je nastavljena avtomatska sinhronizacija"
 
 #. module: marketing_campaign
 #: selection:marketing.campaign.transition,interval_type:0
@@ -305,8 +280,7 @@ msgid "Month(s)"
 msgstr "Mesec(Mesecev)"
 
 #. module: marketing_campaign
-#: view:campaign.analysis:0
-#: field:campaign.analysis,partner_id:0
+#: view:campaign.analysis:0 field:campaign.analysis,partner_id:0
 #: model:ir.model,name:marketing_campaign.model_res_partner
 #: field:marketing.campaign.workitem,partner_id:0
 msgid "Partner"
@@ -320,7 +294,7 @@ msgstr "Partnerji"
 #. module: marketing_campaign
 #: view:campaign.analysis:0
 msgid "Marketing Reports"
-msgstr ""
+msgstr "Marketinška poročila"
 
 #. module: marketing_campaign
 #: selection:marketing.campaign,state:0
@@ -331,7 +305,7 @@ msgstr "Novo"
 #. module: marketing_campaign
 #: sql_constraint:marketing.campaign.transition:0
 msgid "The interval must be positive or zero"
-msgstr ""
+msgstr "Interval mora biti pozitiven ali nič"
 
 #. module: marketing_campaign
 #: selection:marketing.campaign.activity,type:0
@@ -339,8 +313,7 @@ msgid "Email"
 msgstr "Email"
 
 #. module: marketing_campaign
-#: field:marketing.campaign,name:0
-#: field:marketing.campaign.activity,name:0
+#: field:marketing.campaign,name:0 field:marketing.campaign.activity,name:0
 #: field:marketing.campaign.segment,name:0
 #: field:marketing.campaign.transition,name:0
 msgid "Name"
@@ -354,11 +327,10 @@ msgstr "Ime vira"
 #. module: marketing_campaign
 #: field:marketing.campaign.segment,sync_mode:0
 msgid "Synchronization mode"
-msgstr ""
+msgstr "Način sinhronizacije"
 
 #. module: marketing_campaign
-#: view:marketing.campaign:0
-#: view:marketing.campaign.segment:0
+#: view:marketing.campaign:0 view:marketing.campaign.segment:0
 msgid "Run"
 msgstr "Zaženi"
 
@@ -366,22 +338,22 @@ msgstr "Zaženi"
 #: view:marketing.campaign.activity:0
 #: field:marketing.campaign.activity,from_ids:0
 msgid "Previous Activities"
-msgstr ""
+msgstr "Prejšnje aktivnosti"
 
 #. module: marketing_campaign
 #: model:email.template,subject:marketing_campaign.email_template_2
 msgid "Congratulations! You are now a Silver Partner!"
-msgstr ""
+msgstr "Čestitamo! Sedaj ste Srebrni partner!"
 
 #. module: marketing_campaign
 #: help:marketing.campaign.segment,date_done:0
 msgid "Date this segment was last closed or cancelled."
-msgstr ""
+msgstr "Datum, ko je bil ta segment nazadnje zaključen ali preklican."
 
 #. module: marketing_campaign
 #: view:marketing.campaign.workitem:0
 msgid "Marketing Campaign Activities"
-msgstr ""
+msgstr "Aktivnosti marketinške kampanje"
 
 #. module: marketing_campaign
 #: view:marketing.campaign.workitem:0
@@ -393,8 +365,7 @@ msgstr "Sporočilo napake"
 #: model:ir.actions.act_window,name:marketing_campaign.action_marketing_campaign_form
 #: model:ir.ui.menu,name:marketing_campaign.menu_marketing_campaign
 #: model:ir.ui.menu,name:marketing_campaign.menu_marketing_campaign_form
-#: view:marketing.campaign:0
-#: view:res.partner:0
+#: view:marketing.campaign:0 view:res.partner:0
 msgid "Campaigns"
 msgstr "Kampanje"
 
@@ -430,7 +401,7 @@ msgid ""
 "Set a variable cost if you consider that every campaign item that has "
 "reached this point has entailed a certain cost. You can get cost statistics "
 "in the Reporting section"
-msgstr ""
+msgstr "Nastavite spremenljive stroške če upoštevate, da je vsaka kampanja, ki je dosegla to točko, povzročila določene stroške. Statistiko stroškov lahko dobite v odseku Poročanje."
 
 #. module: marketing_campaign
 #: selection:marketing.campaign.transition,interval_type:0
@@ -440,14 +411,14 @@ msgstr "Ura(Ure)"
 #. module: marketing_campaign
 #: model:ir.model,name:marketing_campaign.model_marketing_campaign_segment
 msgid "Campaign Segment"
-msgstr ""
+msgstr "Segment kampanje"
 
 #. module: marketing_campaign
 #: help:marketing.campaign.activity,keep_if_condition_not_met:0
 msgid ""
 "By activating this option, workitems that aren't executed because the "
 "condition is not met are marked as cancelled instead of being deleted."
-msgstr ""
+msgstr "Z aktiviranjem te opcije bodo aktivnosti, ki niso bile izvedene zaradi neizpolnjenih pogojev, označene kot preklicane in se ne bodo brisale."
 
 #. module: marketing_campaign
 #: view:campaign.analysis:0
@@ -458,22 +429,22 @@ msgstr "Izjeme"
 #: model:ir.actions.act_window,name:marketing_campaign.act_marketing_campaing_followup
 #: field:res.partner,workitem_ids:0
 msgid "Workitems"
-msgstr ""
+msgstr "Predmeti dela"
 
 #. module: marketing_campaign
 #: field:marketing.campaign,fixed_cost:0
 msgid "Fixed Cost"
-msgstr ""
+msgstr "Stalni stroški"
 
 #. module: marketing_campaign
 #: view:marketing.campaign.segment:0
 msgid "Newly Modified"
-msgstr ""
+msgstr "Sveže spremenjeno"
 
 #. module: marketing_campaign
 #: view:marketing.campaign.workitem:0
 msgid "Cancel Workitem"
-msgstr ""
+msgstr "Preklic predmeta dela"
 
 #. module: marketing_campaign
 #: model:ir.actions.act_window,help:marketing_campaign.action_marketing_campaign_form
@@ -481,16 +452,12 @@ msgid ""
 "<p class=\"oe_view_nocontent_create\">\n"
 "            Click to create a marketing campaign.\n"
 "          </p><p>\n"
-"            OpenERP's marketing campaign allows you to automate "
-"communication\n"
-"            to your prospects. You can define a segment (set of conditions) "
-"on\n"
+"            OpenERP's marketing campaign allows you to automate communication\n"
+"            to your prospects. You can define a segment (set of conditions) on\n"
 "            your leads and partners to fullfil the campaign.\n"
 "          </p><p>\n"
-"            A campaign can have many activities like sending an email, "
-"printing\n"
-"            a letter, assigning to a team, etc. These activities are "
-"triggered\n"
+"            A campaign can have many activities like sending an email, printing\n"
+"            a letter, assigning to a team, etc. These activities are triggered\n"
 "            from specific situations; contact form, 10 days after first\n"
 "            contact, if a lead is not closed yet, etc.\n"
 "          </p>\n"
@@ -500,7 +467,7 @@ msgstr ""
 #. module: marketing_campaign
 #: field:marketing.campaign.transition,interval_nbr:0
 msgid "Interval Value"
-msgstr ""
+msgstr "Vrednost intervala"
 
 #. module: marketing_campaign
 #: field:campaign.analysis,revenue:0
@@ -521,15 +488,14 @@ msgstr "December"
 #. module: marketing_campaign
 #: help:marketing.campaign,partner_field_id:0
 msgid ""
-"The generated workitems will be linked to the partner related to the record. "
-"If the record is the partner itself leave this field empty. This is useful "
+"The generated workitems will be linked to the partner related to the record."
+" If the record is the partner itself leave this field empty. This is useful "
 "for reporting purposes, via the Campaign Analysis or Campaign Follow-up "
 "views."
-msgstr ""
+msgstr "Ustvarjene predmeti dela bodo povezani s partnerjem, ki je povezan z zapisom. Če je zapis partner sam, pustite polje prazno. To je koristno za namene poročanja, preko analize kampanje ali pregledov nadaljnjih kampanj."
 
 #. module: marketing_campaign
-#: view:campaign.analysis:0
-#: field:campaign.analysis,month:0
+#: view:campaign.analysis:0 field:campaign.analysis,month:0
 msgid "Month"
 msgstr "Mesec"
 
@@ -543,17 +509,17 @@ msgstr "Naslednja dejavnost"
 #: model:ir.actions.act_window,name:marketing_campaign.action_marketing_campaign_workitem
 #: model:ir.ui.menu,name:marketing_campaign.menu_action_marketing_campaign_workitem
 msgid "Campaign Follow-up"
-msgstr ""
+msgstr "Sledenje kampanje"
 
 #. module: marketing_campaign
 #: view:marketing.campaign:0
 msgid "Test Mode"
-msgstr ""
+msgstr "Testni način"
 
 #. module: marketing_campaign
 #: selection:marketing.campaign.segment,sync_mode:0
 msgid "Only records modified after last sync (no duplicates)"
-msgstr ""
+msgstr "Samo zapisi, spremenjeni po zadnji sinhronizaciji (brez podvajanj)"
 
 #. module: marketing_campaign
 #: model:ir.model,name:marketing_campaign.model_ir_actions_report_xml
@@ -563,17 +529,17 @@ msgstr "ir.actions.report.xml"
 #. module: marketing_campaign
 #: view:marketing.campaign:0
 msgid "Campaign Statistics"
-msgstr ""
+msgstr "Statistika kampanje"
 
 #. module: marketing_campaign
 #: help:marketing.campaign.activity,server_action_id:0
 msgid "The action to perform when this activity is activated"
-msgstr ""
+msgstr "Akcija, ki se izvede, ko je ta aktivnost sprožena"
 
 #. module: marketing_campaign
 #: field:marketing.campaign,partner_field_id:0
 msgid "Partner Field"
-msgstr ""
+msgstr "Polje partner"
 
 #. module: marketing_campaign
 #: view:campaign.analysis:0
@@ -581,7 +547,7 @@ msgstr ""
 #: model:ir.model,name:marketing_campaign.model_campaign_analysis
 #: model:ir.ui.menu,name:marketing_campaign.menu_action_campaign_analysis_all
 msgid "Campaign Analysis"
-msgstr ""
+msgstr "Analiza kampanje"
 
 #. module: marketing_campaign
 #: help:marketing.campaign.segment,sync_mode:0
@@ -590,19 +556,19 @@ msgid ""
 "records to inject in the campaign. \"No duplicates\" prevents selecting "
 "records which have already entered the campaign previously.If the campaign "
 "has a \"unique field\" set, \"no duplicates\" will also prevent selecting "
-"records which have the same value for the unique field as other records that "
-"already entered the campaign."
-msgstr ""
+"records which have the same value for the unique field as other records that"
+" already entered the campaign."
+msgstr "Določi dodatni kriterij, ki se doda filtru ob izbiri novih zapisov za vnos v kampanjo. \"Brez duplikatov\" prepreči izbiro zapisov, ki so bili že prej vneseni v kampanjo. Če ima kampanja nastavljeno \"unikatno polje\", \"brez duplikatov\" prepreči tudi izbiro zapisov, ki imajo enako vrednost za unikatno polje, kot obstoječi zapisi vneseni v kampanjo."
 
 #. module: marketing_campaign
 #: selection:marketing.campaign,mode:0
 msgid "Test in Realtime"
-msgstr ""
+msgstr "Testiranje v realnem času"
 
 #. module: marketing_campaign
 #: selection:marketing.campaign,mode:0
 msgid "Test Directly"
-msgstr ""
+msgstr "Direktno testiranje"
 
 #. module: marketing_campaign
 #: field:marketing.campaign.activity,report_directory_id:0
@@ -610,15 +576,14 @@ msgid "Directory"
 msgstr "Mapa"
 
 #. module: marketing_campaign
-#: view:marketing.campaign:0
-#: view:marketing.campaign.segment:0
+#: view:marketing.campaign:0 view:marketing.campaign.segment:0
 msgid "Draft"
 msgstr "Osnutek"
 
 #. module: marketing_campaign
 #: view:marketing.campaign.workitem:0
 msgid "Marketing Campaign Activity"
-msgstr ""
+msgstr "Aktivnost marketinške kampanje"
 
 #. module: marketing_campaign
 #: view:marketing.campaign.workitem:0
@@ -626,12 +591,9 @@ msgid "Preview"
 msgstr "Predogled"
 
 #. module: marketing_campaign
-#: view:campaign.analysis:0
-#: field:campaign.analysis,state:0
-#: view:marketing.campaign:0
-#: field:marketing.campaign,state:0
-#: view:marketing.campaign.segment:0
-#: field:marketing.campaign.segment,state:0
+#: view:campaign.analysis:0 field:campaign.analysis,state:0
+#: view:marketing.campaign:0 field:marketing.campaign,state:0
+#: view:marketing.campaign.segment:0 field:marketing.campaign.segment,state:0
 #: view:marketing.campaign.workitem:0
 #: field:marketing.campaign.workitem,state:0
 msgid "Status"
@@ -650,18 +612,17 @@ msgstr "Običajno"
 #. module: marketing_campaign
 #: help:marketing.campaign.activity,start:0
 msgid "This activity is launched when the campaign starts."
-msgstr ""
+msgstr "Ta aktivnost je sprožena, ko se kampanja prične."
 
 #. module: marketing_campaign
 #: help:marketing.campaign.activity,signal:0
 msgid ""
 "An activity with a signal can be called programmatically. Be careful, the "
 "workitem is always created when a signal is sent"
-msgstr ""
+msgstr "Aktivnost s signalom je lahko klicana programsko. Bodite pozorni, objekt je vedno kreiran, če je poslan signal."
 
 #. module: marketing_campaign
-#: view:campaign.analysis:0
-#: selection:campaign.analysis,state:0
+#: view:campaign.analysis:0 selection:campaign.analysis,state:0
 #: view:marketing.campaign.workitem:0
 #: selection:marketing.campaign.workitem,state:0
 msgid "To Do"
@@ -685,12 +646,12 @@ msgstr "Sync mode: all records"
 #. module: marketing_campaign
 #: selection:marketing.campaign.segment,sync_mode:0
 msgid "All records (no duplicates)"
-msgstr ""
+msgstr "Vsi zapisi (brez podvajanja)"
 
 #. module: marketing_campaign
 #: view:marketing.campaign.segment:0
 msgid "Newly Created"
-msgstr ""
+msgstr "Novo kreirano"
 
 #. module: marketing_campaign
 #: field:campaign.analysis,date:0
@@ -710,16 +671,15 @@ msgstr "Pogoj"
 #. module: marketing_campaign
 #: help:marketing.campaign.activity,report_id:0
 msgid "The report to generate when this activity is activated"
-msgstr ""
+msgstr "Poročilo, ki nastane, ko je ta aktivnost sprožena"
 
 #. module: marketing_campaign
 #: field:marketing.campaign,unique_field_id:0
 msgid "Unique Field"
-msgstr ""
+msgstr "Enoznačno polje"
 
 #. module: marketing_campaign
-#: selection:campaign.analysis,state:0
-#: view:marketing.campaign.workitem:0
+#: selection:campaign.analysis,state:0 view:marketing.campaign.workitem:0
 #: selection:marketing.campaign.workitem,state:0
 msgid "Exception"
 msgstr "Izjema"
@@ -732,7 +692,7 @@ msgstr "Oktober"
 #. module: marketing_campaign
 #: field:marketing.campaign.activity,email_template_id:0
 msgid "Email Template"
-msgstr ""
+msgstr "Predloga elektronskega sporočila"
 
 #. module: marketing_campaign
 #: selection:campaign.analysis,month:0
@@ -740,25 +700,24 @@ msgid "January"
 msgstr "Januar"
 
 #. module: marketing_campaign
-#: view:marketing.campaign.workitem:0
-#: field:marketing.campaign.workitem,date:0
+#: view:marketing.campaign.workitem:0 field:marketing.campaign.workitem,date:0
 msgid "Execution Date"
-msgstr ""
+msgstr "Datum izvedbe"
 
 #. module: marketing_campaign
 #: model:ir.model,name:marketing_campaign.model_marketing_campaign_workitem
 msgid "Campaign Workitem"
-msgstr ""
+msgstr "Objekt kampanje"
 
 #. module: marketing_campaign
 #: model:ir.model,name:marketing_campaign.model_marketing_campaign_activity
 msgid "Campaign Activity"
-msgstr ""
+msgstr "Aktivnost kampanje"
 
 #. module: marketing_campaign
 #: help:marketing.campaign.activity,report_directory_id:0
 msgid "This folder is used to store the generated reports"
-msgstr ""
+msgstr "Ta mapa se uporablja za shranjevanje pripravljenih poročil"
 
 #. module: marketing_campaign
 #: code:addons/marketing_campaign/marketing_campaign.py:136
@@ -774,10 +733,10 @@ msgid "Action"
 msgstr "Dejanje"
 
 #. module: marketing_campaign
-#: code:addons/marketing_campaign/marketing_campaign.py:528
+#: code:addons/marketing_campaign/marketing_campaign.py:526
 #, python-format
 msgid "Automatic transition"
-msgstr ""
+msgstr "Avtomatski prehod"
 
 #. module: marketing_campaign
 #: field:marketing.campaign.activity,start:0
@@ -785,7 +744,7 @@ msgid "Start"
 msgstr "Zagon"
 
 #. module: marketing_campaign
-#: code:addons/marketing_campaign/marketing_campaign.py:819
+#: code:addons/marketing_campaign/marketing_campaign.py:817
 #, python-format
 msgid "No preview"
 msgstr "Ni predogleda"
@@ -793,7 +752,7 @@ msgstr "Ni predogleda"
 #. module: marketing_campaign
 #: view:marketing.campaign:0
 msgid "Cancel Campaign"
-msgstr ""
+msgstr "Preklc kampanje"
 
 #. module: marketing_campaign
 #: view:marketing.campaign.workitem:0
@@ -801,22 +760,20 @@ msgid "Process"
 msgstr "Proces"
 
 #. module: marketing_campaign
-#: code:addons/marketing_campaign/marketing_campaign.py:530
+#: code:addons/marketing_campaign/marketing_campaign.py:528
 #: selection:marketing.campaign.transition,trigger:0
 #, python-format
 msgid "Cosmetic"
-msgstr ""
+msgstr "Kozmetika"
 
 #. module: marketing_campaign
 #: help:marketing.campaign.transition,trigger:0
 msgid "How is the destination workitem triggered"
-msgstr ""
+msgstr "Kakoj je sprožen ciljni objekt"
 
 #. module: marketing_campaign
-#: view:campaign.analysis:0
-#: selection:campaign.analysis,state:0
-#: view:marketing.campaign:0
-#: selection:marketing.campaign,state:0
+#: view:campaign.analysis:0 selection:campaign.analysis,state:0
+#: view:marketing.campaign:0 selection:marketing.campaign,state:0
 #: selection:marketing.campaign.segment,state:0
 #: selection:marketing.campaign.workitem,state:0
 msgid "Done"
@@ -846,7 +803,7 @@ msgstr "Model filtra mora biti isti kot izvirni model kampanje "
 #. module: marketing_campaign
 #: view:marketing.campaign.segment:0
 msgid "Synchronize Manually"
-msgstr ""
+msgstr "Ročno sinhroniziraj"
 
 #. module: marketing_campaign
 #: view:marketing.campaign.workitem:0
@@ -857,26 +814,25 @@ msgstr "ID vira"
 #. module: marketing_campaign
 #: model:ir.model,name:marketing_campaign.model_marketing_campaign_transition
 msgid "Campaign Transition"
-msgstr ""
+msgstr "Prehod kampanje"
 
 #. module: marketing_campaign
 #: view:marketing.campaign.segment:0
 msgid "Marketing Campaign Segment"
-msgstr ""
+msgstr "Segment marketinške kampanje"
 
 #. module: marketing_campaign
 #: model:ir.actions.act_window,name:marketing_campaign.act_marketing_campaing_segment_opened
 #: model:ir.actions.act_window,name:marketing_campaign.action_marketing_campaign_segment_form
 #: model:ir.ui.menu,name:marketing_campaign.menu_marketing_campaign_segment_form
-#: view:marketing.campaign:0
-#: view:marketing.campaign.segment:0
+#: view:marketing.campaign:0 view:marketing.campaign.segment:0
 msgid "Segments"
 msgstr "Segmenti"
 
 #. module: marketing_campaign
 #: field:marketing.campaign.activity,keep_if_condition_not_met:0
 msgid "Don't Delete Workitems"
-msgstr ""
+msgstr "Ne izbriši objektov"
 
 #. module: marketing_campaign
 #: view:marketing.campaign.activity:0
@@ -889,8 +845,7 @@ msgid "Day(s)"
 msgstr "Dan(Dni)"
 
 #. module: marketing_campaign
-#: view:marketing.campaign:0
-#: field:marketing.campaign,activity_ids:0
+#: view:marketing.campaign:0 field:marketing.campaign,activity_ids:0
 #: view:marketing.campaign.activity:0
 msgid "Activities"
 msgstr "Dejavnosti"
@@ -898,7 +853,7 @@ msgstr "Dejavnosti"
 #. module: marketing_campaign
 #: selection:marketing.campaign,mode:0
 msgid "With Manual Confirmation"
-msgstr ""
+msgstr "Z ročno potrditvijo"
 
 #. module: marketing_campaign
 #: selection:campaign.analysis,month:0
@@ -913,32 +868,32 @@ msgstr "Vrsta"
 #. module: marketing_campaign
 #: model:email.template,subject:marketing_campaign.email_template_3
 msgid "Congratulations! You are now one of our Gold Partners!"
-msgstr ""
+msgstr "Čestitamo! Sedaj ste eden od naših Zlatih partnerjev!"
 
 #. module: marketing_campaign
 #: help:marketing.campaign,unique_field_id:0
 msgid ""
-"If set, this field will help segments that work in \"no duplicates\" mode to "
-"avoid selecting similar records twice. Similar records are records that have "
-"the same value for this unique field. For example by choosing the "
+"If set, this field will help segments that work in \"no duplicates\" mode to"
+" avoid selecting similar records twice. Similar records are records that "
+"have the same value for this unique field. For example by choosing the "
 "\"email_from\" field for CRM Leads you would prevent sending the same "
 "campaign to the same email address again. If not set, the \"no duplicates\" "
 "segments will only avoid selecting the same record again if it entered the "
 "campaign previously. Only easily comparable fields like textfields, "
 "integers, selections or single relationships may be used."
-msgstr ""
+msgstr "Če nastavljeno, to polje omogoča segmentom obratovanje v načinu \"brez duplikatov\" v izogib podvajanju podobnih zapisov. Podobni zapisi so zapisi, ki imajo isto vrednost unikatnega polja. Npr. z izbiro polja \"email_from\" pri CRM indicih tako preprečimo ponovno pošiljanje iste kampanje na isti e-poštni naslov. Če ni nastavljeno, se segmenti \"brez duplikatov\" le izogibajo ponovni izbiri istega predhodno vnesenega zapisa kampanje. Uporablja se lahko le enostavno primerljive zapise, kot tekstovne, integer, izbore ali posamične relacije."
 
 #. module: marketing_campaign
-#: code:addons/marketing_campaign/marketing_campaign.py:529
+#: code:addons/marketing_campaign/marketing_campaign.py:527
 #, python-format
 msgid "After %(interval_nbr)d %(interval_type)s"
-msgstr ""
+msgstr "Po %(interval_nbr)d %(interval_type)s"
 
 #. module: marketing_campaign
 #: model:ir.model,name:marketing_campaign.model_marketing_campaign
 #: view:marketing.campaign:0
 msgid "Marketing Campaign"
-msgstr ""
+msgstr "Marketinška kampanja"
 
 #. module: marketing_campaign
 #: field:marketing.campaign.segment,date_done:0
@@ -951,10 +906,8 @@ msgid "February"
 msgstr "Februar"
 
 #. module: marketing_campaign
-#: view:campaign.analysis:0
-#: field:campaign.analysis,res_id:0
-#: view:marketing.campaign:0
-#: field:marketing.campaign,object_id:0
+#: view:campaign.analysis:0 field:campaign.analysis,res_id:0
+#: view:marketing.campaign:0 field:marketing.campaign,object_id:0
 #: field:marketing.campaign.segment,object_id:0
 #: view:marketing.campaign.workitem:0
 #: field:marketing.campaign.workitem,object_id:0
@@ -964,21 +917,21 @@ msgstr "Vir"
 #. module: marketing_campaign
 #: help:marketing.campaign,fixed_cost:0
 msgid ""
-"Fixed cost for running this campaign. You may also specify variable cost and "
-"revenue on each campaign activity. Cost and Revenue statistics are included "
-"in Campaign Reporting."
-msgstr ""
+"Fixed cost for running this campaign. You may also specify variable cost and"
+" revenue on each campaign activity. Cost and Revenue statistics are included"
+" in Campaign Reporting."
+msgstr "Stalni stroški za izvedbo te kampanje. Lahko določite tudi spremenljive stroške in prihodek za vsako aktivnost kampanje. Statistika stroškov in prihodkov je vključena v poročila kampanje."
 
 #. module: marketing_campaign
 #: view:marketing.campaign.segment:0
 msgid "Sync mode: only records updated after last sync"
-msgstr ""
+msgstr "Sinhronizacijski način: samo zapisi, spremenjeni po zadnji sinhronizaciji"
 
 #. module: marketing_campaign
-#: code:addons/marketing_campaign/marketing_campaign.py:793
+#: code:addons/marketing_campaign/marketing_campaign.py:791
 #, python-format
 msgid "Email Preview"
-msgstr ""
+msgstr "Predogled elektronskega sporočila"
 
 #. module: marketing_campaign
 #: field:marketing.campaign.activity,signal:0
@@ -988,7 +941,7 @@ msgstr "Signal"
 #. module: marketing_campaign
 #: help:marketing.campaign.workitem,date:0
 msgid "If date is not set, this workitem has to be run manually"
-msgstr ""
+msgstr "Če datum ni nastavljen, je treba predmet dela zagnati ročno"
 
 #. module: marketing_campaign
 #: selection:campaign.analysis,month:0
@@ -999,17 +952,15 @@ msgstr "April"
 #: code:addons/marketing_campaign/marketing_campaign.py:158
 #, python-format
 msgid "The campaign cannot be marked as done before all segments are closed."
-msgstr ""
+msgstr "Kampanja ne more biti označena kot končana preden so vsi segmenti zaprti."
 
 #. module: marketing_campaign
-#: view:marketing.campaign:0
-#: field:marketing.campaign,mode:0
+#: view:marketing.campaign:0 field:marketing.campaign,mode:0
 msgid "Mode"
 msgstr "Način"
 
 #. module: marketing_campaign
-#: view:campaign.analysis:0
-#: field:campaign.analysis,activity_id:0
+#: view:campaign.analysis:0 field:campaign.analysis,activity_id:0
 #: view:marketing.campaign.workitem:0
 #: field:marketing.campaign.workitem,activity_id:0
 msgid "Activity"
@@ -1022,24 +973,24 @@ msgid ""
 "New filters can be created and saved using the advanced search on the list "
 "view of the Resource. If no filter is set, all records are selected without "
 "filtering. The synchronization mode may also add a criterion to the filter."
-msgstr ""
+msgstr "Filter za izbiro ustreznih virov, ki pripadajo temu segmentu. Ustvarijo se lahko novi filtri in se shranijo v naprednem iskanju pregleda virov. Če filtri niso določeni, so izbrani vsi zapisi. Sinhronizacijski način lahko tudi doda kriterij filtrom."
 
 #. module: marketing_campaign
 #: code:addons/marketing_campaign/marketing_campaign.py:136
 #, python-format
 msgid "The campaign cannot be started. There are no activities in it."
-msgstr ""
+msgstr "Kampanja se ne more začeti. Ne vsebuje nobenih dejavnosti."
 
 #. module: marketing_campaign
 #: field:marketing.campaign.segment,date_next_sync:0
 msgid "Next Synchronization"
-msgstr ""
+msgstr "Naslednja sinhronizacija"
 
 #. module: marketing_campaign
 #: model:email.template,body_html:marketing_campaign.email_template_2
 msgid ""
 "Hi, we are delighted to welcome you among our Silver Partners as of today!"
-msgstr ""
+msgstr "Pozdravljeni. Z velikim veseljem vam izrekamo dobrodošlico med našimi srebrnimi partnerji!"
 
 #. module: marketing_campaign
 #: field:marketing.campaign.segment,ir_filter_id:0
@@ -1054,12 +1005,12 @@ msgstr "Vse"
 #. module: marketing_campaign
 #: selection:marketing.campaign.segment,sync_mode:0
 msgid "Only records created after last sync"
-msgstr ""
+msgstr "Le zapisi ustvarjeni po zadnji sinhronizaciji"
 
 #. module: marketing_campaign
 #: field:marketing.campaign.activity,variable_cost:0
 msgid "Variable Cost"
-msgstr ""
+msgstr "Spremenljivi stroški"
 
 #. module: marketing_campaign
 #: model:email.template,subject:marketing_campaign.email_template_1
@@ -1067,13 +1018,11 @@ msgid "Welcome to the OpenERP Partner Channel!"
 msgstr ""
 
 #. module: marketing_campaign
-#: view:campaign.analysis:0
-#: field:campaign.analysis,total_cost:0
+#: view:campaign.analysis:0 field:campaign.analysis,total_cost:0
 msgid "Cost"
 msgstr "Strošek"
 
 #. module: marketing_campaign
-#: view:campaign.analysis:0
-#: field:campaign.analysis,year:0
+#: view:campaign.analysis:0 field:campaign.analysis,year:0
 msgid "Year"
 msgstr "Leto"

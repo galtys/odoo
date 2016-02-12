@@ -26,9 +26,11 @@ from dateutil.relativedelta import relativedelta
 from openerp.osv import fields, osv
 from openerp.service import web_services
 from openerp.tools.translate import _
+
 import pytz
 import re
 import time
+from operator import itemgetter
 from openerp import tools, SUPERUSER_ID
 
 months = {
@@ -645,7 +647,7 @@ class res_alarm(osv.osv):
 are both optional, but if one occurs, so MUST the other"""),
         'repeat': fields.integer('Repeat'),
         'active': fields.boolean('Active', help="If the active field is set to \
-true, it will allow you to hide the event alarm information without removing it.")
+false, it will allow you to hide the event alarm information without removing it.")
     }
     _defaults = {
         'trigger_interval': 'minutes',
@@ -837,8 +839,7 @@ class calendar_alarm(osv.osv):
         current_datetime = datetime.now()
         alarm_ids = self.search(cr, uid, [('state', '!=', 'done')], context=context)
 
-        mail_to = ""
-
+        mail_to = set()
         for alarm in self.browse(cr, uid, alarm_ids, context=context):
             next_trigger_date = None
             update_vals = {}
@@ -888,10 +889,12 @@ From:
 </pre>
 """  % (alarm.name, alarm.trigger_date, alarm.description, \
                         alarm.user_id.name, alarm.user_id.signature)
-                    mail_to = alarm.user_id.email
+                    mail_to.add(alarm.user_id.email)
                     for att in alarm.attendee_ids:
-                        mail_to = mail_to + " " + att.user_id.email
+                        if att.user_id.email:
+                            mail_to.add(att.user_id.email)
                     if mail_to:
+                        mail_to = ','.join(mail_to)
                         vals = {
                             'state': 'outgoing',
                             'subject': sub,
@@ -1013,15 +1016,20 @@ class calendar_event(osv.osv):
                 result[event] = ""
         return result
 
+    # hook method to fix the wrong signature
+    def _set_rulestring(self, cr, uid, ids, field_name, field_value, args, context=None):
+        return self._rrule_write(self, cr, uid, ids, field_name, field_value, args, context=context)
+
     def _rrule_write(self, obj, cr, uid, ids, field_name, field_value, args, context=None):
+        if not isinstance(ids, list):
+            ids = [ids]
         data = self._get_empty_rrule_data()
         if field_value:
             data['recurrency'] = True
             for event in self.browse(cr, uid, ids, context=context):
-                rdate = rule_date or event.date
-                update_data = self._parse_rrule(field_value, dict(data), rdate)
+                update_data = self._parse_rrule(field_value, dict(data), event.date)
                 data.update(update_data)
-                super(calendar_event, obj).write(cr, uid, ids, data, context=context)
+                super(calendar_event, self).write(cr, uid, ids, data, context=context)
         return True
 
     _columns = {
@@ -1049,7 +1057,7 @@ defines the list of date/time exceptions for a recurring calendar component."),
         'exrule': fields.char('Exception Rule', size=352, help="Defines a \
 rule or repeating pattern of time to exclude from the recurring rule."),
         'rrule': fields.function(_get_rulestring, type='char', size=124, \
-                    fnct_inv=_rrule_write, store=True, string='Recurrent Rule'),
+                    fnct_inv=_set_rulestring, store=True, string='Recurrent Rule'),
         'rrule_type': fields.selection([
             ('daily', 'Day(s)'),
             ('weekly', 'Week(s)'),
@@ -1100,7 +1108,7 @@ rule or repeating pattern of time to exclude from the recurring rule."),
                                  'event_id', 'attendee_id', 'Attendees'),
         'allday': fields.boolean('All Day', states={'done': [('readonly', True)]}),
         'active': fields.boolean('Active', help="If the active field is set to \
-         true, it will allow you to hide the event alarm information without removing it."),
+         false, it will allow you to hide the event alarm information without removing it."),
         'recurrency': fields.boolean('Recurrent', help="Recurrent Meeting"),
         'partner_ids': fields.many2many('res.partner', string='Attendees', states={'done': [('readonly', True)]}),
     }
@@ -1114,7 +1122,7 @@ rule or repeating pattern of time to exclude from the recurring rule."),
             for att in event.attendee_ids:
                 attendees[att.partner_id.id] = True
             new_attendees = []
-            mail_to = ""
+            mail_to = set()
             for partner in event.partner_ids:
                 if partner.id in attendees:
                     continue
@@ -1127,13 +1135,14 @@ rule or repeating pattern of time to exclude from the recurring rule."),
                     'email': partner.email
                 }, context=local_context)
                 if partner.email:
-                    mail_to = mail_to + " " + partner.email
+                    mail_to.add(partner.email)
                 self.write(cr, uid, [event.id], {
                     'attendee_ids': [(4, att_id)]
                 }, context=context)
                 new_attendees.append(att_id)
 
             if mail_to and current_user.email:
+                mail_to = ','.join(mail_to)
                 att_obj._send_mail(cr, uid, new_attendees, mail_to,
                     email_from = current_user.email, context=context)
         return True
@@ -1170,27 +1179,43 @@ rule or repeating pattern of time to exclude from the recurring rule."),
         (_check_closing_date, 'Error ! End date cannot be set before start date.', ['date_deadline']),
     ]
 
+    # TODO for trunk: remove get_recurrent_ids
     def get_recurrent_ids(self, cr, uid, select, domain, limit=100, context=None):
+        """Wrapper for _get_recurrent_ids to get the 'order' parameter from the context"""
+        if not context:
+            context = {}
+        order = context.get('order', self._order)
+        return self._get_recurrent_ids(cr, uid, select, domain, limit=limit, order=order, context=context)
+
+    def _get_recurrent_ids(self, cr, uid, select, domain, limit=100, order=None, context=None):
         """Gives virtual event ids for recurring events based on value of Recurrence Rule
         This method gives ids of dates that comes between start date and end date of calendar views
         @param self: The object pointer
         @param cr: the current row, from the database cursor,
         @param uid: the current user's ID for security checks,
-        @param limit: The Number of Results to Return """
+        @param limit: The Number of Results to Return
+        @param order: The fields (comma separated, format "FIELD {DESC|ASC}") on which the events should be sorted"""
         if not context:
             context = {}
 
         result = []
-        for data in super(calendar_event, self).read(cr, uid, select, ['rrule', 'recurrency', 'exdate', 'exrule', 'date'], context=context):
+        result_data = []
+        fields = ['rrule', 'recurrency', 'exdate', 'exrule', 'date']
+        if order:
+            order_fields = [field.split()[0] for field in order.split(',')]
+        else:
+            # fallback on self._order defined on the model
+            order_fields = [field.split()[0] for field in self._order.split(',')]
+        fields = list(set(fields + order_fields))
+
+        for data in super(calendar_event, self).read(cr, uid, select, fields, context=context):
             if not data['recurrency'] or not data['rrule']:
+                result_data.append(data)
                 result.append(data['id'])
                 continue
             event_date = datetime.strptime(data['date'], "%Y-%m-%d %H:%M:%S")
 
             # TOCHECK: the start date should be replaced by event date; the event date will be changed by that of calendar code
-
-            if not data['rrule']:
-                continue
 
             exdate = data['exdate'] and data['exdate'].split(',') or []
             rrule_str = data['rrule']
@@ -1249,12 +1274,29 @@ rule or repeating pattern of time to exclude from the recurring rule."),
                 if [True for item in new_pile if not item]:
                     continue
                 idval = real_id2base_calendar_id(data['id'], r_date.strftime("%Y-%m-%d %H:%M:%S"))
+                r_data = dict(data, id=idval, date=r_date.strftime("%Y-%m-%d %H:%M:%S"))
                 result.append(idval)
+                result_data.append(r_data)
+        ids = list(set(result))
 
-        if isinstance(select, (str, int, long)):
-            return ids and ids[0] or False
-        else:
-            ids = list(set(result))
+        if order_fields:
+
+            def comparer(left, right):
+                for fn, mult in comparers:
+                    if type(fn(left)) == tuple and type(fn(right)) == tuple:
+                        # comparing many2one values, sorting on name_get result
+                        leftv, rightv = fn(left)[1], fn(right)[1]
+                    else:
+                        leftv, rightv = fn(left), fn(right)
+                    result = cmp(leftv, rightv)
+                    if result:
+                        return mult * result
+                return 0
+
+            sort_params = [key.split()[0] if key[-4:].lower() != 'desc' else '-%s' % key.split()[0] for key in (order or self._order).split(',')]
+            comparers = [ ((itemgetter(col[1:]), -1) if col[0] == '-' else (itemgetter(col), 1)) for col in sort_params]    
+            ids = [r['id'] for r in sorted(result_data, cmp=comparer)]
+            
         return ids
 
     def compute_rule_string(self, data):
@@ -1285,7 +1327,7 @@ rule or repeating pattern of time to exclude from the recurring rule."),
 
         def get_end_date(data):
             if data.get('end_date'):
-                data['end_date_new'] = ''.join((re.compile('\d')).findall(data.get('end_date'))) + 'T235959Z'
+                data['end_date_new'] = ''.join((re.compile('\d')).findall(data.get('end_date'))) + 'T235959'
 
             return (data.get('end_type') == 'count' and (';COUNT=' + str(data.get('count'))) or '') +\
                              ((data.get('end_date_new') and data.get('end_type') == 'end_date' and (';UNTIL=' + data.get('end_date_new'))) or '')
@@ -1340,7 +1382,7 @@ rule or repeating pattern of time to exclude from the recurring rule."),
         #repeat monthly by nweekday ((weekday, weeknumber), )
         if r._bynweekday:
             data['week_list'] = day_list[r._bynweekday[0][0]].upper()
-            data['byday'] = r._bynweekday[0][1]
+            data['byday'] = str(r._bynweekday[0][1])
             data['select1'] = 'day'
             data['rrule_type'] = 'monthly'
 
@@ -1378,10 +1420,13 @@ rule or repeating pattern of time to exclude from the recurring rule."),
                 new_id = get_real_ids(arg[2])
                 new_arg = (arg[0], arg[1], new_id)
             new_args.append(new_arg)
-        #offset, limit and count must be treated separately as we may need to deal with virtual ids
-        res = super(calendar_event, self).search(cr, uid, new_args, offset=0, limit=0, order=order, context=context, count=False)
-        if context.get('virtual_id', True):
-            res = self.get_recurrent_ids(cr, uid, res, args, limit, context=context)
+        if not context.get('virtual_id', True):
+            return super(calendar_event, self).search(cr, uid, new_args, offset=offset, limit=limit, order=order, context=context, count=count)
+
+        # offset, limit, order and count must be treated separately as we may need to deal with virtual ids
+        res = super(calendar_event, self).search(cr, uid, new_args, offset=0, limit=0, order=None, context=context, count=False)
+        res = self._get_recurrent_ids(cr, uid, res, args, limit, order=order, context=context)            
+
         if count:
             return len(res)
         elif limit:
@@ -1464,7 +1509,7 @@ rule or repeating pattern of time to exclude from the recurring rule."),
         # set end_date for calendar searching
         if vals.get('recurrency', True) and vals.get('end_type', 'count') in ('count', unicode('count')) and \
                 (vals.get('rrule_type') or vals.get('count') or vals.get('date') or vals.get('date_deadline')):
-            for data in self.read(cr, uid, ids, ['date', 'date_deadline', 'recurrency', 'rrule_type', 'count', 'end_type'], context=context):
+            for data in self.read(cr, uid, ids, ['end_date', 'date_deadline', 'recurrency', 'rrule_type', 'count', 'end_type'], context=context):
                 end_date = self._set_recurrency_end_date(data, context=context)
                 super(calendar_event, self).write(cr, uid, [data['id']], {'end_date': end_date}, context=context)
 
@@ -1587,18 +1632,23 @@ rule or repeating pattern of time to exclude from the recurring rule."),
         return res
 
     def _set_recurrency_end_date(self, data, context=None):
+        if not data.get('recurrency'):
+            return False
+
+        end_type = data.get('end_type')
         end_date = data.get('end_date')
-        if data.get('recurrency') and data.get('end_type') in ('count', unicode('count')):
-            data_date_deadline = datetime.strptime(data.get('date_deadline'), '%Y-%m-%d %H:%M:%S')
-            if data.get('rrule_type') in ('daily', unicode('count')):
-                rel_date = relativedelta(days=data.get('count')+1)
-            elif data.get('rrule_type') in ('weekly', unicode('weekly')):
-                rel_date = relativedelta(days=(data.get('count')+1)*7)
-            elif data.get('rrule_type') in ('monthly', unicode('monthly')):
-                rel_date = relativedelta(months=data.get('count')+1)
-            elif data.get('rrule_type') in ('yearly', unicode('yearly')):
-                rel_date = relativedelta(years=data.get('count')+1)
-            end_date = data_date_deadline + rel_date
+
+        if end_type == 'count' and all(data.get(key) for key in ['count', 'rrule_type', 'date_deadline']):
+            count = data['count'] + 1
+            delay, mult = {
+                'daily': ('days', 1),
+                'weekly': ('days', 7),
+                'monthly': ('months', 1),
+                'yearly': ('years', 1),
+            }[data['rrule_type']]
+
+            deadline = datetime.strptime(data['date_deadline'], tools.DEFAULT_SERVER_DATETIME_FORMAT)
+            return deadline + relativedelta(**{delay: count * mult})
         return end_date
 
     def create(self, cr, uid, vals, context=None):
@@ -1608,8 +1658,11 @@ rule or repeating pattern of time to exclude from the recurring rule."),
         if vals.get('vtimezone', '') and vals.get('vtimezone', '').startswith('/freeassociation.sourceforge.net/tzfile/'):
             vals['vtimezone'] = vals['vtimezone'][40:]
 
-        vals['end_date'] = self._set_recurrency_end_date(vals, context=context)
         res = super(calendar_event, self).create(cr, uid, vals, context)
+
+        data = self.read(cr, uid, [res], ['end_date', 'date_deadline', 'recurrency', 'rrule_type', 'count', 'end_type'], context=context)[0]
+        end_date = self._set_recurrency_end_date(data, context=context)
+        self.write(cr, uid, [res], {'end_date': end_date}, context=context)
 
         alarm_obj = self.pool.get('res.alarm')
         alarm_obj.do_alarm_create(cr, uid, [res], self._name, 'date', context=context)
@@ -1773,7 +1826,7 @@ ir_model()
 
 class virtual_report_spool(web_services.report_spool):
 
-    def exp_report(self, db, uid, object, ids, data=None, context=None):
+    def exp_report(self, db, uid, object, ids, datas=None, context=None):
         """
         Export Report
         @param self: The object pointer
@@ -1784,13 +1837,13 @@ class virtual_report_spool(web_services.report_spool):
 
         if object == 'printscreen.list':
             return super(virtual_report_spool, self).exp_report(db, uid, \
-                            object, ids, data, context)
+                            object, ids, datas, context)
         new_ids = []
         for id in ids:
             new_ids.append(base_calendar_id2real_id(id))
-        if data.get('id', False):
-            data['id'] = base_calendar_id2real_id(data['id'])
-        return super(virtual_report_spool, self).exp_report(db, uid, object, new_ids, data, context)
+        if datas.get('id', False):
+            datas['id'] = base_calendar_id2real_id(datas['id'])
+        return super(virtual_report_spool, self).exp_report(db, uid, object, new_ids, datas, context)
 
 virtual_report_spool()
 

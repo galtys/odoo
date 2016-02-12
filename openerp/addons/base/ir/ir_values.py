@@ -18,10 +18,11 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-import pickle
 
 from openerp.osv import osv, fields
 from openerp.osv.orm import except_orm
+from openerp.tools.safe_eval import safe_eval as eval
+from openerp.tools import pickle
 
 EXCLUDED_FIELDS = set((
     'report_sxw_content', 'report_rml_content', 'report_sxw', 'report_rml',
@@ -121,7 +122,13 @@ class ir_values(osv.osv):
         record = self.browse(cursor, user, id, context=context)
         if record.key == 'default':
             # default values are pickled on the fly
-            value = pickle.dumps(value)
+            if isinstance(value, (str, unicode)):
+                try:
+                    value = pickle.dumps(eval(value))
+                except Exception:
+                    value = pickle.dumps(value)
+            else:
+                value = pickle.dumps(value)
         self.write(cursor, user, id, {name[:-9]: value}, context=ctx)
 
     def onchange_object_id(self, cr, uid, ids, object_id, context=None):

@@ -21,8 +21,7 @@
 
 import time
 
-from _common import rounding
-
+from openerp import tools
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
 
@@ -271,12 +270,13 @@ class product_pricelist(osv.osv):
                             price = 0.0
                             if sinfo:
                                 qty_in_product_uom = qty
-                                product_default_uom = product_obj.read(cr, uid, [product_id], ['uom_id'])[0]['uom_id'][0]
+                                from_uom = context.get('uom') or product_obj.read(cr, uid, [product_id], ['uom_id'])[0]['uom_id'][0]
                                 supplier = supplierinfo_obj.browse(cr, uid, sinfo, context=context)[0]
                                 seller_uom = supplier.product_uom and supplier.product_uom.id or False
-                                if seller_uom and product_default_uom and product_default_uom != seller_uom:
+                                if seller_uom and from_uom and from_uom != seller_uom:
+                                    qty_in_product_uom = product_uom_obj._compute_qty(cr, uid, from_uom, qty, to_uom_id=seller_uom)
+                                else:
                                     uom_price_already_computed = True
-                                    qty_in_product_uom = product_uom_obj._compute_qty(cr, uid, product_default_uom, qty, to_uom_id=seller_uom)
                                 cr.execute('SELECT * ' \
                                         'FROM pricelist_partnerinfo ' \
                                         'WHERE suppinfo_id IN %s' \
@@ -296,8 +296,14 @@ class product_pricelist(osv.osv):
                         if price is not False:
                             price_limit = price
                             price = price * (1.0+(res['price_discount'] or 0.0))
-                            price = rounding(price, res['price_round']) #TOFIX: rounding with tools.float_rouding
-                            price += (res['price_surcharge'] or 0.0)
+                            if res['price_round']:
+                                price = tools.float_round(price, precision_rounding=res['price_round'])
+                            if context.get('uom'):
+                                # compute price_surcharge based on reference uom
+                                factor = product_uom_obj.browse(cr, uid, context.get('uom'), context=context).factor
+                            else:
+                                factor = 1.0
+                            price += (res['price_surcharge'] or 0.0) / factor
                             if res['price_min_margin']:
                                 price = max(price, price_limit+res['price_min_margin'])
                             if res['price_max_margin']:

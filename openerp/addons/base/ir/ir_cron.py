@@ -24,9 +24,10 @@ import time
 import psycopg2
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+import pytz
 
 import openerp
-from openerp import netsvc
+from openerp import netsvc, SUPERUSER_ID
 from openerp.osv import fields, osv
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from openerp.tools.safe_eval import safe_eval as eval
@@ -84,7 +85,6 @@ class ir_cron(osv.osv):
         'interval_type' : 'months',
         'numbercall' : 1,
         'active' : 1,
-        'doall' : 1
     }
 
     def _check_args(self, cr, uid, ids, context=None):
@@ -149,8 +149,8 @@ class ir_cron(osv.osv):
             must not be committed/rolled back!
         """
         try:
-            now = datetime.now() 
-            nextcall = datetime.strptime(job['nextcall'], DEFAULT_SERVER_DATETIME_FORMAT)
+            now = fields.datetime.context_timestamp(job_cr, job['user_id'], datetime.now())
+            nextcall = fields.datetime.context_timestamp(job_cr, job['user_id'], datetime.strptime(job['nextcall'], DEFAULT_SERVER_DATETIME_FORMAT))
             numbercall = job['numbercall']
 
             ok = False
@@ -166,7 +166,7 @@ class ir_cron(osv.osv):
             if not numbercall:
                 addsql = ', active=False'
             cron_cr.execute("UPDATE ir_cron SET nextcall=%s, numbercall=%s"+addsql+" WHERE id=%s",
-                       (nextcall.strftime(DEFAULT_SERVER_DATETIME_FORMAT), numbercall, job['id']))
+                       (nextcall.astimezone(pytz.UTC).strftime(DEFAULT_SERVER_DATETIME_FORMAT), numbercall, job['id']))
 
         finally:
             job_cr.commit()
@@ -216,12 +216,21 @@ class ir_cron(osv.osv):
             lock_cr = db.cursor()
             try:
                 # Try to grab an exclusive lock on the job row from within the task transaction
+                # Restrict to the same conditions as for the search since the job may have already
+                # been run by an other thread when cron is running in multi thread
                 lock_cr.execute("""SELECT *
                                    FROM ir_cron
-                                   WHERE id=%s
+                                   WHERE numbercall != 0
+                                      AND active
+                                      AND nextcall <= (now() at time zone 'UTC')
+                                      AND id=%s
                                    FOR UPDATE NOWAIT""",
                                (job['id'],), log_exceptions=False)
 
+                locked_job = lock_cr.fetchone()
+                if not locked_job:
+                    _logger.debug("Job `%s` already executed by another process/thread. skipping it", job['name'])
+                    continue
                 # Got the lock on the job row, run its code
                 _logger.debug('Starting job `%s`.', job['name'])
                 job_cr = db.cursor()

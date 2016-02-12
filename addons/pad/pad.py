@@ -5,6 +5,7 @@ import re
 import string
 import urllib2
 import logging
+from openerp import SUPERUSER_ID
 from openerp.tools.translate import _
 from openerp.tools import html2plaintext
 from py_etherpad import EtherpadLiteClient
@@ -14,8 +15,12 @@ _logger = logging.getLogger(__name__)
 class pad_common(osv.osv_memory):
     _name = 'pad.common'
 
+    def pad_is_configured(self, cr, uid, context=None):
+        user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
+        return bool(user.company_id.pad_server)
+
     def pad_generate_url(self, cr, uid, context=None):
-        company = self.pool.get('res.users').browse(cr, uid, uid, context=context).company_id;
+        company = self.pool.get('res.users').browse(cr, SUPERUSER_ID, uid, context=context).company_id
 
         pad = {
             "server" : company.pad_server,
@@ -30,16 +35,22 @@ class pad_common(osv.osv_memory):
         pad["server"] = pad["server"].rstrip('/')
         # generate a salt
         s = string.ascii_uppercase + string.digits
-        salt = ''.join([s[random.randint(0, len(s) - 1)] for i in range(10)])
+        salt = ''.join([s[random.SystemRandom().randint(0, len(s) - 1)] for i in range(10)])
         #path
-        path = '%s-%s-%s' % (cr.dbname.replace('_','-'), self._name, salt)
+        # etherpad hardcodes pad id length limit to 50
+        path = '-%s-%s' % (self._name, salt)
+        path = '%s%s' % (cr.dbname.replace('_','-')[0:50 - len(path)], path)
         # contruct the url
         url = '%s/p/%s' % (pad["server"], path)
 
         #if create with content
         if "field_name" in context and "model" in context and "object_id" in context:
             myPad = EtherpadLiteClient( pad["key"], pad["server"]+'/api')
-            myPad.createPad(path)
+            try:
+                myPad.createPad(path)
+            except urllib2.URLError:
+                raise osv.except_osv(_("Error"), _("Pad creation fail, \
+                either there is a problem with your pad server URL or with your connection."))
 
             #get attr on the field model
             model = self.pool.get(context["model"])
@@ -49,7 +60,7 @@ class pad_common(osv.osv_memory):
             #get content of the real field
             for record in model.browse(cr, uid, [context["object_id"]]):
                 if record[real_field]:
-                    myPad.setText(path, html2plaintext(record[real_field]))
+                    myPad.setText(path, (html2plaintext(record[real_field]).encode('utf-8')))
                     #Etherpad for html not functional
                     #myPad.setHTML(path, record[real_field])
 

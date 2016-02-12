@@ -204,7 +204,8 @@ class reference(_column):
             model_name, res_id = value.split(',')
             model = obj.pool.get(model_name)
             if model and res_id:
-                return model.name_get(cr, uid, [int(res_id)], context=context)[0][1]
+                names = model.name_get(cr, uid, [int(res_id)], context=context)
+                return names[0][1] if names else False
         return tools.ustr(value)
 
 # takes a string (encoded in utf8) and returns a string (encoded in utf8)
@@ -355,17 +356,21 @@ class datetime(_column):
         else:
             registry = openerp.modules.registry.RegistryManager.get(cr.dbname)
             tz_name = registry.get('res.users').read(cr, SUPERUSER_ID, uid, ['tz'])['tz']
+        utc_timestamp = pytz.utc.localize(timestamp, is_dst=False) # UTC = no DST
         if tz_name:
             try:
-                utc = pytz.timezone('UTC')
                 context_tz = pytz.timezone(tz_name)
-                utc_timestamp = utc.localize(timestamp, is_dst=False) # UTC = no DST
                 return utc_timestamp.astimezone(context_tz)
             except Exception:
                 _logger.debug("failed to compute context/client-specific timestamp, "
                               "using the UTC value",
                               exc_info=True)
-        return timestamp
+        return utc_timestamp
+
+    @classmethod
+    def _as_display_name(cls, field, cr, uid, obj, value, context=None):
+        value = datetime.context_timestamp(cr, uid, DT.datetime.strptime(value, tools.DEFAULT_SERVER_DATETIME_FORMAT), context=context)
+        return tools.ustr(value.strftime(tools.DEFAULT_SERVER_DATETIME_FORMAT))
 
 class binary(_column):
     _type = 'binary'
@@ -463,7 +468,7 @@ class many2one(_column):
         # we use uid=1 because the visibility of a many2one field value (just id and name)
         # must be the access right of the parent form and not the linked object itself.
         records = dict(obj.name_get(cr, SUPERUSER_ID,
-                                    list(set([x for x in res.values() if isinstance(x, (int,long))])),
+                                    list(set([x for x in res.values() if x and isinstance(x, (int,long))])),
                                     context=context))
         for id in res:
             if res[id] in records:
@@ -570,8 +575,13 @@ class one2many(_column):
                 else:
                     cr.execute('update '+_table+' set '+self._fields_id+'=null where id=%s', (act[1],))
             elif act[0] == 4:
-                # Must use write() to recompute parent_store structure if needed
-                obj.write(cr, user, [act[1]], {self._fields_id:id}, context=context or {})
+                # table of the field (parent_model in case of inherit)
+                field_model = self._fields_id in obj.pool[self._obj]._columns and self._obj or obj.pool[self._obj]._all_columns[self._fields_id].parent_model
+                field_table = obj.pool[field_model]._table
+                cr.execute("select 1 from {0} where id=%s and {1}=%s".format(field_table, self._fields_id), (act[1], id))
+                if not cr.fetchone():
+                    # Must use write() to recompute parent_store structure if needed and check access rules
+                    obj.write(cr, user, [act[1]], {self._fields_id:id}, context=context or {})
             elif act[0] == 5:
                 reverse_rel = obj._all_columns.get(self._fields_id)
                 assert reverse_rel, 'Trying to unlink the content of a o2m but the pointed model does not have a m2o'
@@ -751,6 +761,25 @@ class many2many(_column):
             return
         rel, id1, id2 = self._sql_names(model)
         obj = model.pool.get(self._obj)
+
+        def link(ids):
+            # beware of duplicates when inserting
+            query = """ INSERT INTO {rel} ({id1}, {id2})
+                        (SELECT %s, unnest(%s)) EXCEPT (SELECT {id1}, {id2} FROM {rel} WHERE {id1}=%s)
+                    """.format(rel=rel, id1=id1, id2=id2)
+            for sub_ids in cr.split_for_in_conditions(ids):
+                cr.execute(query, (id, list(sub_ids), id))
+
+        def unlink_all():
+            # remove all records for which user has access rights
+            clauses, params, tables = obj.pool.get('ir.rule').domain_get(cr, user, obj._name, context=context)
+            cond = " AND ".join(clauses) if clauses else "1=1"
+            query = """ DELETE FROM {rel} USING {tables}
+                        WHERE {rel}.{id1}=%s AND {rel}.{id2}={table}.id AND {cond}
+                    """.format(rel=rel, id1=id1, id2=id2,
+                               table=obj._table, tables=','.join(tables), cond=cond)
+            cr.execute(query, [id] + params)
+
         for act in values:
             if not (isinstance(act, list) or isinstance(act, tuple)) or not act:
                 continue
@@ -764,23 +793,12 @@ class many2many(_column):
             elif act[0] == 3:
                 cr.execute('delete from '+rel+' where ' + id1 + '=%s and '+ id2 + '=%s', (id, act[1]))
             elif act[0] == 4:
-                # following queries are in the same transaction - so should be relatively safe
-                cr.execute('SELECT 1 FROM '+rel+' WHERE '+id1+' = %s and '+id2+' = %s', (id, act[1]))
-                if not cr.fetchone():
-                    cr.execute('insert into '+rel+' ('+id1+','+id2+') values (%s,%s)', (id, act[1]))
+                link([act[1]])
             elif act[0] == 5:
-                cr.execute('delete from '+rel+' where ' + id1 + ' = %s', (id,))
+                unlink_all()
             elif act[0] == 6:
-
-                d1, d2,tables = obj.pool.get('ir.rule').domain_get(cr, user, obj._name, context=context)
-                if d1:
-                    d1 = ' and ' + ' and '.join(d1)
-                else:
-                    d1 = ''
-                cr.execute('delete from '+rel+' where '+id1+'=%s AND '+id2+' IN (SELECT '+rel+'.'+id2+' FROM '+rel+', '+','.join(tables)+' WHERE '+rel+'.'+id1+'=%s AND '+rel+'.'+id2+' = '+obj._table+'.id '+ d1 +')', [id, id]+d2)
-
-                for act_nbr in act[2]:
-                    cr.execute('insert into '+rel+' ('+id1+','+id2+') values (%s, %s)', (id, act_nbr))
+                unlink_all()
+                link(act[2])
 
     #
     # TODO: use a name_search
@@ -1116,7 +1134,7 @@ class function(_column):
             # make the result a tuple if it is not already one
             if isinstance(value, (int,long)) and hasattr(obj._columns[field], 'relation'):
                 obj_model = obj.pool.get(obj._columns[field].relation)
-                dict_names = dict(obj_model.name_get(cr, uid, [value], context))
+                dict_names = dict(obj_model.name_get(cr, SUPERUSER_ID, [value], context))
                 result = (value, dict_names[value])
 
         if field_type == 'binary':
@@ -1136,9 +1154,17 @@ class function(_column):
         return result
 
     def get(self, cr, obj, ids, name, uid=False, context=None, values=None):
-        result = self._fnct(obj, cr, uid, ids, name, self._arg, context)
+        multi = self._multi
+        # if we already have a value, don't recompute it.
+        # This happen if case of stored many2one fields
+        if values and not multi and name in values[0]:
+            result = dict((v['id'], v[name]) for v in values)
+        elif values and multi and all(n in values[0] for n in name):
+            result = dict((v['id'], dict((n, v[n]) for n in name)) for v in values)
+        else:
+            result = self._fnct(obj, cr, uid, ids, name, self._arg, context)
         for id in ids:
-            if self._multi and id in result:
+            if multi and id in result:
                 for field, value in result[id].iteritems():
                     if value:
                         result[id][field] = self.postprocess(cr, uid, obj, field, value, context)
@@ -1260,6 +1286,8 @@ class sparse(function):
         """
 
         if self._type == 'many2many':
+            if not value:
+                return []
             assert value[0][0] == 6, 'Unsupported m2m value for sparse field: %s' % value
             return value[0][2]
 
@@ -1390,9 +1418,9 @@ class property(function):
     def _get_by_id(self, obj, cr, uid, prop_name, ids, context=None):
         prop = obj.pool.get('ir.property')
         vids = [obj._name + ',' + str(oid) for oid in  ids]
-
         domain = [('fields_id.model', '=', obj._name), ('fields_id.name', 'in', prop_name)]
-        #domain = prop._get_domain(cr, uid, prop_name, obj._name, context)
+        if context and context.get('company_id'):
+            domain += [('company_id', '=', context.get('company_id'))]
         if vids:
             domain = [('res_id', 'in', vids)] + domain
         return prop.search(cr, uid, domain, context=context)
@@ -1402,24 +1430,26 @@ class property(function):
         if context is None:
             context = {}
 
-        nids = self._get_by_id(obj, cr, uid, [prop_name], [id], context)
+        def_id = self._field_get(cr, uid, obj._name, prop_name)
+        company = obj.pool.get('res.company')
+        cid = company._company_default_get(cr, uid, obj._name, def_id, context=context)
+        # TODO for trunk: add new parameter company_id to _get_by_id method
+        context_company = dict(context, company_id=cid)
+        nids = self._get_by_id(obj, cr, uid, [prop_name], [id], context_company)
         if nids:
             cr.execute('DELETE FROM ir_property WHERE id IN %s', (tuple(nids),))
 
         default_val = self._get_default(obj, cr, uid, prop_name, context)
 
         property_create = False
-        if isinstance(default_val, openerp.osv.orm.browse_record):
+        if isinstance(default_val, (openerp.osv.orm.browse_record,
+                                    openerp.osv.orm.browse_null)):
             if default_val.id != id_val:
                 property_create = True
         elif default_val != id_val:
             property_create = True
 
         if property_create:
-            def_id = self._field_get(cr, uid, obj._name, prop_name)
-            company = obj.pool.get('res.company')
-            cid = company._company_default_get(cr, uid, obj._name, def_id,
-                                               context=context)
             propdef = obj.pool.get('ir.model.fields').browse(cr, uid, def_id,
                                                              context=context)
             prop = obj.pool.get('ir.property')

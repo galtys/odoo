@@ -72,6 +72,8 @@ class purchase_requisition(osv.osv):
             for purchase_id in purchase.purchase_ids:
                 if str(purchase_id.state) in('draft'):
                     purchase_order_obj.action_cancel(cr,uid,[purchase_id.id])
+        procurement_ids = self.pool['procurement.order'].search(cr, uid, [('requisition_id', 'in', ids)], context=context)
+        self.pool['procurement.order'].action_done(cr, uid, procurement_ids)
         return self.write(cr, uid, ids, {'state': 'cancel'})
 
     def tender_in_progress(self, cr, uid, ids, context=None):
@@ -81,6 +83,8 @@ class purchase_requisition(osv.osv):
         return self.write(cr, uid, ids, {'state': 'draft'})
 
     def tender_done(self, cr, uid, ids, context=None):
+        procurement_ids = self.pool['procurement.order'].search(cr, uid, [('requisition_id', 'in', ids)], context=context)
+        self.pool['procurement.order'].action_done(cr, uid, procurement_ids)
         return self.write(cr, uid, ids, {'state':'done', 'date_end':time.strftime('%Y-%m-%d %H:%M:%S')}, context=context)
 
     def _planned_date(self, requisition, delay=0.0):
@@ -109,7 +113,7 @@ class purchase_requisition(osv.osv):
                 seller_delay = product_supplier.delay
                 seller_qty = product_supplier.qty
         supplier_pricelist = supplier.property_product_pricelist_purchase or False
-        seller_price = pricelist.price_get(cr, uid, [supplier_pricelist.id], product.id, qty, False, {'uom': default_uom_po_id})[supplier_pricelist.id]
+        seller_price = pricelist.price_get(cr, uid, [supplier_pricelist.id], product.id, qty, supplier.id, {'uom': default_uom_po_id})[supplier_pricelist.id]
         if seller_qty:
             qty = max(qty,seller_qty)
         date_planned = self._planned_date(requisition_line.requisition_id, seller_delay)
@@ -171,7 +175,7 @@ class purchase_requisition_line(osv.osv):
     _rec_name = 'product_id'
 
     _columns = {
-        'product_id': fields.many2one('product.product', 'Product' ),
+        'product_id': fields.many2one('product.product', 'Product', domain=[('purchase_ok', '=', True)]),
         'product_uom_id': fields.many2one('product.uom', 'Product Unit of Measure'),
         'product_qty': fields.float('Quantity', digits_compute=dp.get_precision('Product Unit of Measure')),
         'requisition_id' : fields.many2one('purchase.requisition','Purchase Requisition', ondelete='cascade'),
@@ -214,6 +218,11 @@ class purchase_order(osv.osv):
                         wf_service = netsvc.LocalService("workflow")
                         wf_service.trg_validate(uid, 'purchase.order', order.id, 'purchase_cancel', cr)
                     po.requisition_id.tender_done(context=context)
+            if po.requisition_id and all(purchase_id.state in ['draft', 'cancel'] for purchase_id in po.requisition_id.purchase_ids if purchase_id.id != po.id):
+                procurement_ids = self.pool['procurement.order'].search(cr, uid, [('requisition_id', '=', po.requisition_id.id)], context=context)
+                for procurement in proc_obj.browse(cr, uid, procurement_ids, context=context):
+                    if procurement.move_id:
+                        procurement.move_id.write({'location_id': procurement.move_id.location_dest_id.id})
         return res
 
 purchase_order()
@@ -231,34 +240,70 @@ class product_product(osv.osv):
 product_product()
 
 class procurement_order(osv.osv):
-
     _inherit = 'procurement.order'
     _columns = {
-        'requisition_id' : fields.many2one('purchase.requisition','Latest Requisition')
+        'requisition_id': fields.many2one('purchase.requisition', 'Latest Requisition')
     }
+
+    def _get_warehouse(self, procurement, user_company):
+        """
+            Return the warehouse containing the procurment stock location (or one of it ancestors)
+            If none match, returns then first warehouse of the company
+        """
+        # NOTE This method is a copy of the one on the procurement.order defined in purchase
+        #      module. It's been copied to ensure it been always available, even if module
+        #      purchase is not up to date.
+        #      Do not forget to update both version in case of modification.
+        company_id = (procurement.company_id or user_company).id
+        domains = [
+            [
+                '&', ('company_id', '=', company_id),
+                '|', '&', ('lot_stock_id.parent_left', '<', procurement.location_id.parent_left),
+                          ('lot_stock_id.parent_right', '>', procurement.location_id.parent_right),
+                     ('lot_stock_id', '=', procurement.location_id.id)
+            ],
+            [('company_id', '=', company_id)]
+        ]
+
+        cr, uid = procurement._cr, procurement._uid
+        context = procurement._context
+        Warehouse = self.pool['stock.warehouse']
+        for domain in domains:
+            ids = Warehouse.search(cr, uid, domain, context=context)
+            if ids:
+                return ids[0]
+        return False
+
     def make_po(self, cr, uid, ids, context=None):
         res = {}
         requisition_obj = self.pool.get('purchase.requisition')
-        warehouse_obj = self.pool.get('stock.warehouse')
-        procurement = self.browse(cr, uid, ids, context=context)[0]
-        if procurement.product_id.purchase_requisition:
-             warehouse_id = warehouse_obj.search(cr, uid, [('company_id', '=', procurement.company_id.id or company.id)], context=context)
-             res[procurement.id] = requisition_obj.create(cr, uid, 
-                   {
+        non_requisition = []
+        for procurement in self.browse(cr, uid, ids, context=context):
+            if procurement.product_id.purchase_requisition:
+                user_company = self.pool['res.users'].browse(cr, uid, uid, context=context).company_id
+                req = requisition_obj.create(cr, uid, {
                     'origin': procurement.origin,
                     'date_end': procurement.date_planned,
-                    'warehouse_id':warehouse_id and warehouse_id[0] or False,
-                    'company_id':procurement.company_id.id,
-                    'line_ids': [(0,0,{
+                    'warehouse_id': self._get_warehouse(procurement, user_company),
+                    'company_id': procurement.company_id.id,
+                    'line_ids': [(0, 0, {
                         'product_id': procurement.product_id.id,
                         'product_uom_id': procurement.product_uom.id,
                         'product_qty': procurement.product_qty
 
-                   })],
+                    })],
                 })
-             self.write(cr,uid,[procurement.id],{'state': 'running','requisition_id': res[procurement.id]},context=context)
-        else:
-            res = super(procurement_order, self).make_po(cr, uid, ids, context=context)
+                procurement.write({
+                    'state': 'running',
+                    'requisition_id': req
+                })
+                res[procurement.id] = 0
+            else:
+                non_requisition.append(procurement.id)
+
+        if non_requisition:
+            res.update(super(procurement_order, self).make_po(cr, uid, non_requisition, context=context))
+
         return res
 
 procurement_order()

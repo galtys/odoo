@@ -331,17 +331,17 @@ instance.web.SearchView = instance.web.Widget.extend(/** @lends instance.web.Sea
         'keydown .oe_searchview_input, .oe_searchview_facet': function (e) {
             switch(e.which) {
             case $.ui.keyCode.LEFT:
-                this.focusPreceding(this);
+                this.focusPreceding(e.target);
                 e.preventDefault();
                 break;
             case $.ui.keyCode.RIGHT:
-                this.focusFollowing(this);
+                this.focusFollowing(e.target);
                 e.preventDefault();
                 break;
             }
         },
         'autocompleteopen': function () {
-            this.$el.autocomplete('widget').css('z-index', 1004);
+            this.$el.autocomplete('widget').css('z-index', 9999);
         },
     },
     /**
@@ -407,7 +407,7 @@ instance.web.SearchView = instance.web.Widget.extend(/** @lends instance.web.Sea
                 context: this.dataset.get_context(),
             });
 
-            $.when(load_view).then(function (r) {
+            this.alive($.when(load_view)).then(function (r) {
                 return self.search_view_loaded(r)
             }).fail(function () {
                 self.ready.reject.apply(null, arguments);
@@ -467,17 +467,19 @@ instance.web.SearchView = instance.web.Widget.extend(/** @lends instance.web.Sea
      */
     setup_global_completion: function () {
         var self = this;
-
         var autocomplete = this.$el.autocomplete({
             source: this.proxy('complete_global_search'),
             select: this.proxy('select_completion'),
-            search: function () { self.$el.autocomplete('close'); },
             focus: function (e) { e.preventDefault(); },
             html: true,
             autoFocus: true,
             minLength: 1,
-            delay: 0,
+            delay: 250,
         }).data('autocomplete');
+
+        this.$el.on('input', function () {
+            this.$el.autocomplete('close');
+        }.bind(this));
 
         // MonkeyPatch autocomplete instance
         _.extend(autocomplete, {
@@ -1451,7 +1453,7 @@ instance.web.search.SelectionField = instance.web.search.Field.extend(/** @lends
         var results = _(this.attrs.selection).chain()
             .filter(function (sel) {
                 var value = sel[0], label = sel[1];
-                if (!value) { return false; }
+                if (value === undefined || !label) { return false; }
                 return label.toLowerCase().indexOf(needle.toLowerCase()) !== -1;
             })
             .map(function (sel) {
@@ -1495,7 +1497,19 @@ instance.web.search.DateField = instance.web.search.Field.extend(/** @lends inst
         return instance.web.date_to_str(facetValue.get('value'));
     },
     complete: function (needle) {
-        var d = Date.parse(needle);
+        var d;
+        try {
+            var t = (this.attrs && this.attrs.type === 'datetime') ? 'datetime' : 'date';
+            var v = instance.web.parse_value(needle, {'widget': t});
+            if (t === 'datetime'){
+                d = instance.web.str_to_datetime(v);
+            }
+            else{
+                d = instance.web.str_to_date(v);
+            }
+        } catch (e) {
+            // pass
+        }
         if (!d) { return $.when(null); }
         var date_string = instance.web.format_value(d, this.attrs);
         var label = _.str.sprintf(_.str.escapeHTML(
@@ -1577,8 +1591,11 @@ instance.web.search.ManyToOneField = instance.web.search.CharField.extend({
         return facetValue.get('label');
     },
     make_domain: function (name, operator, facetValue) {
-        if (operator === this.default_operator) {
+        switch(operator){
+        case this.default_operator:
             return [[name, '=', facetValue.get('value')]];
+        case 'child_of':
+            return [[name, 'child_of', facetValue.get('value')]];
         }
         return this._super(name, operator, facetValue);
     },
@@ -1848,9 +1865,14 @@ instance.web.search.Advanced = instance.web.search.Input.extend({
             new instance.web.Model(this.view.model).call('fields_get', {
                     context: this.view.dataset.context
                 }).done(function(data) {
-                    self.fields = _.extend({
+                    self.fields = {
                         id: { string: 'ID', type: 'id' }
-                    }, data);
+                    };
+                    _.each(data, function(field_def, field_name) {
+                        if (field_def.selectable !== false && field_name != 'id') {
+                            self.fields[field_name] = field_def;
+                        }
+                    });
         })).done(function () {
             self.append_proposition();
         });
@@ -2128,6 +2150,10 @@ instance.web.search.ExtendedSearchProposition.Float = instance.web.search.Extend
         {value: "∃", text: _lt("is set")},
         {value: "∄", text: _lt("is not set")}
     ],
+    init: function (parent) {
+        this._super(parent);
+        this.decimal_point = instance.web._t.database.parameters.decimal_point;
+    },
     toString: function () {
         return this.$el.val();
     },

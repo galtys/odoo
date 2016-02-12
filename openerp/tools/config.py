@@ -154,7 +154,7 @@ class configmanager(object):
         # WEB
         # TODO move to web addons after MetaOption merge
         group = optparse.OptionGroup(parser, "Web interface Configuration")
-        group.add_option("--db-filter", dest="dbfilter", default='.*',
+        group.add_option("--db-filter", dest="dbfilter", my_default='.*',
                          help="Filter listed database", metavar="REGEXP")
         parser.add_option_group(group)
 
@@ -192,7 +192,7 @@ class configmanager(object):
         levels = ['info', 'debug_rpc', 'warn', 'test', 'critical',
             'debug_sql', 'error', 'debug', 'debug_rpc_answer', 'notset']
         group.add_option('--log-level', dest='log_level', type='choice', choices=levels,
-            my_default='info', help='specify the level of the logging. Accepted values: ' + str(levels) + ' (deprecated option).')
+            my_default='info', help='specify the level of the logging. Accepted values: ' + str(levels))
 
         parser.add_option_group(group)
 
@@ -350,8 +350,8 @@ class configmanager(object):
             "the i18n-export option cannot be used without the database (-d) option")
 
         # Check if the config file exists (-c used, but not -s)
-        die(not opt.save and opt.config and not os.path.exists(opt.config),
-            "The config file '%s' selected with -c/--config doesn't exist, "\
+        die(not opt.save and opt.config and not os.access(opt.config, os.R_OK),
+            "The config file '%s' selected with -c/--config doesn't exist or is not readable, "\
             "use -s/--save if you want to generate it"% opt.config)
 
         # place/search the config file on Win32 near the server installation

@@ -194,7 +194,7 @@ class account_analytic_account(osv.osv):
         'user_id': fields.many2one('res.users', 'Project Manager', track_visibility='onchange'),
         'manager_id': fields.many2one('res.users', 'Account Manager', track_visibility='onchange'),
         'date_start': fields.date('Start Date'),
-        'date': fields.date('End Date', select=True, track_visibility='onchange'),
+        'date': fields.date('Expiration Date', select=True, track_visibility='onchange'),
         'company_id': fields.many2one('res.company', 'Company', required=False), #not required because we want to allow different companies to use the same chart of account, except for leaf accounts.
         'state': fields.selection([('template', 'Template'),('draft','New'),('open','In Progress'),('pending','To Renew'),('close','Closed'),('cancelled', 'Cancelled')], 'Status', required=True, track_visibility='onchange'),
         'currency_id': fields.function(_currency, fnct_inv=_set_company_currency, #the currency_id field is readonly except if it's a view account and if there is no company
@@ -219,7 +219,7 @@ class account_analytic_account(osv.osv):
         res['value']['description'] = template.description
         return res
 
-    def on_change_partner_id(self, cr, uid, ids,partner_id, name, context={}):
+    def on_change_partner_id(self, cr, uid, ids,partner_id, name, context=None):
         res={}
         if partner_id:
             partner = self.pool.get('res.partner').browse(cr, uid, partner_id, context=context)
@@ -261,13 +261,21 @@ class account_analytic_account(osv.osv):
     def name_create(self, cr, uid, name, context=None):
         raise osv.except_osv(_('Warning'), _("Quick account creation disallowed."))
 
+    def copy_data(self, cr, uid, id, default=None, context=None):
+        """executed for all the objects down the hierarchy during copy"""
+        if not default:
+            default = {}
+        default.setdefault('code', False)
+        default.setdefault('line_ids', [])
+        return super(account_analytic_account, self).copy_data(cr, uid, id, default, context=context)
+
     def copy(self, cr, uid, id, default=None, context=None):
+        """ executed only on the toplevel copied object of the hierarchy.
+        Subobject are actually copied with copy_data"""
         if not default:
             default = {}
         analytic = self.browse(cr, uid, id, context=context)
         default.update(
-            code=False,
-            line_ids=[],
             name=_("%s (copy)") % (analytic['name']))
         return super(account_analytic_account, self).copy(cr, uid, id, default, context=context)
 
@@ -301,7 +309,7 @@ class account_analytic_account(osv.osv):
                 dom = []
                 for name2 in name.split('/'):
                     name = name2.strip()
-                    account_ids = self.search(cr, uid, dom + [('name', 'ilike', name)] + args, limit=limit, context=context)
+                    account_ids = self.search(cr, uid, dom + [('name', operator, name)] + args, limit=limit, context=context)
                     if not account_ids: break
                     dom = [('parent_id','in',account_ids)]
         else:

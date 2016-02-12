@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Business Applications
-#    Copyright (C) 2012 OpenERP S.A. (<http://openerp.com>).
+#    Copyright (C) 2012-2013 OpenERP S.A. (<http://openerp.com>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,7 @@ import re
 import socket
 import threading
 import time
+from email.utils import getaddresses
 
 from openerp.loglevels import ustr
 
@@ -52,19 +53,30 @@ def html_sanitize(src):
     # html encode email tags
     part = re.compile(r"(<(([^a<>]|a[^<>\s])[^<>]*)@[^<>]+>)", re.IGNORECASE | re.DOTALL)
     src = part.sub(lambda m: cgi.escape(m.group(1)), src)
-    
+
     # some corner cases make the parser crash (such as <SCRIPT/XSS SRC=\"http://ha.ckers.org/xss.js\"></SCRIPT> in test_mail)
     try:
         cleaner = clean.Cleaner(page_structure=True, style=False, safe_attrs_only=False, forms=False, kill_tags=tags_to_kill, remove_tags=tags_to_remove)
         cleaned = cleaner.clean_html(src)
-    except TypeError, e:
+    except TypeError:
         # lxml.clean version < 2.3.1 does not have a kill_tags attribute
         # to remove in 2014
-        cleaner = clean.Cleaner(page_structure=True, style=False, safe_attrs_only=False, forms=False, remove_tags=tags_to_kill+tags_to_remove)
+        cleaner = clean.Cleaner(page_structure=True, style=False, safe_attrs_only=False, forms=False, remove_tags=tags_to_kill + tags_to_remove)
         cleaned = cleaner.clean_html(src)
-    except:
+    except Exception, e:
+        if isinstance(e, etree.ParserError) and 'empty' in str(e):
+            return ""
         _logger.warning('html_sanitize failed to parse %s' % (src))
         cleaned = '<p>Impossible to parse</p>'
+
+    # MAKO compatibility: $, { and } inside quotes are escaped, preventing correct mako execution
+    cleaned = cleaned.replace('%24', '$')
+    cleaned = cleaned.replace('%7B', '{')
+    cleaned = cleaned.replace('%7D', '}')
+    cleaned = cleaned.replace('%20', ' ')
+    cleaned = cleaned.replace('%5B', '[')
+    cleaned = cleaned.replace('%5D', ']')
+
     return cleaned
 
 
@@ -128,7 +140,7 @@ def html_email_clean(html):
         node.getparent().remove(node)
 
     # 4. strip signatures
-    signature = re.compile(r'([-]{2}[\s]?[\r\n]{1,2}[^\z]+)')
+    signature = re.compile(r'(^[-]{2,}[\s]?[\r\n]{1,2}[\s\S]+)', re.M)
     for elem in root.getiterator():
         if elem.text:
             match = re.search(signature, elem.text)
@@ -199,6 +211,9 @@ def html2plaintext(html, body_id=None, encoding='utf-8'):
     html = re.sub('<br\s*/?>', '\n', html)
     html = re.sub('<.*?>', ' ', html)
     html = html.replace(' ' * 2, ' ')
+    html = html.replace('&gt;', '>')
+    html = html.replace('&lt;', '<')
+    html = html.replace('&amp;', '&')
 
     # strip all lines
     html = '\n'.join([x.strip() for x in html.splitlines()])
@@ -267,7 +282,7 @@ def append_content_to_html(html, content, plaintext=True, preserve=False, contai
     elif plaintext:
         content = '\n%s\n' % plaintext2html(content, container_tag)
     else:
-        content = re.sub(r'(?i)(</?html.*>|</?body.*>|<!\W*DOCTYPE.*>)', '', content)
+        content = re.sub(r'(?i)(</?(?:html|body|head|!\s*DOCTYPE)[^>]*>)', '', content)
         content = u'\n%s\n' % ustr(content)
     # Force all tags to lowercase
     html = re.sub(r'(</?)\W*(\w+)([ >])',
@@ -297,7 +312,7 @@ command_re = re.compile("^Set-([a-z]+) *: *(.+)$", re.I + re.UNICODE)
 # Updated in 7.0 to match the model name as well
 # Typical form of references is <timestamp-openerp-record_id-model_name@domain>
 # group(1) = the record ID ; group(2) = the model (if any) ; group(3) = the domain
-reference_re = re.compile("<.*-open(?:object|erp)-(\\d+)(?:-([\w.]+))?.*@(.*)>", re.UNICODE)
+reference_re = re.compile("<.*-open(?:object|erp)-(\\d+)(?:-([\w.]+))?[^>]*@([^>]*)>", re.UNICODE)
 
 def generate_tracking_message_id(res_id):
     """Returns a string that can be used in the Message-ID RFC822 header field
@@ -356,4 +371,9 @@ def email_split(text):
     """ Return a list of the email addresses found in ``text`` """
     if not text:
         return []
-    return re.findall(r'([^ ,<@]+@[^> ,]+)', text)
+    return [addr[1] for addr in getaddresses([text])
+                # getaddresses() returns '' when email parsing fails, and
+                # sometimes returns emails without at least '@'. The '@'
+                # is strictly required in RFC2822's `addr-spec`.
+                if addr[1]
+                if '@' in addr[1]]

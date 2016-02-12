@@ -111,9 +111,11 @@ class crm_phonecall(base_state, osv.osv):
         model_data = self.pool.get('ir.model.data')
         phonecall_dict = {}
         if not categ_id:
-            res_id = model_data._get_id(cr, uid, 'crm', 'categ_phone2')
-            if res_id:
+            try:
+                res_id = model_data._get_id(cr, uid, 'crm', 'categ_phone2')
                 categ_id = model_data.browse(cr, uid, res_id, context=context).res_id
+            except ValueError:
+                pass
         for call in self.browse(cr, uid, ids, context=context):
             if not section_id:
                 section_id = call.section_id and call.section_id.id or False
@@ -132,6 +134,7 @@ class crm_phonecall(base_state, osv.osv):
                     'partner_phone' : call.partner_phone,
                     'partner_mobile' : call.partner_mobile,
                     'priority': call.priority,
+                    'opportunity_id': call.opportunity_id and call.opportunity_id.id or False,
             }
             new_id = self.create(cr, uid, vals, context=context)
             if action == 'log':

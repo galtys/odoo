@@ -54,7 +54,7 @@ _ref_vat = {
     'gr': 'GR12345670',
     'hu': 'HU12345676',
     'hr': 'HR01234567896', # Croatia, contributed by Milan Tribuson 
-    'ie': 'IE1234567T',
+    'ie': 'IE1234567FA',
     'it': 'IT12345670017',
     'lt': 'LT123456715',
     'lu': 'LU12345613',
@@ -63,6 +63,7 @@ _ref_vat = {
     'mx': 'MXABC123456T1B',
     'nl': 'NL123456782B90',
     'no': 'NO123456785',
+    'pe': 'PER10254824220 or PED10254824220',
     'pl': 'PL1234567883',
     'pt': 'PT123456789',
     'ro': 'RO1234567897',
@@ -90,6 +91,10 @@ class res_partner(osv.osv):
                         getattr(vatnumber, check_func_name, None)
         if not check_func:
             # No VAT validation available, default to check that the country code exists
+            if country_code.upper() == 'EU':
+                # Foreign companies that trade with non-enterprises in the EU
+                # may have a VATIN starting with "EU" instead of a country code.
+                return True
             res_country = self.pool.get('res.country')
             return bool(res_country.search(cr, uid, [('code', '=ilike', country_code)], context=context))
         return check_func(vat_number)
@@ -149,6 +154,8 @@ class res_partner(osv.osv):
         vat_no = "'CC##' (CC=Country Code, ##=VAT Number)"
         if default_vat_check(vat_country, vat_number):
             vat_no = _ref_vat[vat_country] if vat_country in _ref_vat else vat_no
+            if self.pool['res.users'].browse(cr, uid, uid).company_id.vat_check_vies:
+                return '\n' + _('This VAT number either failed the VIES VAT validation check or did not respect the expected format %s.') % vat_no
         return '\n' + _('This VAT number does not seem to be valid.\nNote: the expected format is %s') % vat_no
 
     _constraints = [(check_vat, _construct_constraint_msg, ["vat"])]
@@ -190,8 +197,36 @@ class res_partner(osv.osv):
             return check == int(num[8])
         return False
 
+    def _ie_check_char(self, vat):
+        vat = vat.zfill(8)
+        extra = 0
+        if vat[7] not in ' W':
+            if vat[7].isalpha():
+                extra = 9 * (ord(vat[7]) - 64)
+            else:
+                # invalid
+                return -1
+        checksum = extra + sum((8-i) * int(x) for i, x in enumerate(vat[:7]))
+        return 'WABCDEFGHIJKLMNOPQRSTUV'[checksum % 23]
 
-    # Mexican VAT verification, contributed by <moylop260@hotmail.com>
+    def check_vat_ie(self, vat):
+        """ Temporary Ireland VAT validation to support the new format
+        introduced in January 2013 in Ireland, until upstream is fixed.
+        TODO: remove when fixed upstream"""
+        if len(vat) not in (8, 9) or not vat[2:7].isdigit():
+            return False
+        if len(vat) == 8:
+            # Normalize pre-2013 numbers: final space or 'W' not significant
+            vat += ' '
+        if vat[:7].isdigit():
+            return vat[7] == self._ie_check_char(vat[:7] + vat[8])
+        elif vat[1] in (string.ascii_uppercase + '+*'):
+            # Deprecated format
+            # See http://www.revenue.ie/en/online/third-party-reporting/reporting-payment-details/faqs.html#section3
+            return vat[7] == self._ie_check_char(vat[2:7] + vat[0] + vat[8])
+        return False
+
+    # Mexican VAT verification, contributed by Vauxoo
     # and Panos Christeas <p_christ@hol.gr>
     __check_vat_mx_re = re.compile(r"(?P<primeras>[A-Za-z\xd1\xf1&]{3,4})" \
                                     r"[ \-_]?" \
@@ -248,6 +283,41 @@ class res_partner(osv.osv):
             return False
         return check == int(vat[8])
 
+    # Peruvian VAT validation, contributed by Vauxoo
+    def check_vat_pe(self, vat):
+
+        vat_type,vat = vat and len(vat)>=2 and (vat[0], vat[1:]) or (False, False)
+
+        if vat_type and vat_type.upper() == 'D':
+            #DNI
+            return True
+        elif vat_type and vat_type.upper() == 'R':
+            #verify RUC
+            factor = '5432765432'
+            sum = 0
+            dig_check = False
+            if len(vat) != 11:
+                return False
+            try:
+                int(vat)
+            except ValueError:
+                return False 
+                         
+            for f in range(0,10):
+                sum += int(factor[f]) * int(vat[f])
+                
+            subtraction = 11 - (sum % 11)
+            if subtraction == 10:
+                dig_check = 0
+            elif subtraction == 11:
+                dig_check = 1
+            else:
+                dig_check = subtraction
+            
+            return int(vat[10]) == dig_check
+        else:
+            return False
+        
 res_partner()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

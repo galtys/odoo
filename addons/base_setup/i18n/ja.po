@@ -1,26 +1,27 @@
-# Japanese translation for openobject-addons
-# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
-#
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+# * base_setup
+# 
+# Translators:
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Project-Id-Version: Odoo 7.0\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-07 19:36+0000\n"
-"PO-Revision-Date: 2013-08-06 03:52+0000\n"
-"Last-Translator: Yoshi Tashiro <yostashiro@gmail.com>\n"
-"Language-Team: Japanese <ja@li.org>\n"
+"PO-Revision-Date: 2015-10-25 09:46+0000\n"
+"Last-Translator: Martin Trigaux\n"
+"Language-Team: Japanese (http://www.transifex.com/odoo/odoo-7/language/ja/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-08-07 05:03+0000\n"
-"X-Generator: Launchpad (build 16721)\n"
+"Content-Transfer-Encoding: \n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: base_setup
 #: view:sale.config.settings:0
 msgid "Emails Integration"
-msgstr ""
+msgstr "Eメールの統合"
 
 #. module: base_setup
 #: selection:base.setup.terminology,partner:0
@@ -30,29 +31,26 @@ msgstr "ゲスト"
 #. module: base_setup
 #: view:sale.config.settings:0
 msgid "Contacts"
-msgstr ""
+msgstr "連絡先"
 
 #. module: base_setup
 #: model:ir.model,name:base_setup.model_base_config_settings
 msgid "base.config.settings"
-msgstr ""
+msgstr "base.config.settings"
 
 #. module: base_setup
 #: field:base.config.settings,module_auth_oauth:0
 msgid ""
 "Use external authentication providers, sign in with google, facebook, ..."
-msgstr ""
+msgstr "外部認証プロバイダを使用、GoogleやFacebookでサインイン、…"
 
 #. module: base_setup
 #: view:sale.config.settings:0
 msgid ""
 "OpenERP allows to automatically create leads (or others documents)\n"
-"                            from incoming emails. You can automatically "
-"synchronize emails with OpenERP\n"
-"                            using regular POP/IMAP accounts, using a direct "
-"email integration script for your\n"
-"                            email server, or by manually pushing emails to "
-"OpenERP using specific\n"
+"                            from incoming emails. You can automatically synchronize emails with OpenERP\n"
+"                            using regular POP/IMAP accounts, using a direct email integration script for your\n"
+"                            email server, or by manually pushing emails to OpenERP using specific\n"
 "                            plugins for your preferred email application."
 msgstr ""
 
@@ -69,17 +67,17 @@ msgstr "メンバー"
 #. module: base_setup
 #: view:base.config.settings:0
 msgid "Portal access"
-msgstr ""
+msgstr "ポータルアクセス"
 
 #. module: base_setup
 #: view:base.config.settings:0
 msgid "Authentication"
-msgstr ""
+msgstr "認証"
 
 #. module: base_setup
 #: view:sale.config.settings:0
 msgid "Quotations and Sales Orders"
-msgstr ""
+msgstr "見積りと販売受注"
 
 #. module: base_setup
 #: view:base.config.settings:0
@@ -96,7 +94,7 @@ msgstr "提供者"
 #. module: base_setup
 #: view:base.config.settings:0
 msgid "Email"
-msgstr ""
+msgstr "Eメール"
 
 #. module: base_setup
 #: field:sale.config.settings,module_crm:0
@@ -111,12 +109,12 @@ msgstr "お待ちください。"
 #. module: base_setup
 #: field:base.config.settings,module_base_import:0
 msgid "Allow users to import data from CSV files"
-msgstr ""
+msgstr "CSVファイルからデータをインポート"
 
 #. module: base_setup
 #: field:base.config.settings,module_multi_company:0
 msgid "Manage multiple companies"
-msgstr ""
+msgstr "複数の会社を管理"
 
 #. module: base_setup
 #: view:sale.config.settings:0
@@ -131,7 +129,7 @@ msgstr ""
 #. module: base_setup
 #: field:sale.config.settings,module_web_linkedin:0
 msgid "Get contacts automatically from linkedIn"
-msgstr ""
+msgstr "LinkedInから自動で連絡先を取得"
 
 #. module: base_setup
 #: field:sale.config.settings,module_plugin_thunderbird:0
@@ -146,17 +144,17 @@ msgstr "res_config_contents"
 #. module: base_setup
 #: view:sale.config.settings:0
 msgid "Customer Features"
-msgstr ""
+msgstr "顧客の特徴"
 
 #. module: base_setup
 #: view:base.config.settings:0
 msgid "Import / Export"
-msgstr ""
+msgstr "インポート / エクスポート"
 
 #. module: base_setup
 #: view:sale.config.settings:0
 msgid "Sale Features"
-msgstr ""
+msgstr "販売の機能"
 
 #. module: base_setup
 #: field:sale.config.settings,module_plugin_outlook:0
@@ -190,21 +188,19 @@ msgstr "顧客"
 msgid ""
 "When you create a new contact (person or company), you will be able to load "
 "all the data from LinkedIn (photos, address, etc)."
-msgstr ""
+msgstr "新しい連絡先(個人または会社)を作成すると、LinkedInからすべてのデータ(写真、住所など)を読み込むことができるようになります。"
 
 #. module: base_setup
 #: help:base.config.settings,module_multi_company:0
 msgid ""
-"Work in multi-company environments, with appropriate security access between "
-"companies.\n"
+"Work in multi-company environments, with appropriate security access between companies.\n"
 "                This installs the module multi_company."
-msgstr ""
+msgstr "企業間の適切なセキュリティアクセスにより複数の企業環境で動作します。"
 
 #. module: base_setup
 #: view:base.config.settings:0
 msgid ""
-"The public portal is accessible only if you are in a single database mode. "
-"You can\n"
+"The public portal is accessible only if you are in a single database mode. You can\n"
 "                                    launch the OpenERP Server with the option"
 msgstr ""
 
@@ -213,7 +209,7 @@ msgstr ""
 msgid ""
 "You will find more options in your company details: address for the header "
 "and footer, overdue payments texts, etc."
-msgstr ""
+msgstr "会社の詳細にはヘッダとフッタのアドレス、遅延支払いのテキストなどより多くのオプションがあります。"
 
 #. module: base_setup
 #: model:ir.model,name:base_setup.model_sale_config_settings
@@ -229,12 +225,9 @@ msgstr "どのように顧客を呼びますか"
 #: view:base.config.settings:0
 msgid ""
 "When you send a document to a customer\n"
-"                                    (quotation, invoice), your customer will "
-"be\n"
-"                                    able to signup to get all his "
-"documents,\n"
-"                                    read your company news, check his "
-"projects,\n"
+"                                    (quotation, invoice), your customer will be\n"
+"                                    able to signup to get all his documents,\n"
+"                                    read your company news, check his projects,\n"
 "                                    etc."
 msgstr ""
 
@@ -251,7 +244,7 @@ msgstr "顧客"
 #. module: base_setup
 #: help:base.config.settings,module_portal_anonymous:0
 msgid "Enable the public part of openerp, openerp becomes a public website."
-msgstr ""
+msgstr "OpenERPの公開部分を有効にすると、OpenERPは公開ウェブサイトになります。"
 
 #. module: base_setup
 #: help:sale.config.settings,module_plugin_thunderbird:0
@@ -259,8 +252,7 @@ msgid ""
 "The plugin allows you archive email and its attachments to the selected\n"
 "                OpenERP objects. You can select a partner, or a lead and\n"
 "                attach the selected mail as a .eml file in\n"
-"                the attachment of a selected record. You can create "
-"documents for CRM Lead,\n"
+"                the attachment of a selected record. You can create documents for CRM Lead,\n"
 "                Partner from the selected emails.\n"
 "                This installs the module plugin_thunderbird."
 msgstr ""
@@ -284,10 +276,8 @@ msgstr ""
 #. module: base_setup
 #: help:sale.config.settings,module_plugin_outlook:0
 msgid ""
-"The Outlook plugin allows you to select an object that you would like to "
-"add\n"
-"                to your email and its attachments from MS Outlook. You can "
-"select a partner,\n"
+"The Outlook plugin allows you to select an object that you would like to add\n"
+"                to your email and its attachments from MS Outlook. You can select a partner,\n"
 "                or a lead object and archive a selected\n"
 "                email into an OpenERP mail message with attachments.\n"
 "                This installs the module plugin_outlook."
@@ -296,19 +286,18 @@ msgstr ""
 #. module: base_setup
 #: view:base.config.settings:0
 msgid "Options"
-msgstr ""
+msgstr "オプション"
 
 #. module: base_setup
 #: field:base.config.settings,module_portal:0
 msgid "Activate the customer portal"
-msgstr ""
+msgstr "顧客ポータルを活性化"
 
 #. module: base_setup
 #: view:base.config.settings:0
 msgid ""
 "to do so.\n"
-"                                    Once activated, the login page will be "
-"replaced by the public website."
+"                                    Once activated, the login page will be replaced by the public website."
 msgstr ""
 
 #. module: base_setup
@@ -319,39 +308,37 @@ msgstr ""
 #. module: base_setup
 #: view:base.config.settings:0
 msgid "(company news, jobs, contact form, etc.)"
-msgstr ""
+msgstr "(会社のニュース、求人、連絡先フォームなど)"
 
 #. module: base_setup
 #: field:base.config.settings,module_portal_anonymous:0
 msgid "Activate the public portal"
-msgstr ""
+msgstr "公共ポータルを活性化"
 
 #. module: base_setup
 #: view:base.config.settings:0
 msgid "Configure outgoing email servers"
-msgstr ""
+msgstr "送信メールサーバを設定"
 
 #. module: base_setup
 #: view:sale.config.settings:0
 msgid "Social Network Integration"
-msgstr ""
+msgstr "ソーシャルネットワークの統合"
 
 #. module: base_setup
 #: help:base.config.settings,module_portal:0
 msgid "Give your customers access to their documents."
-msgstr ""
+msgstr "顧客に文書へのアクセスを与えます。"
 
 #. module: base_setup
-#: view:base.config.settings:0
-#: view:sale.config.settings:0
+#: view:base.config.settings:0 view:sale.config.settings:0
 msgid "Cancel"
-msgstr ""
+msgstr "取消し"
 
 #. module: base_setup
-#: view:base.config.settings:0
-#: view:sale.config.settings:0
+#: view:base.config.settings:0 view:sale.config.settings:0
 msgid "Apply"
-msgstr ""
+msgstr "適用"
 
 #. module: base_setup
 #: view:base.setup.terminology:0
@@ -359,12 +346,11 @@ msgid "Specify Your Terminology"
 msgstr "用語の定義"
 
 #. module: base_setup
-#: view:base.config.settings:0
-#: view:sale.config.settings:0
+#: view:base.config.settings:0 view:sale.config.settings:0
 msgid "or"
-msgstr ""
+msgstr "または"
 
 #. module: base_setup
 #: view:base.config.settings:0
 msgid "Configure your company data"
-msgstr ""
+msgstr "会社のデータを設定"

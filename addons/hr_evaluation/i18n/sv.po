@@ -1,21 +1,22 @@
-# Swedish translation for openobject-addons
-# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
-#
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+# * hr_evaluation
+# 
+# Translators:
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Project-Id-Version: Odoo 7.0\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-07 19:36+0000\n"
-"PO-Revision-Date: 2012-12-21 23:00+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Swedish <sv@li.org>\n"
+"PO-Revision-Date: 2015-07-17 09:02+0000\n"
+"Last-Translator: Martin Trigaux\n"
+"Language-Team: Swedish (http://www.transifex.com/odoo/odoo-7/language/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-07-11 06:00+0000\n"
-"X-Generator: Launchpad (build 16696)\n"
+"Content-Transfer-Encoding: \n"
+"Language: sv\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. module: hr_evaluation
 #: help:hr_evaluation.plan.phase,send_anonymous_manager:0
@@ -25,19 +26,18 @@ msgstr "Skicka en anonym sammanfattning till chefen"
 #. module: hr_evaluation
 #: view:hr_evaluation.evaluation:0
 msgid "Start Appraisal"
-msgstr "Starta Bedömning"
+msgstr "Starta utvärdering"
 
 #. module: hr_evaluation
-#: view:hr.evaluation.interview:0
-#: view:hr.evaluation.report:0
+#: view:hr.evaluation.interview:0 view:hr.evaluation.report:0
 #: view:hr_evaluation.plan:0
 msgid "Group By..."
-msgstr "Gruppera efter..."
+msgstr "Gruppera på..."
 
 #. module: hr_evaluation
 #: view:hr_evaluation.evaluation:0
 msgid "Cancel Appraisal"
-msgstr ""
+msgstr "Avbryt utvärdering"
 
 #. module: hr_evaluation
 #: field:hr.evaluation.interview,request_id:0
@@ -48,88 +48,83 @@ msgstr "Request_id"
 #. module: hr_evaluation
 #: selection:hr.evaluation.report,month:0
 msgid "March"
-msgstr "Mars"
+msgstr "mars"
 
 #. module: hr_evaluation
 #: field:hr.evaluation.report,delay_date:0
 msgid "Delay to Start"
-msgstr "Fördröjning till Start"
+msgstr "Tid till start"
 
 #. module: hr_evaluation
 #: view:hr_evaluation.evaluation:0
 msgid "Appraisal that are in waiting appreciation state"
-msgstr "Bedömning som väntar"
+msgstr "Utvärdering som väntar på erkännande"
 
 #. module: hr_evaluation
-#: view:hr_evaluation.plan:0
-#: field:hr_evaluation.plan,company_id:0
+#: view:hr_evaluation.plan:0 field:hr_evaluation.plan,company_id:0
 #: field:hr_evaluation.plan.phase,company_id:0
 msgid "Company"
-msgstr "Företag"
+msgstr "Bolag"
 
 #. module: hr_evaluation
 #: field:hr.evaluation.interview,evaluation_id:0
 #: field:hr_evaluation.plan.phase,survey_id:0
 msgid "Appraisal Form"
-msgstr "Bedömningsformulär"
+msgstr "Utvärderingsformulär"
 
 #. module: hr_evaluation
-#: view:hr.evaluation.report:0
-#: field:hr.evaluation.report,day:0
+#: view:hr.evaluation.report:0 field:hr.evaluation.report,day:0
 msgid "Day"
 msgstr "Dag"
 
 #. module: hr_evaluation
-#: view:hr_evaluation.plan:0
-#: field:hr_evaluation.plan,phase_ids:0
+#: view:hr_evaluation.plan:0 field:hr_evaluation.plan,phase_ids:0
 msgid "Appraisal Phases"
-msgstr "Bedömningsfaser"
+msgstr "Utvärderingsetapper"
 
 #. module: hr_evaluation
 #: view:hr.evaluation.interview:0
 msgid "Send Request"
-msgstr ""
+msgstr "Skicka begäran"
 
 #. module: hr_evaluation
 #: help:hr_evaluation.plan,month_first:0
 msgid ""
 "This number of months will be used to schedule the first evaluation date of "
 "the employee when selecting an evaluation plan. "
-msgstr ""
-"Det antal månader ska användas för att schemalägga den första "
-"Utvärderingsdatumet för den anställde, när man väljer en Utvärderingsplan. "
+msgstr "Det antal månader som skall användas för att schemalägga det första utvärderingsdatumet för den anställde, när man väljer en utvärderingsplan. "
 
 #. module: hr_evaluation
 #: view:hr.employee:0
 #: model:ir.ui.menu,name:hr_evaluation.menu_open_view_hr_evaluation_tree
 msgid "Appraisals"
-msgstr ""
+msgstr "Utvärderingar"
 
 #. module: hr_evaluation
 #: view:hr_evaluation.plan.phase:0
 msgid "(eval_name)s:Appraisal Name"
-msgstr "(Eval_name): Bedömnings namn"
+msgstr "(Eval_name): Utvärderingsnamn"
 
 #. module: hr_evaluation
 #: field:hr.evaluation.interview,message_ids:0
 #: field:hr_evaluation.evaluation,message_ids:0
 msgid "Messages"
-msgstr ""
+msgstr "Meddelanden"
 
 #. module: hr_evaluation
 #: view:hr_evaluation.plan.phase:0
 msgid "Mail Body"
-msgstr "Meddelande"
+msgstr "Meddelandetext"
 
 #. module: hr_evaluation
 #: field:hr_evaluation.plan.phase,wait:0
 msgid "Wait Previous Phases"
-msgstr "Invänta tidigare faser"
+msgstr "Invänta tidigare etapper"
 
 #. module: hr_evaluation
 #: model:ir.model,name:hr_evaluation.model_hr_evaluation_evaluation
 msgid "Employee Appraisal"
-msgstr "Bedömning av anställd"
+msgstr "Utvärdering av personal"
 
 #. module: hr_evaluation
 #: selection:hr.evaluation.report,state:0
@@ -148,13 +143,13 @@ msgstr "Uppfyller inte förväntningarna"
 #: model:ir.actions.act_window,name:hr_evaluation.open_view_hr_evaluation_tree
 #: model:ir.ui.menu,name:hr_evaluation.menu_eval_hr
 msgid "Appraisal"
-msgstr "Bedömning"
+msgstr "Utvärdering"
 
 #. module: hr_evaluation
 #: help:hr.evaluation.interview,message_unread:0
 #: help:hr_evaluation.evaluation,message_unread:0
 msgid "If checked new messages require your attention."
-msgstr ""
+msgstr "Om ikryssad nya meddelanden som kräver din uppmärksamhet"
 
 #. module: hr_evaluation
 #: view:hr_evaluation.plan.phase:0
@@ -169,7 +164,7 @@ msgstr "Slutdatum"
 #. module: hr_evaluation
 #: field:hr_evaluation.plan,month_first:0
 msgid "First Appraisal in (months)"
-msgstr "Första Bedömning i (månader)"
+msgstr "Första utvärdering i (månader)"
 
 #. module: hr_evaluation
 #: view:hr_evaluation.plan.phase:0
@@ -195,27 +190,12 @@ msgid ""
 "%(user_signature)s\n"
 "\n"
 "        "
-msgstr ""
-"\n"
-"Datum: %(date)s\n"
-"\n"
-"%(employee_name)s,\n"
-"\n"
-"Jag gör en utvärdering om %(eval_name)s.\n"
-"\n"
-"Vänligen bidra med dina åsikter.\n"
-"\n"
-"\n"
-"Tack på förhand,\n"
-"--\n"
-"%(user_signature)s\n"
-"\n"
-"        "
+msgstr "\nDatum: %(date)s\n\n%(employee_name)s,\n\nJag gör en utvärdering om %(eval_name)s.\n\nVänligen bidra med dina åsikter.\n\n\nTack på förhand,\n--\n%(user_signature)s\n\n        "
 
 #. module: hr_evaluation
 #: view:hr_evaluation.evaluation:0
 msgid "Appraisal that are in Plan In Progress state"
-msgstr "Bedömning som pågår"
+msgstr "Planerad och pågående utvärdering"
 
 #. module: hr_evaluation
 #: help:hr.evaluation.interview,message_summary:0
@@ -223,12 +203,12 @@ msgstr "Bedömning som pågår"
 msgid ""
 "Holds the Chatter summary (number of messages, ...). This summary is "
 "directly in html format in order to be inserted in kanban views."
-msgstr ""
+msgstr "Lagrar pladder-sammanfattning (antal meddelanden, ...). Denna sammanfattning presenteras i html-format för att kunna sättas in i kanban vyer."
 
 #. module: hr_evaluation
 #: view:hr_evaluation.evaluation:0
 msgid "Reset to Draft"
-msgstr "Återställ till Utkast"
+msgstr "Återställ till utkast"
 
 #. module: hr_evaluation
 #: field:hr.evaluation.report,deadline:0
@@ -240,7 +220,7 @@ msgstr "Tidsfrist"
 #: code:addons/hr_evaluation/hr_evaluation.py:320
 #, python-format
 msgid "Warning!"
-msgstr ""
+msgstr "Varning!"
 
 #. module: hr_evaluation
 #: view:hr.evaluation.report:0
@@ -250,12 +230,12 @@ msgstr "Pågående Utvärderingar"
 #. module: hr_evaluation
 #: model:ir.model,name:hr_evaluation.model_survey_request
 msgid "survey.request"
-msgstr "undersöknings.begäran"
+msgstr "survey.request"
 
 #. module: hr_evaluation
 #: view:hr.evaluation.interview:0
 msgid "Cancel Survey"
-msgstr ""
+msgstr "Avbryt undersökning"
 
 #. module: hr_evaluation
 #: view:hr_evaluation.plan.phase:0
@@ -265,7 +245,7 @@ msgstr "(Datum)s: Aktuellt datum"
 #. module: hr_evaluation
 #: model:ir.actions.act_window,name:hr_evaluation.act_hr_employee_2_hr__evaluation_interview
 msgid "Interviews"
-msgstr ""
+msgstr "Intervjuer"
 
 #. module: hr_evaluation
 #: code:addons/hr_evaluation/hr_evaluation.py:83
@@ -277,22 +257,21 @@ msgstr "Beträffande "
 #: field:hr.evaluation.interview,message_follower_ids:0
 #: field:hr_evaluation.evaluation,message_follower_ids:0
 msgid "Followers"
-msgstr ""
+msgstr "Följare"
 
 #. module: hr_evaluation
 #: field:hr.evaluation.interview,message_unread:0
 #: field:hr_evaluation.evaluation,message_unread:0
 msgid "Unread Messages"
-msgstr ""
+msgstr "Olästa meddelanden"
 
 #. module: hr_evaluation
-#: view:hr.evaluation.report:0
-#: field:hr.evaluation.report,employee_id:0
+#: view:hr.evaluation.report:0 field:hr.evaluation.report,employee_id:0
 #: view:hr_evaluation.evaluation:0
 #: field:hr_evaluation.evaluation,employee_id:0
 #: model:ir.model,name:hr_evaluation.model_hr_employee
 msgid "Employee"
-msgstr "Anställd"
+msgstr "Medarbetare"
 
 #. module: hr_evaluation
 #: selection:hr_evaluation.evaluation,state:0
@@ -314,14 +293,12 @@ msgstr "Överträffar förväntningarna"
 #: help:hr_evaluation.plan.phase,mail_feature:0
 msgid ""
 "Check this box if you want to send mail to employees coming under this phase"
-msgstr ""
-"Markera denna ruta om du vill skicka e-post till anställda som omfattas av "
-"denna fas"
+msgstr "Markera denna ruta om du vill skicka e-post till anställda som omfattas av denna etapp"
 
 #. module: hr_evaluation
 #: view:hr.evaluation.report:0
 msgid "Creation Date"
-msgstr "Skapades"
+msgstr "Registeringsdatum"
 
 #. module: hr_evaluation
 #: help:hr_evaluation.plan.phase,send_answer_manager:0
@@ -345,8 +322,7 @@ msgid "Send Reminder Email"
 msgstr "Skicka Påminnelse E-post"
 
 #. module: hr_evaluation
-#: view:hr.evaluation.report:0
-#: field:hr_evaluation.evaluation,rating:0
+#: view:hr.evaluation.report:0 field:hr_evaluation.evaluation,rating:0
 msgid "Appreciation"
 msgstr "Värdering"
 
@@ -367,8 +343,7 @@ msgid "Meet expectations"
 msgstr "Möter Förväntningarna"
 
 #. module: hr_evaluation
-#: view:hr.evaluation.report:0
-#: field:hr.evaluation.report,nbr:0
+#: view:hr.evaluation.report:0 field:hr.evaluation.report,nbr:0
 msgid "# of Requests"
 msgstr "# Av begäran"
 
@@ -378,18 +353,16 @@ msgid "July"
 msgstr "Juli"
 
 #. module: hr_evaluation
-#: view:hr.evaluation.interview:0
-#: view:hr.evaluation.report:0
-#: field:hr.evaluation.report,state:0
-#: view:hr_evaluation.evaluation:0
+#: view:hr.evaluation.interview:0 view:hr.evaluation.report:0
+#: field:hr.evaluation.report,state:0 view:hr_evaluation.evaluation:0
 #: field:hr_evaluation.evaluation,state:0
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #. module: hr_evaluation
 #: model:ir.actions.act_window,name:hr_evaluation.action_evaluation_plans_installer
 msgid "Review Appraisal Plans"
-msgstr "Recension Bedömning Planer"
+msgstr "Granska utvärderingsplaner"
 
 #. module: hr_evaluation
 #: model:ir.actions.act_window,help:hr_evaluation.action_evaluation_plans_installer
@@ -398,14 +371,12 @@ msgid ""
 "                Click to define a new appraisal plan.\n"
 "              </p><p>\n"
 "                You can define appraisal plans (ex: first interview after 6\n"
-"                months, then every year). Then, each employee can be linked "
-"to\n"
-"                an appraisal plan so that OpenERP can automatically "
-"generate\n"
+"                months, then every year). Then, each employee can be linked to\n"
+"                an appraisal plan so that OpenERP can automatically generate\n"
 "                interview requests to managers and/or subordinates.\n"
 "              </p>\n"
 "            "
-msgstr ""
+msgstr "<p class=\"oe_view_nocontent_create\">\n                 Klicka för att definiera en ny utvärderingsplan .\n               </p><p>\n                 Du kan definiera utvärderingsplaner (ex: första intervju efter 6\n                 månader, därefter varje år). Sedan kan varje anställd kopplas till\n                 en utvärderingsplan så att OpenERP automatiskt kan generera\n                 intervjubegäran till chefer och / eller underordnade.\n               </p>\n            "
 
 #. module: hr_evaluation
 #: view:hr_evaluation.plan.phase:0
@@ -420,12 +391,12 @@ msgstr "Handlingsplan"
 #. module: hr_evaluation
 #: model:ir.ui.menu,name:hr_evaluation.menu_eval_hr_config
 msgid "Periodic Appraisal"
-msgstr "Regelbunden Bedömning"
+msgstr "Periodisk utvärdering"
 
 #. module: hr_evaluation
 #: field:hr_evaluation.plan,month_next:0
 msgid "Periodicity of Appraisal (months)"
-msgstr "Periodicitet av Bedömning (månader)"
+msgstr "Periodicitet av utvärdering (månader)"
 
 #. module: hr_evaluation
 #: selection:hr.evaluation.report,rating:0
@@ -450,10 +421,9 @@ msgid "All Answers"
 msgstr "Alla svar"
 
 #. module: hr_evaluation
-#: view:hr.evaluation.interview:0
-#: view:hr_evaluation.evaluation:0
+#: view:hr.evaluation.interview:0 view:hr_evaluation.evaluation:0
 msgid "Answer Survey"
-msgstr ""
+msgstr "Svara på undersökningen"
 
 #. module: hr_evaluation
 #: selection:hr.evaluation.report,month:0
@@ -466,8 +436,7 @@ msgid "December"
 msgstr "December"
 
 #. module: hr_evaluation
-#: view:hr.evaluation.report:0
-#: field:hr.evaluation.report,month:0
+#: view:hr.evaluation.report:0 field:hr.evaluation.report,month:0
 msgid "Month"
 msgstr "Månad"
 
@@ -484,16 +453,14 @@ msgstr "E-postinställningar"
 #. module: hr_evaluation
 #: model:ir.actions.act_window,name:hr_evaluation.evaluation_reminders
 msgid "Appraisal Reminders"
-msgstr "BedömningsPåminnelser"
+msgstr "Utvärderingspåminnelser"
 
 #. module: hr_evaluation
 #: help:hr_evaluation.plan.phase,wait:0
 msgid ""
 "Check this box if you want to wait that all preceding phases are finished "
 "before launching this phase."
-msgstr ""
-"Markera den här rutan om du vill invänta att alla föregående faser är klara "
-"innan du startar denna fas."
+msgstr "Markera den här rutan om du vill invänta att alla föregående faser är klara innan du startar denna fas."
 
 #. module: hr_evaluation
 #: view:hr_evaluation.plan.phase:0
@@ -505,8 +472,7 @@ msgstr "Teckenförklaring"
 msgid ""
 "If the evaluation does not meet the expectations, you can proposean action "
 "plan"
-msgstr ""
-"Om Utvärderingen inte uppfyller förväntningarna, kan du föreslå handlingsplan"
+msgstr "Om Utvärderingen inte uppfyller förväntningarna, kan du föreslå handlingsplan"
 
 #. module: hr_evaluation
 #: selection:hr.evaluation.report,state:0
@@ -525,14 +491,12 @@ msgid "Pending"
 msgstr "Pågående"
 
 #. module: hr_evaluation
-#: field:hr.employee,evaluation_plan_id:0
-#: view:hr.evaluation.interview:0
-#: view:hr_evaluation.plan:0
-#: field:hr_evaluation.plan,name:0
+#: field:hr.employee,evaluation_plan_id:0 view:hr.evaluation.interview:0
+#: view:hr_evaluation.plan:0 field:hr_evaluation.plan,name:0
 #: field:hr_evaluation.plan.phase,plan_id:0
 #: model:ir.model,name:hr_evaluation.model_hr_evaluation_plan
 msgid "Appraisal Plan"
-msgstr "BedömningsPlan"
+msgstr "Utvärderingsplan"
 
 #. module: hr_evaluation
 #: view:hr.evaluation.interview:0
@@ -558,7 +522,7 @@ msgstr "Betydligt under förväntningarna"
 #. module: hr_evaluation
 #: view:hr_evaluation.evaluation:0
 msgid "Validate Appraisal"
-msgstr "Validera Bedömning"
+msgstr "Granska utvärdering"
 
 #. module: hr_evaluation
 #: view:hr_evaluation.plan.phase:0
@@ -569,13 +533,11 @@ msgstr " (Employee_name) s: Partners namn"
 #: field:hr.evaluation.interview,message_is_follower:0
 #: field:hr_evaluation.evaluation,message_is_follower:0
 msgid "Is a Follower"
-msgstr ""
+msgstr "Är en följare"
 
 #. module: hr_evaluation
-#: view:hr.evaluation.report:0
-#: field:hr.evaluation.report,plan_id:0
-#: view:hr_evaluation.evaluation:0
-#: field:hr_evaluation.evaluation,plan_id:0
+#: view:hr.evaluation.report:0 field:hr.evaluation.report,plan_id:0
+#: view:hr_evaluation.evaluation:0 field:hr_evaluation.evaluation,plan_id:0
 msgid "Plan"
 msgstr "Plan"
 
@@ -602,7 +564,7 @@ msgstr "Skicka en anonym sammanfattning till den anställde"
 #. module: hr_evaluation
 #: model:ir.model,name:hr_evaluation.model_hr_evaluation_plan_phase
 msgid "Appraisal Plan Phase"
-msgstr "BedömningPlan fas"
+msgstr "Utvärderingsplane etapp"
 
 #. module: hr_evaluation
 #: selection:hr.evaluation.report,month:0
@@ -618,7 +580,7 @@ msgstr "Utvecklingssamtal"
 #: field:hr.evaluation.interview,message_summary:0
 #: field:hr_evaluation.evaluation,message_summary:0
 msgid "Summary"
-msgstr ""
+msgstr "Sammandrag"
 
 #. module: hr_evaluation
 #: view:hr_evaluation.evaluation:0
@@ -636,8 +598,7 @@ msgid "Action"
 msgstr "Åtgärd"
 
 #. module: hr_evaluation
-#: view:hr.evaluation.report:0
-#: selection:hr.evaluation.report,state:0
+#: view:hr.evaluation.report:0 selection:hr.evaluation.report,state:0
 msgid "Final Validation"
 msgstr "Slutlig validering"
 
@@ -651,12 +612,12 @@ msgstr "Väntar Värdering"
 #: model:ir.actions.act_window,name:hr_evaluation.action_evaluation_report_all
 #: model:ir.ui.menu,name:hr_evaluation.menu_evaluation_report_all
 msgid "Appraisal Analysis"
-msgstr "BedömningsAnalys"
+msgstr "Utvärderingsanalys"
 
 #. module: hr_evaluation
 #: field:hr_evaluation.evaluation,date:0
 msgid "Appraisal Deadline"
-msgstr "Tidsfrist Bedömning"
+msgstr "Frist för utvärdering"
 
 #. module: hr_evaluation
 #: field:hr.evaluation.report,rating:0
@@ -664,8 +625,7 @@ msgid "Overall Rating"
 msgstr "Totalbetyg"
 
 #. module: hr_evaluation
-#: view:hr.evaluation.interview:0
-#: view:hr_evaluation.evaluation:0
+#: view:hr.evaluation.interview:0 view:hr_evaluation.evaluation:0
 msgid "Interviewer"
 msgstr "Intervjuare"
 
@@ -682,12 +642,12 @@ msgstr "Datum Tidsfrist"
 #. module: hr_evaluation
 #: help:hr_evaluation.evaluation,rating:0
 msgid "This is the appreciation on which the evaluation is summarized."
-msgstr ""
+msgstr "Detta är sammanfattningen av utvärderingens slutliga bedömning."
 
 #. module: hr_evaluation
 #: selection:hr_evaluation.plan.phase,action:0
 msgid "Top-Down Appraisal Requests"
-msgstr "Uppifrån och ner Begäran om Bedömning"
+msgstr "Begäran av utvärdering från ledningen"
 
 #. module: hr_evaluation
 #: view:hr_evaluation.plan.phase:0
@@ -700,10 +660,8 @@ msgid "Send all answers to the employee"
 msgstr "Skicka alla svar till den anställde"
 
 #. module: hr_evaluation
-#: view:hr.evaluation.interview:0
-#: view:hr.evaluation.report:0
-#: selection:hr.evaluation.report,state:0
-#: view:hr_evaluation.evaluation:0
+#: view:hr.evaluation.interview:0 view:hr.evaluation.report:0
+#: selection:hr.evaluation.report,state:0 view:hr_evaluation.evaluation:0
 #: selection:hr_evaluation.evaluation,state:0
 msgid "Done"
 msgstr "Klar"
@@ -713,7 +671,7 @@ msgstr "Klar"
 #: model:ir.actions.act_window,name:hr_evaluation.open_view_hr_evaluation_plan_tree
 #: model:ir.ui.menu,name:hr_evaluation.menu_open_view_hr_evaluation_plan_tree
 msgid "Appraisal Plans"
-msgstr "BedömningsPlaner"
+msgstr "Utvärderingsplaner"
 
 #. module: hr_evaluation
 #: model:ir.model,name:hr_evaluation.model_hr_evaluation_interview
@@ -755,9 +713,7 @@ msgstr "Oktober"
 msgid ""
 "The date of the next appraisal is computed by the appraisal plan's dates "
 "(first appraisal + periodicity)."
-msgstr ""
-"Datumet för nästa Bedömning beräknas genom Bedömningsplanens datum (första "
-"Bedömning + periodicitet)."
+msgstr "Datumet för nästa utvärdering beräknas genom planeringens datum (första utvärderingen + periodicitet)."
 
 #. module: hr_evaluation
 #: field:hr.evaluation.report,overpass_delay:0
@@ -769,20 +725,18 @@ msgstr "Har passerat tidsfristen"
 msgid ""
 "The number of month that depicts the delay between each evaluation of this "
 "plan (after the first one)."
-msgstr ""
-"Antal månader som skildrar fördröjningen mellan varje Utvärdering i denna "
-"plan (efter den första)."
+msgstr "Antal månader som skildrar fördröjningen mellan varje Utvärdering i denna plan (efter den första)."
 
 #. module: hr_evaluation
 #: selection:hr_evaluation.plan.phase,action:0
 msgid "Self Appraisal Requests"
-msgstr "Egen Begäran om Bedömning"
+msgstr "Utvärdering på egen begäran"
 
 #. module: hr_evaluation
 #: view:hr_evaluation.evaluation:0
 #: field:hr_evaluation.evaluation,survey_request_ids:0
 msgid "Appraisal Forms"
-msgstr "BedömningsBlanketter"
+msgstr "Utvärderingsblankett"
 
 #. module: hr_evaluation
 #: selection:hr.evaluation.report,month:0
@@ -795,17 +749,15 @@ msgid ""
 "<p class=\"oe_view_nocontent_create\">\n"
 "                Click to create a new appraisal.\n"
 "              </p><p>\n"
-"                Each employee may be assigned an Appraisal Plan. Such a "
-"plan\n"
+"                Each employee may be assigned an Appraisal Plan. Such a plan\n"
 "                defines the frequency and the way you manage your periodic\n"
 "                personnel evaluation. You will be able to define steps and\n"
-"                attach interviews to each step. OpenERP manages all kinds "
-"of\n"
+"                attach interviews to each step. OpenERP manages all kinds of\n"
 "                evaluations: bottom-up, top-down, self-evaluation and final\n"
 "                evaluation by the manager.\n"
 "              </p>\n"
 "            "
-msgstr ""
+msgstr "<p class=\"oe_view_nocontent_create\">Klicka för att skapa en ny utvärdering. </p><p>Varje anställd kan tilldelas en utvärderingsplan. En sådan plan definierar frekvensen och ditt sätt att hantera din periodiska personalutvärdering. Du kommer att kunna fastställa åtgärder och bifoga intervjuer till varje steg. OpenERP hanterar alla typer av utvärderingar: bottom-up, top-down, självutvärdering och slutlig utvärdering av projektledaren. </p>\n            "
 
 #. module: hr_evaluation
 #: view:hr_evaluation.evaluation:0
@@ -825,7 +777,7 @@ msgstr "Fas"
 #. module: hr_evaluation
 #: selection:hr_evaluation.plan.phase,action:0
 msgid "Bottom-Up Appraisal Requests"
-msgstr "Nerifrån och upp Begäran om Bedömning"
+msgstr "Begäran av utvärdering från golvet"
 
 #. module: hr_evaluation
 #: selection:hr.evaluation.report,month:0
@@ -833,10 +785,9 @@ msgid "February"
 msgstr "Februari"
 
 #. module: hr_evaluation
-#: view:hr.evaluation.interview:0
-#: view:hr_evaluation.evaluation:0
+#: view:hr.evaluation.interview:0 view:hr_evaluation.evaluation:0
 msgid "Interview Appraisal"
-msgstr "Intervju Bedömning"
+msgstr "Utvärderingsintervju"
 
 #. module: hr_evaluation
 #: field:survey.request,is_evaluation:0
@@ -847,12 +798,12 @@ msgstr "Är Bedömning?"
 #: code:addons/hr_evaluation/hr_evaluation.py:320
 #, python-format
 msgid "You cannot start evaluation without Appraisal."
-msgstr "Du kan inte starta Utvärdering utan Bedömning."
+msgstr "Du kan inte starta kartläggning utan utvärdering."
 
 #. module: hr_evaluation
 #: view:hr_evaluation.evaluation:0
 msgid "Appraisal Summary..."
-msgstr ""
+msgstr "Utvärderingssummering"
 
 #. module: hr_evaluation
 #: field:hr.evaluation.interview,user_to_review_id:0
@@ -865,7 +816,7 @@ msgstr "Anställd att Intervjua"
 msgid ""
 "You cannot change state, because some appraisal(s) are in waiting answer or "
 "draft state."
-msgstr ""
+msgstr "Du kan inte ändra status, eftersom vissa utvärderingssvar är att vänta eller bara är preleminära."
 
 #. module: hr_evaluation
 #: selection:hr.evaluation.report,month:0
@@ -875,35 +826,32 @@ msgstr "April"
 #. module: hr_evaluation
 #: view:hr_evaluation.plan.phase:0
 msgid "Appraisal Plan Phases"
-msgstr "Bedömning Plan faser"
+msgstr "Utvärderingsplan etapper"
 
 #. module: hr_evaluation
 #: model:ir.actions.act_window,help:hr_evaluation.action_hr_evaluation_interview_tree
 msgid ""
 "<p class=\"oe_view_nocontent_create\">\n"
-"                Click to create a new interview request related to a "
-"personal evaluation. \n"
+"                Click to create a new interview request related to a personal evaluation. \n"
 "              </p><p>\n"
 "                Interview requests are usually generated automatically by\n"
-"                OpenERP according to an employee's appraisal plan. Each "
-"user\n"
+"                OpenERP according to an employee's appraisal plan. Each user\n"
 "                receives automatic emails and requests to evaluate their\n"
 "                colleagues periodically.\n"
 "              </p>\n"
 "            "
-msgstr ""
+msgstr "<p class=\"oe_view_nocontent_create\"> Klicka för att skapa en ny intervjubegäran i samband med en personlig utvärdering. </p><p> Intervjuförfrågningar brukar genereras automatiskt av OpenERP enligt en anställds utvärderingsplan. Varje användare tar emot automatiska e-postmeddelanden och önskemål för att utvärdera sina kollegor regelbundet. </p>\n            "
 
 #. module: hr_evaluation
 #: help:hr.evaluation.interview,message_ids:0
 #: help:hr_evaluation.evaluation,message_ids:0
 msgid "Messages and communication history"
-msgstr ""
+msgstr "Meddelande- och kommunikationshistorik"
 
 #. module: hr_evaluation
-#: view:hr.evaluation.interview:0
-#: view:hr_evaluation.evaluation:0
+#: view:hr.evaluation.interview:0 view:hr_evaluation.evaluation:0
 msgid "Search Appraisal"
-msgstr "Sök Bedömning"
+msgstr "Sök utvärdering"
 
 #. module: hr_evaluation
 #: field:hr_evaluation.plan.phase,sequence:0
@@ -929,15 +877,14 @@ msgid "Create Date"
 msgstr "Skapa datum"
 
 #. module: hr_evaluation
-#: view:hr.evaluation.report:0
-#: field:hr.evaluation.report,year:0
+#: view:hr.evaluation.report:0 field:hr.evaluation.report,year:0
 msgid "Year"
 msgstr "År"
 
 #. module: hr_evaluation
 #: field:hr_evaluation.evaluation,note_summary:0
 msgid "Appraisal Summary"
-msgstr "Bedömning Sammanfattning"
+msgstr "Utvärderingssammanfattning"
 
 #. module: hr_evaluation
 #: field:hr.employee,evaluation_date:0
@@ -947,7 +894,4 @@ msgstr "Nästa datum för Bedömande"
 #. module: hr_evaluation
 #: view:hr_evaluation.evaluation:0
 msgid "Action Plan..."
-msgstr ""
-
-#~ msgid "Cancel"
-#~ msgstr "Avbryt"
+msgstr "Åtgärdsplan..."

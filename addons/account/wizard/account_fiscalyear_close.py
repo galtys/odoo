@@ -113,7 +113,7 @@ class account_fiscalyear_close(osv.osv_memory):
 
         cr.execute("SELECT id FROM account_fiscalyear WHERE date_stop < %s", (str(new_fyear.date_start),))
         result = cr.dictfetchall()
-        fy_ids = ','.join([str(x['id']) for x in result])
+        fy_ids = [x['id'] for x in result]
         query_line = obj_acc_move_line._query_get(cr, uid,
                 obj='account_move_line', context={'fiscalyear': fy_ids})
         #create the opening move
@@ -132,7 +132,7 @@ class account_fiscalyear_close(osv.osv_memory):
             FROM account_account a
             LEFT JOIN account_account_type t ON (a.user_type = t.id)
             WHERE a.active
-              AND a.type != 'view'
+              AND a.type not in ('view', 'consolidation')
               AND a.company_id = %s
               AND t.close_method = %s''', (company_id, 'unreconciled', ))
         account_ids = map(lambda x: x[0], cr.fetchall())
@@ -182,7 +182,7 @@ class account_fiscalyear_close(osv.osv_memory):
             FROM account_account a
             LEFT JOIN account_account_type t ON (a.user_type = t.id)
             WHERE a.active
-              AND a.type != 'view'
+              AND a.type not in ('view', 'consolidation')
               AND a.company_id = %s
               AND t.close_method = %s''', (company_id, 'detail', ))
         account_ids = map(lambda x: x[0], cr.fetchall())
@@ -211,7 +211,7 @@ class account_fiscalyear_close(osv.osv_memory):
             FROM account_account a
             LEFT JOIN account_account_type t ON (a.user_type = t.id)
             WHERE a.active
-              AND a.type != 'view'
+              AND a.type not in ('view', 'consolidation')
               AND a.company_id = %s
               AND t.close_method = %s''', (company_id, 'balance', ))
         account_ids = map(lambda x: x[0], cr.fetchall())
@@ -224,14 +224,6 @@ class account_fiscalyear_close(osv.osv_memory):
         query_2nd_part = ""
         query_2nd_part_args = []
         for account in obj_acc_account.browse(cr, uid, account_ids, context={'fiscalyear': fy_id}):
-            balance_in_currency = 0.0
-            if account.currency_id:
-                cr.execute('SELECT sum(COALESCE(amount_currency,0.0)) as balance_in_currency FROM account_move_line ' \
-                        'WHERE account_id = %s ' \
-                            'AND ' + query_line + ' ' \
-                            'AND currency_id = %s', (account.id, account.currency_id.id))
-                balance_in_currency = cr.dictfetchone()['balance_in_currency']
-
             company_currency_id = self.pool.get('res.users').browse(cr, uid, uid).company_id.currency_id
             if not currency_obj.is_zero(cr, uid, company_currency_id, abs(account.balance)):
                 if query_2nd_part:
@@ -246,7 +238,7 @@ class account_fiscalyear_close(osv.osv_memory):
                        period.id,
                        account.id,
                        account.currency_id and account.currency_id.id or None,
-                       balance_in_currency,
+                       account.foreign_balance if account.currency_id else 0.0,
                        account.company_id.id,
                        'draft')
         if query_2nd_part:

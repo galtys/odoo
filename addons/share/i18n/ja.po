@@ -1,21 +1,22 @@
-# Japanese translation for openobject-addons
-# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
-# This file is distributed under the same license as the openobject-addons package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
-#
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+# * share
+# 
+# Translators:
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012
 msgid ""
 msgstr ""
-"Project-Id-Version: openobject-addons\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2013-06-07 19:37+0000\n"
-"PO-Revision-Date: 2012-12-21 23:00+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Japanese <ja@li.org>\n"
+"Project-Id-Version: Odoo 7.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-14 00:11+0000\n"
+"PO-Revision-Date: 2015-10-30 09:19+0000\n"
+"Last-Translator: Martin Trigaux\n"
+"Language-Team: Japanese (http://www.transifex.com/odoo/odoo-7/language/ja/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2013-07-11 06:22+0000\n"
-"X-Generator: Launchpad (build 16696)\n"
+"Content-Transfer-Encoding: \n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: share
 #: code:addons/share/wizard/share_wizard.py:842
@@ -33,7 +34,7 @@ msgstr ""
 #. module: share
 #: view:share.wizard:0
 msgid "Include an Optional Personal Message"
-msgstr ""
+msgstr "オプションの個人的なメッセージ記入"
 
 #. module: share
 #: field:share.wizard,embed_option_title:0
@@ -71,8 +72,7 @@ msgstr "タイトルの共有"
 #: code:addons/share/wizard/share_wizard.py:877
 #, python-format
 msgid ""
-"The documents are not attached, you can view them online directly on my "
-"OpenERP server at:\n"
+"The documents are not attached, you can view them online directly on my OpenERP server at:\n"
 "    %s\n"
 "\n"
 msgstr ""
@@ -97,8 +97,7 @@ msgid "Share Access URL"
 msgstr "URLアクセス共有"
 
 #. module: share
-#: field:share.wizard,email_1:0
-#: field:share.wizard,email_2:0
+#: field:share.wizard,email_1:0 field:share.wizard,email_2:0
 #: field:share.wizard,email_3:0
 msgid "New user email"
 msgstr ""
@@ -126,7 +125,7 @@ msgstr ""
 #: code:addons/share/static/src/js/share.js:63
 #, python-format
 msgid "Embed"
-msgstr ""
+msgstr "埋め込み"
 
 #. module: share
 #: code:addons/share/wizard/share_wizard.py:599
@@ -135,8 +134,7 @@ msgid "Sharing filter created by user %s (%s) for group %s"
 msgstr "ユーザ %s（%s）、グループ %s により作成された共有フィルタ"
 
 #. module: share
-#: field:share.wizard,embed_url:0
-#: field:share.wizard.result.line,share_url:0
+#: field:share.wizard,embed_url:0 field:share.wizard.result.line,share_url:0
 msgid "Share URL"
 msgstr "共有URL"
 
@@ -154,8 +152,7 @@ msgstr "アクセス情報"
 
 #. module: share
 #. openerp-web
-#: code:addons/share/static/src/js/share.js:60
-#: view:share.wizard:0
+#: code:addons/share/static/src/js/share.js:60 view:share.wizard:0
 #, python-format
 msgid "Share"
 msgstr "共有"
@@ -169,8 +166,7 @@ msgstr "（共有許可の変更のために複製されました）"
 #. module: share
 #: code:addons/share/wizard/share_wizard.py:669
 #, python-format
-msgid ""
-"Please indicate the emails of the persons to share with, one per line."
+msgid "Please indicate the emails of the persons to share with, one per line."
 msgstr ""
 
 #. module: share
@@ -211,12 +207,17 @@ msgstr ""
 #. module: share
 #: view:share.wizard:0
 msgid "Embedded code options"
-msgstr ""
+msgstr "埋め込みコードオプション"
 
 #. module: share
 #: view:share.wizard:0
 msgid "Configuration"
-msgstr ""
+msgstr "設定"
+
+#. module: share
+#: selection:share.wizard,access_mode:0
+msgid "Can view"
+msgstr "表示可能"
 
 #. module: share
 #: view:share.wizard:0
@@ -229,13 +230,6 @@ msgstr "共有したいデータを含む画面を開くアクションを選択
 #: field:res.groups,share:0
 msgid "Share Group"
 msgstr "共有グループ"
-
-#. module: share
-#: code:addons/share/wizard/share_wizard.py:835
-#: code:addons/share/wizard/share_wizard.py:866
-#, python-format
-msgid "Email required"
-msgstr "Eメールは必須"
 
 #. module: share
 #: view:share.wizard:0
@@ -260,19 +254,16 @@ msgstr "指示に従いEメールの通知は次の人に送信されました�
 #: code:addons/share/wizard/share_wizard.py:77
 #, python-format
 msgid "Direct link or embed code"
-msgstr ""
+msgstr "直接リンクまたは埋め込みコード"
 
 #. module: share
 #: code:addons/share/wizard/share_wizard.py:856
 #: code:addons/share/wizard/share_wizard.py:890
 #, python-format
 msgid ""
-"OpenERP is a powerful and user-friendly suite of Business Applications (CRM, "
-"Sales, HR, etc.)\n"
+"OpenERP is a powerful and user-friendly suite of Business Applications (CRM, Sales, HR, etc.)\n"
 "It is open source and can be found on http://www.openerp.com."
-msgstr ""
-"OpenERPはパワフルでユーザフレンドリーなビジネスアプリケーション（CRM、販売、HRなど）スイートです。\n"
-"これはオープンソースです。http://www.openerp.com にアクセスして下さい。"
+msgstr "OpenERPはパワフルでユーザフレンドリーなビジネスアプリケーション（CRM、販売、HRなど）スイートです。\nこれはオープンソースです。http://www.openerp.com にアクセスして下さい。"
 
 #. module: share
 #: field:share.wizard,action_id:0
@@ -367,12 +358,9 @@ msgstr "ユーザ"
 #: code:addons/share/wizard/share_wizard.py:658
 #, python-format
 msgid ""
-"Sorry, the current screen and filter you are trying to share are not "
-"supported at the moment.\n"
+"Sorry, the current screen and filter you are trying to share are not supported at the moment.\n"
 "You may want to try a simpler filter."
-msgstr ""
-"残念ですが、共有しようとしている現在の画面とフィルタは現時点ではサポートされていません。\n"
-"単純なフィルタを試して下さい。"
+msgstr "残念ですが、共有しようとしている現在の画面とフィルタは現時点ではサポートされていません。\n単純なフィルタを試して下さい。"
 
 #. module: share
 #: view:share.wizard:0
@@ -402,8 +390,7 @@ msgid "{'search_default_no_share':1}"
 msgstr ""
 
 #. module: share
-#: view:share.wizard:0
-#: field:share.wizard,result_line_ids:0
+#: view:share.wizard:0 field:share.wizard,result_line_ids:0
 msgid "Summary"
 msgstr "要約"
 
@@ -411,7 +398,7 @@ msgstr "要約"
 #: help:share.wizard,embed_code:0
 msgid ""
 "Embed this code in your documents to provide a link to the shared document."
-msgstr ""
+msgstr "共有ドキュメントにリンクを提供するため、このコードを埋め込みます。"
 
 #. module: share
 #: code:addons/share/wizard/share_wizard.py:513
@@ -451,7 +438,7 @@ msgstr ""
 #. module: share
 #: field:share.wizard,embed_code:0
 msgid "Code"
-msgstr ""
+msgstr "コード"
 
 #. module: share
 #: help:share.wizard,user_type:0
@@ -472,9 +459,11 @@ msgid "Current View Type"
 msgstr "現在のビュータイプ"
 
 #. module: share
-#: selection:share.wizard,access_mode:0
-msgid "Can view"
-msgstr "表示可能"
+#: code:addons/share/wizard/share_wizard.py:835
+#: code:addons/share/wizard/share_wizard.py:866
+#, python-format
+msgid "Email Required"
+msgstr ""
 
 #. module: share
 #: selection:share.wizard,access_mode:0
@@ -510,11 +499,8 @@ msgstr "共有アクセスは作成されました。"
 #: model:res.groups,comment:share.group_share_user
 msgid ""
 "\n"
-"Members of this groups have access to the sharing wizard, which allows them "
-"to invite external users to view or edit some of their documents."
-msgstr ""
-"\n"
-"このグループのメンバーは共有ウィザードにアクセスして、彼らのドキュメントの一部を表示や編集する外部ユーザを招待することができます。"
+"Members of this groups have access to the sharing wizard, which allows them to invite external users to view or edit some of their documents."
+msgstr "\nこのグループのメンバーは共有ウィザードにアクセスして、彼らのドキュメントの一部を表示や編集する外部ユーザを招待することができます。"
 
 #. module: share
 #: code:addons/share/wizard/share_wizard.py:853
@@ -527,7 +513,7 @@ msgstr ""
 #. module: share
 #: model:ir.model,name:share.model_res_users
 msgid "Users"
-msgstr ""
+msgstr "ユーザ"
 
 #. module: share
 #: code:addons/share/wizard/share_wizard.py:876
@@ -556,8 +542,7 @@ msgid "Password"
 msgstr "パスワード"
 
 #. module: share
-#: code:addons/share/wizard/share_wizard.py:77
-#: field:share.wizard,new_users:0
+#: code:addons/share/wizard/share_wizard.py:77 field:share.wizard,new_users:0
 #, python-format
 msgid "Emails"
 msgstr "Eメール"
@@ -610,12 +595,12 @@ msgstr "共有操作"
 #. module: share
 #: model:ir.model,name:share.model_ir_model_access
 msgid "ir.model.access"
-msgstr ""
+msgstr "ir.model.access"
 
 #. module: share
 #: view:share.wizard:0
 msgid "or"
-msgstr ""
+msgstr "または"
 
 #. module: share
 #: help:share.wizard,access_mode:0

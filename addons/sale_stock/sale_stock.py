@@ -134,7 +134,8 @@ class sale_order(osv.osv):
             ('shipping_except', 'Shipping Exception'),
             ('invoice_except', 'Invoice Exception'),
             ('done', 'Done'),
-            ], 'Status', readonly=True,help="Gives the status of the quotation or sales order.\
+            ], 'Status', readonly=True, track_visibility='onchange',
+            help="Gives the status of the quotation or sales order.\
               \nThe exception status is automatically set when a cancel operation occurs \
               in the invoice validation (Invoice Exception) or in the picking list process (Shipping Exception).\nThe 'Waiting Schedule' status is set when the invoice is confirmed\
                but waiting for the scheduler to run on the order date.", select=True),
@@ -432,7 +433,6 @@ class sale_order(osv.osv):
             'move_id': move_id,
             'company_id': order.company_id.id,
             'note': line.name,
-            'property_ids': [(6, 0, [x.id for x in line.property_ids])],
         }
 
     def _prepare_order_line_move(self, cr, uid, order, line, picking_id, date_planned, context=None):
@@ -479,7 +479,6 @@ class sale_order(osv.osv):
         }
 
     def ship_recreate(self, cr, uid, order, line, move_id, proc_id):
-        # FIXME: deals with potentially cancelled shipments, seems broken (specially if shipment has production lot)
         """
         Define ship_recreate for process after shipping exception
         param order: sales order to which the order lines belong
@@ -488,16 +487,25 @@ class sale_order(osv.osv):
         param proc_id: the ID of procurement
         """
         move_obj = self.pool.get('stock.move')
-        if order.state == 'shipping_except':
-            for pick in order.picking_ids:
-                for move in pick.move_lines:
-                    if move.state == 'cancel':
-                        mov_ids = move_obj.search(cr, uid, [('state', '=', 'cancel'),('sale_line_id', '=', line.id),('picking_id', '=', pick.id)])
-                        if mov_ids:
-                            for mov in move_obj.browse(cr, uid, mov_ids):
-                                # FIXME: the following seems broken: what if move_id doesn't exist? What if there are several mov_ids? Shouldn't that be a sum?
-                                move_obj.write(cr, uid, [move_id], {'product_qty': mov.product_qty, 'product_uos_qty': mov.product_uos_qty})
-                                self.pool.get('procurement.order').write(cr, uid, [proc_id], {'product_qty': mov.product_qty, 'product_uos_qty': mov.product_uos_qty})
+        proc_obj = self.pool.get('procurement.order')
+        if move_id and order.state == 'shipping_except':
+            current_move = move_obj.browse(cr, uid, move_id)
+            moves = []
+            for picking in order.picking_ids:
+                if picking.id != current_move.picking_id.id and picking.state != 'cancel':
+                    moves.extend(move for move in picking.move_lines if move.state != 'cancel' and move.sale_line_id.id == line.id)
+            if moves:
+                product_qty = current_move.product_qty
+                product_uos_qty = current_move.product_uos_qty
+                for move in moves:
+                    product_qty -= move.product_qty
+                    product_uos_qty -= move.product_uos_qty
+                if product_qty > 0 or product_uos_qty > 0:
+                    move_obj.write(cr, uid, [move_id], {'product_qty': product_qty, 'product_uos_qty': product_uos_qty})
+                    proc_obj.write(cr, uid, [proc_id], {'product_qty': product_qty, 'product_uos_qty': product_uos_qty})
+                else:
+                    current_move.unlink()
+                    proc_obj.unlink(cr, uid, [proc_id])
         return True
 
     def _get_date_planned(self, cr, uid, order, line, start_date, context=None):
@@ -725,6 +733,14 @@ class sale_order_line(osv.osv):
             res['value'].update({'product_packaging': False})
             return res
 
+        # set product uom in context to get virtual stock in current uom
+        if res.get('value', {}).get('product_uom'):
+            # use the uom changed by super call
+            context.update({'uom': res['value']['product_uom']})
+        elif uom:
+            # fallback on selected
+            context.update({'uom': uom})
+
         #update of result obtained in super function
         product_obj = product_obj.browse(cr, uid, product, context=context)
         res['value']['delay'] = (product_obj.sale_delay or 0.0)
@@ -733,7 +749,7 @@ class sale_order_line(osv.osv):
         #check if product is available, and if not: raise an error
         uom2 = False
         if uom:
-            uom2 = product_uom_obj.browse(cr, uid, uom)
+            uom2 = product_uom_obj.browse(cr, uid, uom, context=context)
             if product_obj.uom_id.category_id.id != uom2.category_id.id:
                 uom = False
         if not uom2:
@@ -743,13 +759,13 @@ class sale_order_line(osv.osv):
         res_packing = self.product_packaging_change(cr, uid, ids, pricelist, product, qty, uom, partner_id, packaging, context=context)
         res['value'].update(res_packing.get('value', {}))
         warning_msgs = res_packing.get('warning') and res_packing['warning']['message'] or ''
-        compare_qty = float_compare(product_obj.virtual_available * uom2.factor, qty * product_obj.uom_id.factor, precision_rounding=product_obj.uom_id.rounding)
+        compare_qty = float_compare(product_obj.virtual_available, qty, precision_rounding=uom2.rounding)
         if (product_obj.type=='product') and int(compare_qty) == -1 \
-          and (product_obj.procure_method=='make_to_stock'):
+           and (product_obj.procure_method=='make_to_stock'):
             warn_msg = _('You plan to sell %.2f %s but you only have %.2f %s available !\nThe real stock is %.2f %s. (without reservations)') % \
-                    (qty, uom2 and uom2.name or product_obj.uom_id.name,
-                     max(0,product_obj.virtual_available), product_obj.uom_id.name,
-                     max(0,product_obj.qty_available), product_obj.uom_id.name)
+                    (qty, uom2.name,
+                     max(0,product_obj.virtual_available), uom2.name,
+                     max(0,product_obj.qty_available), uom2.name)
             warning_msgs += _("Not enough stock ! : ") + warn_msg + "\n\n"
 
         #update of warning messages

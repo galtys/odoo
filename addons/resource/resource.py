@@ -25,7 +25,7 @@ from dateutil import rrule
 import math
 from faces import *
 from openerp.osv import fields, osv
-from openerp.tools.float_utils import float_compare
+from openerp.tools.float_utils import float_compare, float_round as f_round
 from openerp.tools.translate import _
 
 from itertools import groupby
@@ -152,6 +152,7 @@ class resource_calendar(osv.osv):
 
         for d, hours, id in date_and_hours_by_cal:
             dt_from = datetime.strptime(d, '%Y-%m-%d %H:%M:%S')
+            tzinfo = fields.datetime.context_timestamp(cr, uid, dt_from, context={}).tzinfo
             if not id:
                 td = int(hours)*3
                 results[(d, hours, id)] = [(dt_from, dt_from + timedelta(hours=td))]
@@ -161,9 +162,13 @@ class resource_calendar(osv.osv):
             todo = hours
             result = []
             maxrecur = 100
-            current_hour = dt_from.hour
+            current_hour = dt_from.hour + f_round(float(dt_from.minute)/60, 2)
             while float_compare(todo, 0, 4) and maxrecur:
                 for (hour_from,hour_to) in [(item['hour_from'], item['hour_to']) for item in hours_by_cal[id] if item['dayofweek'] == str(dt_from.weekday())]:
+                    h_from = dt_from.replace(hour=int(hour_from), minute=int((hour_from % 1)*60)).replace(tzinfo=tzinfo).astimezone(pytz.UTC)
+                    hour_from = h_from.hour + f_round(float(h_from.minute)/60, 2)
+                    h_to = dt_from.replace(hour=int(hour_to), minute=int((hour_to % 1)*60)).replace(tzinfo=tzinfo).astimezone(pytz.UTC)
+                    hour_to = h_to.hour + f_round(float(h_to.minute)/60, 2)
                     leave_flag  = False
                     if (hour_to>current_hour) and float_compare(todo, 0, 4):
                         m = max(hour_from, current_hour)
@@ -177,8 +182,8 @@ class resource_calendar(osv.osv):
                         if leave_flag:
                             break
                         else:
-                            d1 = datetime(dt_from.year, dt_from.month, dt_from.day, int(math.floor(m)), int((m%1) * 60))
-                            d2 = datetime(dt_from.year, dt_from.month, dt_from.day, int(math.floor(hour_to)), int((hour_to%1) * 60))
+                            d1 = datetime(dt_from.year, dt_from.month, dt_from.day) + timedelta(hours=int(math.floor(m)), minutes=int((m%1) * 60))
+                            d2 = datetime(dt_from.year, dt_from.month, dt_from.day) + timedelta(hours=int(math.floor(hour_to)), minutes=int((hour_to%1) * 60))
                             result.append((d1, d2))
                             current_hour = hour_to
                             todo -= (hour_to - m)

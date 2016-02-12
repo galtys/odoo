@@ -22,9 +22,11 @@ import logging
 from operator import attrgetter
 
 import openerp
+from openerp import SUPERUSER_ID
 from openerp.osv import osv, fields
 from openerp.tools import ustr
 from openerp.tools.translate import _
+from lxml import etree
 
 _logger = logging.getLogger(__name__)
 
@@ -471,6 +473,43 @@ class res_config_settings(osv.osv_memory, res_config_module_installation_mixin):
     def copy(self, cr, uid, id, values, context=None):
         raise osv.except_osv(_("Cannot duplicate configuration!"), "")
 
+    def fields_view_get(self, cr, user, view_id=None, view_type='form',
+                        context=None, toolbar=False, submenu=False):
+        ret_val = super(res_config_settings, self).fields_view_get(
+            cr, user, view_id=view_id, view_type=view_type, context=context,
+            toolbar=toolbar, submenu=submenu)
+
+        doc = etree.XML(ret_val['arch'])
+
+        for field in ret_val['fields']:
+            if not field.startswith("module_"):
+                continue
+            for node in doc.xpath("//field[@name='%s']" % field):
+                if 'on_change' not in node.attrib:
+                    node.set("on_change",
+                    "onchange_module(%s, '%s')" % (field, field))
+
+        ret_val['arch'] = etree.tostring(doc)
+        return ret_val
+
+    def onchange_module(self, cr, uid, ids, field_value, module_name, context={}):
+        module_pool = self.pool.get('ir.module.module')
+        module_ids = module_pool.search(
+            cr, uid, [('name', '=', module_name.replace("module_", '')),
+            ('state','in', ['to install', 'installed', 'to upgrade'])],
+            context=context)
+
+        if module_ids and not field_value:
+            dep_ids = module_pool.downstream_dependencies(cr, uid, module_ids, context=context)
+            dep_name = [x.shortdesc for x  in module_pool.browse(
+                cr, uid, dep_ids + module_ids, context=context)]
+            message = '\n'.join(dep_name)
+            return {'warning': {'title': _('Warning!'),
+                    'message':
+                    _('Disabling this option will also uninstall the following modules \n%s' % message)
+                   }}
+        return {}
+
     def _get_classified_fields(self, cr, uid, context=None):
         """ return a dictionary with the fields classified by category::
 
@@ -530,6 +569,9 @@ class res_config_settings(osv.osv_memory, res_config_module_installation_mixin):
         return res
 
     def execute(self, cr, uid, ids, context=None):
+        if uid != SUPERUSER_ID and not self.pool['res.users'].has_group(cr, uid, 'base.group_erp_manager'):
+            raise openerp.exceptions.AccessError(_("Only administrators can change the settings"))
+
         ir_values = self.pool.get('ir.values')
         ir_module = self.pool.get('ir.module.module')
         classified = self._get_classified_fields(cr, uid, context)
@@ -538,7 +580,7 @@ class res_config_settings(osv.osv_memory, res_config_module_installation_mixin):
 
         # default values fields
         for name, model, field in classified['default']:
-            ir_values.set_default(cr, uid, model, field, config[name])
+            ir_values.set_default(cr, SUPERUSER_ID, model, field, config[name])
 
         # group fields: modify group / implied groups
         for name, group, implied_group in classified['group']:
