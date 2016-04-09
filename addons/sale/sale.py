@@ -247,7 +247,8 @@ class sale_order(osv.osv):
     _columns = {
         'name': fields.char('Order Reference', size=64, required=True,
             readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]}, select=True),
-        'shop_id': fields.many2one('sale.shop', 'Shop', required=True, readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]}),
+        #'shop_id': fields.many2one('sale.shop', 'Shop', required=True, readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]}),
+        'shop_id': fields.many2one('sale.shop', 'Shop', readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]}),
         'origin': fields.char('Source Document', size=64, help="Reference of the document that generated this sales order request."),
         'client_order_ref': fields.char('Customer Reference', size=64),
         'state': fields.selection([
@@ -686,9 +687,6 @@ class sale_order(osv.osv):
     def action_button_confirm(self, cr, uid, ids, context=None):         
         #if not self._pjb_check_pricelist(cr, uid, ids):
         #    raise osv.except_osv(_('Error!'),_('Prices used on order lines do not match pricelist specified on sale order. Please edit sale order and click update button (above sale total).'))
-        for so in self.browse(cr, uid, ids):
-            if (so.amount_total > (so.partner_id.debit-so.partner_id.credit)) and so.pricelist_id.type=='retail' and ('Internet' not in so.shop_id.name):
-                raise osv.except_osv(_('Error!'),_('Current balance on partner account (%0.2f) does not exeed total order amount (%0.2f). For retail customers, payment must be received in advance.'%(so.partner_id.debit-so.partner_id.credit, so.amount_total )   ))
         assert len(ids) == 1, 'This option should only be used for a single id at a time.'
         wf_service = netsvc.LocalService('workflow')
         wf_service.trg_validate(uid, 'sale.order', ids[0], 'order_confirm', cr)
