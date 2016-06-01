@@ -1396,7 +1396,7 @@ class stock_picking(osv.osv):
                 self.message_post(cr, uid, ids, body=_("Back order <em>%s</em> has been <b>created</b>.") % (back_order_name), context=context)
             else:
                 self.action_move(cr, uid, [pick.id], context=context)
-                wf_service.trg_validate(uid, 'stock.picking', pick.id, 'button_done', cr)
+                #wf_service.trg_validate(uid, 'stock.picking', pick.id, 'button_done', cr)
                 delivered_pack_id = pick.id
 
             delivered_pack = self.browse(cr, uid, delivered_pack_id, context=context)

@@ -23,6 +23,8 @@ from openerp.osv import fields,osv
 from openerp.tools.translate import _
 
 import openerp.addons.decimal_precision as dp
+import logging
+_logger = logging.getLogger(__name__)
 
 # Redefinition of the new fields in order to update the model stock.picking.out in the orm
 # FIXME: this is a temporary workaround because of a framework bug (ref: lp996816). It should be removed as soon as
@@ -45,7 +47,26 @@ class picking_operations(osv.osv):
                                 'weight_net': total_weight_net,
                               }
         return res
-    def _prepare_shipping_invoice_line(self, cr, uid, picking, invoice, context=None):
+    def _get_sale_order_taxes(self, cr, uid, order, context=None):
+        taxes=[]
+        for l in order.order_line:
+            for t_id in l.tax_id:
+                if t_id.id not in taxes:
+                    taxes.append(t_id.id)
+        return taxes
+
+    def _get_sale_order_shipping_line(self, cr, uid, picking, context=None):
+        print picking
+        if picking.sale_id:
+            lines = [l for l in picking.sale_id.order_line if l.delivery_line]
+            if len(lines)!=1:
+                _logger.error("Number of delivery lines on sale order %s is not equal 1, but %s",picking.sale_id.name, len(lines))
+        else:
+            _logger.error("Picking %s is not linked to a sale order. Can not find a delivery_line", picking.name)
+            lines = []
+        return lines
+
+    def _prepare_shipping_invoice_line_galtys(self, cr, uid, picking, invoice, context=None):
         """Prepare the invoice line to add to the shipping costs to the shipping's
            invoice.
 
@@ -69,9 +90,20 @@ class picking_operations(osv.osv):
             taxes_ids = self.pool.get('account.fiscal.position').map_tax(cr, uid, partner.property_account_position, taxes)
         else:
             taxes_ids = [x.id for x in taxes]
-        lines = [l for l in picking.sale_id.order_line if l.delivery_line]
-        if len(lines)==1 and (not picking.sale_id.delivery_invoiced):
+        taxes_ids = self._get_sale_order_taxes(cr, uid, picking.sale_id)
+        #lines = [l for l in picking.sale_id.order_line if l.delivery_line]
+        print picking
+        lines = self._get_sale_order_shipping_line(cr, uid, picking)
+
+        one_delivery_line = len(lines)==1
+        delivery_invoiced = picking.sale_id.delivery_invoiced
+
+        _logger.debug("shipping line for picking.name: %s, one_delivery_line on sale order: %s, delivery_invoiced: %s", picking.name, one_delivery_line, delivery_invoiced)
+
+        if  one_delivery_line and (not delivery_invoiced):
             price = lines[0].price_unit
+            discount = lines[0].discount
+            qty= lines[0].product_uom_qty
             vals={
                 'name': picking.carrier_id.name,
                 'invoice_id': invoice.id,
@@ -79,12 +111,15 @@ class picking_operations(osv.osv):
                 'product_id': picking.carrier_id.product_id.id,
                 'account_id': account_id,
                 'price_unit': price,
-                'quantity': 1,
+                'discount': discount,
+                'quantity': qty,
                 'invoice_line_tax_id': [(6, 0, taxes_ids)],
             }
             picking.sale_id.write( {'delivery_invoiced':True} )
+            _logger.debug("updating sale order: %s, from picking: %s that delivery_invoice=True", picking.sale_id.name, picking.name)
         else:
             vals=None
+        _logger.debug("shipping line for picking.name: %s, vals: %s", picking.name, vals) 
         return vals
     def _get_price_unit_invoice2(self, cr, uid, move_line, type, context=None):
         """ Gets price unit for invoice
@@ -95,14 +130,12 @@ class picking_operations(osv.osv):
         if context is None:
             context = {}
         if type in ('in_invoice', 'in_refund'):
-            # Take the user company and pricetype
             context['currency_id'] = move_line.company_id.currency_id.id
             amount_unit = move_line.product_id.price_get('standard_price', context=context)[move_line.product_id.id]
             return amount_unit
         else:
             return move_line.product_id.list_price
         
-        #return move_line.product_id.list_price
     def _product_pricelist_price(self, cursor, user, move_line, product_id=None, uom_id=None):
         #print ['id id', move_line, 'sssd']
         pricelist_id = move_line.picking_id.sale_id.pricelist_id.id
@@ -118,11 +151,17 @@ class picking_operations(osv.osv):
                                                                                   'date': date_order,
                                                                                  })[pricelist_id]
         return price_pricelist
+    def _get_taxes_invoice(self, cursor, user, move_line, type):
+        if move_line.sale_line_id and move_line.sale_line_id.product_id.id == move_line.product_id.id:
+            return [x.id for x in move_line.sale_line_id.tax_id]
+        elif move_line.sale_line_id: #todo: make sure the tax code is in the bundle
+            return [x.id for x in move_line.sale_line_id.tax_id]
+        else:
+            _logger.error("could not get tax codes for move_line: %s, %s", move_line.picking_id.name, move_line.name)
+        return super(stock_picking, self)._get_taxes_invoice(cursor, user, move_line, type)
+
     def _get_price_unit_invoice_galtys(self, cursor, user, move_line, type):
-        
-        #ret_super=super(stock_picking, self)._get_price_unit_invoice2(cursor, user, move_line, type)
-        #print 'CALC', move_line, move_line.sale_line_id.id,  move_line.sale_line_id.move_ids
-        #print 'calc', [move_line]
+
         ret_super=self._get_price_unit_invoice2(cursor, user, move_line, type)
         ret=ret_super
         ret_line=0
@@ -140,43 +179,30 @@ class picking_operations(osv.osv):
                 ret_uos=price_unit
                 ret=ret_uos
         if move_line.sale_line_id:        
-            ret=move_line.price_unit * (1-move_line.sale_line_id.udrate)
-            if 0:
-                #print 'move_price', move_line
-                move_price = self._product_pricelist_price(cursor, user, move_line)
-                boms = move_line.sale_line_id.product_id.bom_ids
-                if boms:
-                    if len(boms)==1:
-                        prod,ret =  self.pool.get('mrp.bom')._bom_explode(cursor, user, boms[0], 1)
-                        bom_components_map = dict( [ (x['product_id'],x['product_qty']) for x in prod ] )
-                        move_ids=move_line.sale_line_id.move_ids
-                        total=0
-                        for move in move_ids:
-                            if move_line.sale_line_id.procurement_id.move_id.id != move.id:                            
-                                price=self._product_pricelist_price(cursor, user, move)
-                                #print 'move product trade price', move.product_id, price
-                                total += move.product_qty*price
-                        #print 'total', total
-                        pro_rata=move_line.sale_line_id.product_uom_qty*move_line.sale_line_id.price_unit/total
-                        ret_pro_rata = move_price * pro_rata
-                        ret=ret_pro_rata
-                    
-        #print 'GET PRICE LINE', [move_line.name, ret_super, ret_line, ret_uos, ret_pro_rata,ret, move_line.sale_line_id.id,  move_line.sale_line_id.price_unit, move_line.sale_line_id.discount ]
-        #raise
+            sale_line_id=move_line.sale_line_id
+            line_udrate = sale_line_id.line_udrate
+            ret=move_line.price_unit * (1-line_udrate)
+        else:
+            ret=move_line.price_unit
+            sale_line_id=False
+            line_udrate=0.0
+        _logger.debug("  calculated price_unit=%0.2f for picking: %s, stock_move:%s, sale_line_id: %s, line_udrate:%0.6f ",ret, move_line.picking_id.name, move_line.name,sale_line_id,line_udrate)
+        #print 'price_unit_galt', move_line.price_unit, ret, move_line.sale_line_id.udrate
         return ret
-
     def action_invoice_create(self, cr, uid, ids, journal_id=False,
                               group=False, type='out_invoice', context=None):
         if ((context is None) or ('scripted_invoicing' not in context)) and uid!=1:
             raise osv.except_osv(_('Error!'), ("Manual invoicing from delivery temporarily disabled. Please contact Jan to run the invoicing script."))
-
+        #if len(ids)!=1:
+        #    _logger.error("action_invoice_create can only create one invoice len(ids)==!, ids:%s",ids)
         invoice_obj = self.pool.get('account.invoice')
         picking_obj = self.pool.get('stock.picking')
         invoice_line_obj = self.pool.get('account.invoice.line')
+        _logger.debug("action_invoice_create for ids: %s", ids)
         result = super(picking_operations, self).action_invoice_create(cr, uid,
-                ids, journal_id=journal_id, group=group, type=type,
-                context=context)
-        #print 444*'_.'
+                                                                       ids, journal_id=journal_id, group=group, type=type,
+                                                                       context=context)
+        #print 'after super action invoice create', 444*'_.', result
         for picking in picking_obj.browse(cr, uid, result.keys(), context=context):
             invoice_id = result[picking.id]
             invoice = invoice_obj.browse(cr, uid, invoice_id, context=context)
@@ -189,46 +215,13 @@ class picking_operations(osv.osv):
                         taxes.append(t.id)
             #print 'taxes', taxes
             assert len(taxes)==1
+            #assert False
 
-            invoice_line = self._prepare_shipping_invoice_line(cr, uid, picking, invoice, context=context)
-            if invoice_line:
-                invoice_line_obj.create(cr, uid, invoice_line)
-                invoice_obj.button_compute(cr, uid, [invoice.id], context=context)
-        #for picking in self.browse(cr, uid, ids, context=context):
-            current_invoice_untaxed = invoice_obj.browse(cr, uid, invoice_id).amount_untaxed
-            #print 'current invoice untaxed ', current_invoice_untaxed, [x.amount_untaxed for x in picking.sale_id.invoice_ids]
-            invoiced_total = sum( [x.amount_untaxed for x in picking.sale_id.invoice_ids] ) #+ current_invoice_untaxed
-            diff_adj = picking.sale_id.amount_untaxed - invoiced_total
-            still_2bi=False
-
-            vals = {
-                'name': picking.name,
-                'origin': picking.name,
-                'invoice_id': invoice_id,
-                'uos_id': False,
-                #'product_id': move_line.product_id.id,
-                'account_id': account_id[-1],
-                #'price_unit': self._get_price_unit_invoice(cr, uid, move_line, invoice_vals['type']),
-                #'discount': self._get_discount_invoice(cr, uid, move_line),
-                #'quantity': move_line.product_uos_qty or move_line.product_qty,
-                'invoice_line_tax_id': [(6, 0, taxes)],
-                #'account_analytic_id': self._get_account_analytic_invoice(cr, uid, picking, move_line),
-                }
-            for p in picking.sale_id.picking_ids:
-                if p.id!=picking.id:
-                    if p.invoice_state == '2binvoiced':
-                        still_2bi=True
-
-            if 0:#(not still_2bi) and abs(diff_adj) > 0.0:
-                print 'DIFF ADJ: ', diff_adj
-                if (abs(diff_adj)>0.001) and (not context.get('allow_adj')):
-                    raise osv.except_osv(_('Error!'), ("Adj > 0.001. Not allowed"))
-                vals['price_unit']=diff_adj
-                vals['product_id']=False
-                vals['name']='Adj to %s' % picking.sale_id.name
-                vals['discount']=0
-                vals['quantity']=1
-                #invoice_line_id = invoice_line_obj.create(cr, uid, vals, context=context)
+            #invoice_line = self._prepare_shipping_invoice_line_galtys(cr, uid, picking, invoice, context=context)
+            #if invoice_line is not None:
+             #   shipping_line_id=invoice_line_obj.create(cr, uid, invoice_line)
+              #  ret_button_compute=invoice_obj.button_compute(cr, uid, [invoice.id], context=context)
+               # _logger.debug("action_invoice_create: invoice_id: %d, added shipping line, shipping_line_id=%d, ret_button_compute=%s",invoice.id,shipping_line_id, ret_button_compute )
         return result
 
     def _get_default_uom(self,cr,uid,c):

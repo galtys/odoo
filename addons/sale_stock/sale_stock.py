@@ -273,7 +273,7 @@ class sale_order(osv.osv):
         (_pjb_check_fiscal_position_partner, 'Fiscal position on order must equal partner fiscal position.', []),
         (_pjb_check_fiscal_position_pricelist, 'EXVAT Fiscal positions (0%VAT or 20EXVAT CODES) must be used with EXVAT Pricelists.', []),
         (_pjb_check_order_policy_manual, 'After 17.6.2014, "Create Invoice" for Retail must be "On Demand", for Trade and Contract must be "On Delivery Order". Please see Other Information tab', []),
-        (_pjb_check_taxes, 'Only one tax code per line allowed.', []),
+       # (_pjb_check_taxes, 'Only one tax code per line allowed.', []),
         (_pjb_check_same_tax_codes, 'All tax codes used on an sale order must be the same.', []),
         (_pjb_check_tax_and_pricelist, 'The tax code must be allowed in the pricelist.', [] ),
 #        (_pjb_check_partner_pricelist, 'Pricelist on Sale Order must be the same as sale pricelist on partner form.', []),
@@ -315,6 +315,7 @@ class sale_order(osv.osv):
         return result
 
     def action_invoice_create(self, cr, uid, ids, grouped=False, states=['confirmed', 'done', 'exception'], date_invoice = False, context=None):
+        print self._module, 'action inv cre'
         picking_obj = self.pool.get('stock.picking')
         res = super(sale_order,self).action_invoice_create( cr, uid, ids, grouped=grouped, states=states, date_invoice = date_invoice, context=context)
         for order in self.browse(cr, uid, ids, context=context):

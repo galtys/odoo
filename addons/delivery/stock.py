@@ -70,7 +70,7 @@ class stock_picking(osv.osv):
         'weight_uom_id': fields.many2one('product.uom', 'Unit of Measure', required=True,readonly="1",help="Unit of measurement for Weight",),
         }
 
-    def _prepare_shipping_invoice_line(self, cr, uid, picking, invoice, context=None):
+    def _prepare_shipping_invoice_line_not_used(self, cr, uid, picking, invoice, context=None):
         """Prepare the invoice line to add to the shipping costs to the shipping's
            invoice.
 
@@ -119,20 +119,20 @@ class stock_picking(osv.osv):
             'invoice_line_tax_id': [(6, 0, taxes_ids)],
         }
 
-    def action_invoice_create(self, cr, uid, ids, journal_id=False,
+    def action_invoice_create_not_used(self, cr, uid, ids, journal_id=False,
             group=False, type='out_invoice', context=None):
         invoice_obj = self.pool.get('account.invoice')
         picking_obj = self.pool.get('stock.picking')
         invoice_line_obj = self.pool.get('account.invoice.line')
-        result = super(stock_picking, self).action_invoice_create(cr, uid,
+        result = super(stock_picking, self).action_invoice_create_not_used(cr, uid,
                 ids, journal_id=journal_id, group=group, type=type,
                 context=context)
         for picking in picking_obj.browse(cr, uid, result.keys(), context=context):
             invoice = invoice_obj.browse(cr, uid, result[picking.id], context=context)
-            invoice_line = self._prepare_shipping_invoice_line(cr, uid, picking, invoice, context=context)
-            if invoice_line:
-                invoice_line_obj.create(cr, uid, invoice_line)
-                invoice_obj.button_compute(cr, uid, [invoice.id], context=context)
+            #invoice_line = self._prepare_shipping_invoice_line(cr, uid, picking, invoice, context=context)
+            #if invoice_line:
+            #    invoice_line_obj.create(cr, uid, invoice_line)
+            #    invoice_obj.button_compute(cr, uid, [invoice.id], context=context)
         return result
     def _get_default_uom(self,cr,uid,c):
         uom_categ, uom_categ_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'product', 'product_uom_categ_kgm')
