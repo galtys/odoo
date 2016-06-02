@@ -116,6 +116,11 @@ class account_fiscalyear_close(osv.osv_memory):
         fy_ids = [x['id'] for x in result]
         query_line = obj_acc_move_line._query_get(cr, uid,
                 obj='account_move_line', context={'fiscalyear': fy_ids})
+
+        query_line = obj_acc_move_line._query_get(cr, uid,
+                                                  obj='account_move_line', context={'date_from': old_fyear.date_start,
+                                                                                    'date_to': old_fyear.date_stop})
+        
         #create the opening move
         vals = {
             'name': '/',
@@ -127,82 +132,173 @@ class account_fiscalyear_close(osv.osv_memory):
         move_id = obj_acc_move.create(cr, uid, vals, context=context)
 
         #1. report of the accounts with defferal method == 'unreconciled'
-        cr.execute('''
-            SELECT a.id
-            FROM account_account a
-            LEFT JOIN account_account_type t ON (a.user_type = t.id)
-            WHERE a.active
-              AND a.type not in ('view', 'consolidation')
-              AND a.company_id = %s
-              AND t.close_method = %s''', (company_id, 'unreconciled', ))
-        account_ids = map(lambda x: x[0], cr.fetchall())
-        if account_ids:
+        if 1:
             cr.execute('''
-                INSERT INTO account_move_line (
-                     name, create_uid, create_date, write_uid, write_date,
-                     statement_id, journal_id, currency_id, date_maturity,
-                     partner_id, blocked, credit, state, debit,
-                     ref, account_id, period_id, date, move_id, amount_currency,
-                     quantity, product_id, company_id)
-                  (SELECT name, create_uid, create_date, write_uid, write_date,
-                     statement_id, %s,currency_id, date_maturity, partner_id,
-                     blocked, credit, 'draft', debit, ref, account_id,
-                     %s, (%s) AS date, %s, amount_currency, quantity, product_id, company_id
-                   FROM account_move_line
-                   WHERE account_id IN %s
-                     AND ''' + query_line + '''
-                     AND reconcile_id IS NULL)''', (new_journal.id, period.id, period.date_start, move_id, tuple(account_ids),))
+                SELECT a.id
+                FROM account_account a
+                LEFT JOIN account_account_type t ON (a.user_type = t.id)
+                WHERE a.active
+                  AND a.type not in ('view', 'consolidation')
+                  AND a.company_id = %s
+                  AND t.close_method = %s''', (company_id, 'unreconciled', ))
+            account_ids = map(lambda x: x[0], cr.fetchall())
+            if account_ids:
+                #print 44*'_'
+                print [tuple(account_ids), query_line]
+                cr.execute('''
+                SELECT name, create_uid, create_date, write_uid, write_date,
+                         statement_id, %s,currency_id, date_maturity, partner_id,
+                         blocked, credit, 'draft', debit, ref, account_id,
+                         %s, (%s) AS date, %s, amount_currency, quantity, product_id, company_id
+                       FROM account_move_line
+                       WHERE account_id IN %s
+                         AND ''' + query_line + '''
+                         AND reconcile_id IS NULL''', (new_journal.id, period.id, period.date_start, move_id, tuple(account_ids),))
+                ret = list(cr.fetchall())
 
-            #We have also to consider all move_lines that were reconciled
-            #on another fiscal year, and report them too
+                #print ret
+                account_ids = [231]
+                if 1:
+                    cr.execute('''
+                            SELECT
+                             b.name, b.create_uid, b.create_date, b.write_uid, b.write_date,
+                             b.statement_id, %s, b.currency_id, b.date_maturity,
+                             b.partner_id, b.blocked, b.credit, 'draft', b.debit,
+                             b.ref, b.account_id, %s, (%s) AS date, %s, b.amount_currency,
+                             b.quantity, b.product_id, b.company_id
+                             FROM account_move_line b
+                             WHERE b.account_id IN %s
+                               AND b.reconcile_id IS NOT NULL
+                               AND b.period_id IN ('''+fy_period_set+''')
+                               AND b.reconcile_id IN (SELECT DISTINCT(reconcile_id)
+                                                  FROM account_move_line a
+                                                  WHERE a.period_id IN ('''+fy2_period_set+''')) ''', (new_journal.id, period.id, period.date_start, move_id, tuple(account_ids),))
+                ret = list(cr.fetchall())
+
+                if 1:
+                    print 'fy_period_set, fy2_period_set', fy_period_set, fy2_period_set
+                    cr.execute("""
+                           SELECT
+                             b.name, b.create_uid, b.create_date, b.write_uid, b.write_date,
+                             b.statement_id, %s, b.currency_id, b.date_maturity,
+                             b.partner_id, b.blocked, b.credit, 'draft', b.debit,
+                             b.ref, b.account_id, %s, (%s) AS date, %s, b.amount_currency,
+                             b.quantity, b.product_id, b.company_id
+                             FROM account_move_line b
+                             WHERE b.account_id IN %s
+                               AND b.reconcile_id IS NOT NULL
+                               AND b.date >= '"""+ old_fyear.date_start + """' and b.date <= '""" + old_fyear.date_stop +"""'
+                               AND b.reconcile_id IN (SELECT DISTINCT(reconcile_id)
+                                                  FROM account_move_line a
+                                                  WHERE a.date >= '""" + old_fyear.date_start + """'and a.date <= '""" + old_fyear.date_stop +"""'  )""", (new_journal.id, period.id, period.date_start, move_id, tuple(account_ids),))
+                    
+                ret = list(cr.fetchall()) 
+                #print ret
+
+
+        if 0:
             cr.execute('''
-                INSERT INTO account_move_line (
-                     name, create_uid, create_date, write_uid, write_date,
-                     statement_id, journal_id, currency_id, date_maturity,
-                     partner_id, blocked, credit, state, debit,
-                     ref, account_id, period_id, date, move_id, amount_currency,
-                     quantity, product_id, company_id)
-                  (SELECT
-                     b.name, b.create_uid, b.create_date, b.write_uid, b.write_date,
-                     b.statement_id, %s, b.currency_id, b.date_maturity,
-                     b.partner_id, b.blocked, b.credit, 'draft', b.debit,
-                     b.ref, b.account_id, %s, (%s) AS date, %s, b.amount_currency,
-                     b.quantity, b.product_id, b.company_id
-                     FROM account_move_line b
-                     WHERE b.account_id IN %s
-                       AND b.reconcile_id IS NOT NULL
-                       AND b.period_id IN ('''+fy_period_set+''')
-                       AND b.reconcile_id IN (SELECT DISTINCT(reconcile_id)
-                                          FROM account_move_line a
-                                          WHERE a.period_id IN ('''+fy2_period_set+''')))''', (new_journal.id, period.id, period.date_start, move_id, tuple(account_ids),))
+                SELECT a.id
+                FROM account_account a
+                LEFT JOIN account_account_type t ON (a.user_type = t.id)
+                WHERE a.active
+                  AND a.type not in ('view', 'consolidation')
+                  AND a.company_id = %s
+                  AND t.close_method = %s''', (company_id, 'unreconciled', ))
+            account_ids = map(lambda x: x[0], cr.fetchall())
+            if account_ids:
+                print 44*'_'
+                print [tuple(account_ids), query_line]
+                cr.execute('''
+                    INSERT INTO account_move_line (
+                         name, create_uid, create_date, write_uid, write_date,
+                         statement_id, journal_id, currency_id, date_maturity,
+                         partner_id, blocked, credit, state, debit,
+                         ref, account_id, period_id, date, move_id, amount_currency,
+                         quantity, product_id, company_id)
+                      (SELECT name, create_uid, create_date, write_uid, write_date,
+                         statement_id, %s,currency_id, date_maturity, partner_id,
+                         blocked, credit, 'draft', debit, ref, account_id,
+                         %s, (%s) AS date, %s, amount_currency, quantity, product_id, company_id
+                       FROM account_move_line
+                       WHERE account_id IN %s
+                         AND ''' + query_line + '''
+                         AND reconcile_id IS NULL)''', (new_journal.id, period.id, period.date_start, move_id, tuple(account_ids),))
+                #We have also to consider all move_lines that were reconciled
+                #on another fiscal year, and report them too
+                if 0:
+                    print 'fy_period_set, fy2_period_set', fy_period_set, fy2_period_set
+                    cr.execute('''
+                        INSERT INTO account_move_line (
+                             name, create_uid, create_date, write_uid, write_date,
+                             statement_id, journal_id, currency_id, date_maturity,
+                             partner_id, blocked, credit, state, debit,
+                             ref, account_id, period_id, date, move_id, amount_currency,
+                             quantity, product_id, company_id)
+                          (SELECT
+                             b.name, b.create_uid, b.create_date, b.write_uid, b.write_date,
+                             b.statement_id, %s, b.currency_id, b.date_maturity,
+                             b.partner_id, b.blocked, b.credit, 'draft', b.debit,
+                             b.ref, b.account_id, %s, (%s) AS date, %s, b.amount_currency,
+                             b.quantity, b.product_id, b.company_id
+                             FROM account_move_line b
+                             WHERE b.account_id IN %s
+                               AND b.reconcile_id IS NOT NULL
+                               AND b.period_id IN ('''+fy_period_set+''')
+                               AND b.reconcile_id IN (SELECT DISTINCT(reconcile_id)
+                                                  FROM account_move_line a
+                                                  WHERE a.period_id IN ('''+fy2_period_set+''')))''', (new_journal.id, period.id, period.date_start, move_id, tuple(account_ids),))
+                if 1:
+                    print 'fy_period_set, fy2_period_set', fy_period_set, fy2_period_set
+                    cr.execute("""
+                        INSERT INTO account_move_line (
+                             name, create_uid, create_date, write_uid, write_date,
+                             statement_id, journal_id, currency_id, date_maturity,
+                             partner_id, blocked, credit, state, debit,
+                             ref, account_id, period_id, date, move_id, amount_currency,
+                             quantity, product_id, company_id)
+                          (SELECT
+                             b.name, b.create_uid, b.create_date, b.write_uid, b.write_date,
+                             b.statement_id, %s, b.currency_id, b.date_maturity,
+                             b.partner_id, b.blocked, b.credit, 'draft', b.debit,
+                             b.ref, b.account_id, %s, (%s) AS date, %s, b.amount_currency,
+                             b.quantity, b.product_id, b.company_id
+                             FROM account_move_line b
+                             WHERE b.account_id IN %s
+                               AND b.reconcile_id IS NOT NULL
+                               AND b.date >= '"""+ old_fyear.date_start + """' and b.date <= '""" + old_fyear.date_stop +"""'
+                               AND b.reconcile_id IN (SELECT DISTINCT(reconcile_id)
+                                                  FROM account_move_line a
+                                                  WHERE a.date >= '""" + old_fyear.date_start + """'and a.date <= '""" + old_fyear.date_stop +"""'  ))""", (new_journal.id, period.id, period.date_start, move_id, tuple(account_ids),))
 
         #2. report of the accounts with defferal method == 'detail'
-        cr.execute('''
-            SELECT a.id
-            FROM account_account a
-            LEFT JOIN account_account_type t ON (a.user_type = t.id)
-            WHERE a.active
-              AND a.type not in ('view', 'consolidation')
-              AND a.company_id = %s
-              AND t.close_method = %s''', (company_id, 'detail', ))
-        account_ids = map(lambda x: x[0], cr.fetchall())
-
-        if account_ids:
+        if 0:
             cr.execute('''
-                INSERT INTO account_move_line (
-                     name, create_uid, create_date, write_uid, write_date,
-                     statement_id, journal_id, currency_id, date_maturity,
-                     partner_id, blocked, credit, state, debit,
-                     ref, account_id, period_id, date, move_id, amount_currency,
-                     quantity, product_id, company_id)
-                  (SELECT name, create_uid, create_date, write_uid, write_date,
-                     statement_id, %s,currency_id, date_maturity, partner_id,
-                     blocked, credit, 'draft', debit, ref, account_id,
-                     %s, (%s) AS date, %s, amount_currency, quantity, product_id, company_id
-                   FROM account_move_line
-                   WHERE account_id IN %s
-                     AND ''' + query_line + ''')
-                     ''', (new_journal.id, period.id, period.date_start, move_id, tuple(account_ids),))
+                SELECT a.id
+                FROM account_account a
+                LEFT JOIN account_account_type t ON (a.user_type = t.id)
+                WHERE a.active
+                  AND a.type not in ('view', 'consolidation')
+                  AND a.company_id = %s
+                  AND t.close_method = %s''', (company_id, 'detail', ))
+            account_ids = map(lambda x: x[0], cr.fetchall())
+
+            if account_ids:
+                cr.execute('''
+                    INSERT INTO account_move_line (
+                         name, create_uid, create_date, write_uid, write_date,
+                         statement_id, journal_id, currency_id, date_maturity,
+                         partner_id, blocked, credit, state, debit,
+                         ref, account_id, period_id, date, move_id, amount_currency,
+                         quantity, product_id, company_id)
+                      (SELECT name, create_uid, create_date, write_uid, write_date,
+                         statement_id, %s,currency_id, date_maturity, partner_id,
+                         blocked, credit, 'draft', debit, ref, account_id,
+                         %s, (%s) AS date, %s, amount_currency, quantity, product_id, company_id
+                       FROM account_move_line
+                       WHERE account_id IN %s
+                         AND ''' + query_line + ''')
+                         ''', (new_journal.id, period.id, period.date_start, move_id, tuple(account_ids),))
 
 
         #3. report of the accounts with defferal method == 'balance'
