@@ -29,6 +29,8 @@ from openerp import pooler
 from openerp.osv import fields, osv, orm
 from openerp.tools import float_compare
 from openerp.tools.translate import _
+import logging
+_logger = logging.getLogger(__name__)
 
 class account_invoice(osv.osv):
     def _amount_all(self, cr, uid, ids, name, args, context=None):
@@ -1097,6 +1099,7 @@ class account_invoice(osv.osv):
             ctx.update(invoice=inv)
             ctx_copy = ctx.copy()
             ctx_copy.pop('lang', None)
+            _logger.debug("move: %s, ctx: %s", move, ctx_copy)
             move_id = move_obj.create(cr, uid, move, context=ctx_copy)
             new_move_name = move_obj.browse(cr, uid, move_id, context=ctx).name
             # make the invoice point to that move
