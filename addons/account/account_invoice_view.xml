@@ -408,9 +408,6 @@
                                         string="Accounting Period"
                                         placeholder="force period"/>
                                     <field name="date_due"/>
-				    <field name="so_not_required"/>
-				    <field name="so_not_required_reason"/>
-				    <field name="email_sent" groups="base.group_erp_manager"/>
                                 </group>
                                 <group>
                                     <field name="origin" groups="base.group_user"/>
