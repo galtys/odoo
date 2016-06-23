@@ -191,8 +191,8 @@ class picking_operations(osv.osv):
         return ret
     def action_invoice_create(self, cr, uid, ids, journal_id=False,
                               group=False, type='out_invoice', context=None):
-        if ((context is None) or ('scripted_invoicing' not in context)) and uid!=1:
-            raise osv.except_osv(_('Error!'), ("Manual invoicing from delivery temporarily disabled. Please contact Jan to run the invoicing script."))
+        #if ((context is None) or ('scripted_invoicing' not in context)) and uid!=1:
+        #    raise osv.except_osv(_('Error!'), ("Manual invoicing from delivery temporarily disabled. Please contact Jan to run the invoicing script."))
         #if len(ids)!=1:
         #    _logger.error("action_invoice_create can only create one invoice len(ids)==!, ids:%s",ids)
         invoice_obj = self.pool.get('account.invoice')
