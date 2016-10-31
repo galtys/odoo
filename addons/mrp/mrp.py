@@ -231,7 +231,11 @@ class mrp_bom(osv.osv):
         'name': fields.char('Name', size=64),
         'code': fields.char('Reference', size=16),
         'active': fields.boolean('Active', help="If the active field is set to False, it will allow you to hide the bills of material without removing it."),
-        'type': fields.selection([('normal','Normal BoM'),('phantom','Sets / Phantom')], 'BoM Type', required=True,
+        #'type': fields.selection([('normal','Normal BoM'),('phantom','Sets / Phantom')], 'BoM Type', required=True,
+        #                         help= "If a by-product is used in several products, it can be useful to create its own BoM. "\
+        #                         "Though if you don't want separated production orders for this by-product, select Set/Phantom as BoM type. "\
+        #                         "If a Phantom BoM is used for a root product, it will be sold and shipped as a set of components, instead of being produced."),
+        'type': fields.selection([('phantom','Sets / Phantom')], 'BoM Type', required=True,
                                  help= "If a by-product is used in several products, it can be useful to create its own BoM. "\
                                  "Though if you don't want separated production orders for this by-product, select Set/Phantom as BoM type. "\
                                  "If a Phantom BoM is used for a root product, it will be sold and shipped as a set of components, instead of being produced."),
@@ -260,7 +264,7 @@ class mrp_bom(osv.osv):
         'product_efficiency': lambda *a: 1.0,
         'product_qty': lambda *a: 1.0,
         'product_rounding': lambda *a: 0.0,
-        'type': lambda *a: 'normal',
+        'type': lambda *a: 'phantom',
         'company_id': lambda self,cr,uid,c: self.pool.get('res.company')._company_default_get(cr, uid, 'mrp.bom', context=c),
     }
     _order = "sequence"
