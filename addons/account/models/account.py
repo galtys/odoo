@@ -113,7 +113,7 @@ class AccountAccount(models.Model):
     tax_ids = fields.Many2many('account.tax', 'account_account_tax_default_rel',
         'account_id', 'tax_id', string='Default Taxes')
     note = fields.Text('Internal Notes')
-    company_id = fields.Many2one('res.company', string='Company', required=True,
+    company_id = fields.Many2one('res.company', string='Company', required=False,
         default=lambda self: self.env['res.company']._company_default_get('account.account'))
     tag_ids = fields.Many2many('account.account.tag', 'account_account_account_tag', string='Tags', help="Optional tags you may want to assign for custom reporting")
 
