@@ -526,6 +526,14 @@ msgstr ""
 "wkhtmltopdf.org</a>"
 
 #. module: report
+#: code:addons/report/models/report.py:164
+#, python-format
+msgid "Unable to find Wkhtmltopdf on this system. The PDF can not be created."
+msgstr ""
+"Wkhtmltopdf kon niet gevonden worden op het systeem. De PDF kan niet "
+"gegenereerd worden."
+
+#. module: report
 #: model:ir.ui.view,arch_db:report.external_layout_footer
 msgid "Website:"
 msgstr "Website:"
@@ -535,6 +543,16 @@ msgstr "Website:"
 #, python-format
 msgid "Wkhtmltopdf failed (error code: %s). Message: %s"
 msgstr "Fout in Wkhtmltopdf (fout code: %s). Bericht: %s"
+
+#. module: report
+#: code:addons/report/models/report.py:450
+#, python-format
+msgid ""
+"Wkhtmltopdf failed (error code: %s). Memory limit too low or maximum file "
+"number of subprocess reached. Message : %s"
+msgstr ""
+"Wkhtmltopdf fout (error code: %s). Te weinig geheugen or maximum aantal "
+"bestanden tegelijk bereikt. Bericht: %s"
 
 #. module: report
 #. openerp-web
@@ -568,16 +586,17 @@ msgid "base.config.settings"
 msgstr "base.config.settings"
 
 #. module: report
-#: model:ir.model,name:report.model_ir_actions_report_xml
-msgid "ir.actions.report.xml"
-msgstr "ir.actions.report.xml"
+#. openerp-web
+#: code:addons/report/static/src/js/qwebactionmanager.js:96
+#, python-format
+msgid ""
+"Your installation of Wkhtmltopdf seems to be broken. The \n"
+"report will be shown in html.<br><br><a href=\"http://wkhtmltopdf.org/\" target=\"_blank\">wkhtmltopdf.org</a>"
+msgstr ""
+"Uw Wkhtmltopdf installatie lijkt stuk te zijn. Het\n"
+"rapport wordt in HTML getoond..<br><br><a href=\"http://wkhtmltopdf.org/\" target=\"_blank\">wkhtmltopdf.org</a>"
 
 #. module: report
 #: model:ir.model,name:report.model_ir_qweb_field_barcode
 msgid "ir.qweb.field.barcode"
 msgstr "ir.qweb.field.barcode"
-
-#. module: report
-#: model:ir.model,name:report.model_report_abstract_report
-msgid "report.abstract_report"
-msgstr "report.abstract_report"

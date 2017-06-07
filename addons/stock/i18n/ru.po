@@ -3,28 +3,13 @@
 # * stock
 # 
 # Translators:
-# Максим Дронь <dronmax@gmail.com>, 2016
-# KingOPl Slav <87slava13@gmail.com>, 2016
-# Masha Koc <mariya.kos.ua@gmail.com>, 2016
-# Gennady Marchenko <gennadym@gmail.com>, 2016
-# Sergey Vilizhanin <sv@grimmette.ru>, 2016
-# Martin Trigaux <mat@odoo.com>, 2016
-# Viktor Pogrebniak <vp@aifil.ru>, 2016
-# Denis Trepalin <zekarious@gmail.com>, 2016
-# OstapYakovenko <Ostap.Yakovenko@gmail.com>, 2016
-# Amaro Vita <vita.amaro@gmail.com>, 2016
-# Alex Puchkov <ap@alteco.co>, 2016
-# Max Belyanin <maxbelyanin@gmail.com>, 2016
-# Русский «kolobok2048» Ивашка <kolobok2048@gmail.com>, 2016
-# Andrey Samorukov <andrey.samorukov@me.com>, 2016
-# Danil Bochevkin <danil.borchevkin@gmail.com>, 2016
 # Эдуард Манятовский <manyatovskiy@gmail.com>, 2016
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 10.0c\n"
+"Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-07 08:55+0000\n"
-"PO-Revision-Date: 2016-09-07 08:55+0000\n"
+"POT-Creation-Date: 2016-11-22 14:03+0000\n"
+"PO-Revision-Date: 2016-11-22 14:03+0000\n"
 "Last-Translator: Эдуард Манятовский <manyatovskiy@gmail.com>, 2016\n"
 "Language-Team: Russian (https://www.transifex.com/odoo/teams/41243/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -40,6 +25,9 @@ msgid ""
 "Creates the dropship route and add more complex tests\n"
 "-This installs the module stock_dropshipping."
 msgstr ""
+"\n"
+"Создает маршрут Dropship и добавляет более сложные тесты\n"
+"-Это устанавливает модуль stock_dropshipping."
 
 #. module: stock
 #: code:addons/stock/models/stock_move.py:217
@@ -65,6 +53,13 @@ msgid ""
 " * Transferred: has been processed, can't be modified or cancelled anymore\n"
 " * Cancelled: has been cancelled, can't be confirmed anymore"
 msgstr ""
+" * Черновик: еще не подтвержден и не будет запланирован до тех пор, пока не будет подтвержден\n"
+"  * Ожидание новой операции: ожидание следующего шага, чтобы он стал доступен автоматически (например, в потоках Make-To-Order)\n"
+"  * Ожидание доступности: ожидание доступности продуктов\n"
+"  * Частично доступно: некоторые продукты доступны и зарезервированы\n"
+"  * Готов к передаче: продукты защищены, просто жду подтверждения.\n"
+"  * Перенесено: обработано, не может быть изменено или отменено.\n"
+"  * Отменено: отменено, больше не может быть подтверждено"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_move_picking_form
@@ -81,7 +76,7 @@ msgstr "%s: Поставка товаров из %s"
 #: code:addons/stock/models/res_company.py:24
 #, python-format
 msgid "%s: Transit Location"
-msgstr "%s: место транзита"
+msgstr "%s: Место транзита"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_state
@@ -92,6 +87,11 @@ msgid ""
 "* Available: When products are reserved, it is set to 'Available'.\n"
 "* Done: When the shipment is processed, the state is 'Done'."
 msgstr ""
+"* Новый: когда перемещение запаса создается и еще не подтверждено.\n"
+"* Ожидание новой операции: Это состояние можно увидеть, когда движение ожидает другого, например, в цепном потоке.\n"
+"* Ожидание доступности: Это состояние достигается, когда разрешение на закупку не является прямым. Может понадобиться планировщик для запуска, компонент для производства ...\n"
+"* Доступно: если продукт зарезервирован, он имеет значение 'Доступен'.\n"
+"* Выполнено: Когда обработка отправлена, состояние 'Выполнено'."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_location_usage
@@ -105,11 +105,19 @@ msgid ""
 "* Production: Virtual counterpart location for production operations: this location consumes the raw material and produces finished products\n"
 "* Transit Location: Counterpart location that should be used in inter-companies or inter-warehouses operations"
 msgstr ""
+"* Местонахождение поставщика: виртуальное местоположение, представляющее местоположение источника для продуктов, поступающих от ваших поставщиков\n"
+"* Вид: виртуальное местоположение, используемое для создания иерархических структур для вашего склада, агрегирование его дочерних расположений; Не могут напрямую содержать продукты\n"
+"* Внутреннее расположение: физические места внутри ваших собственных складов,\n"
+"* Местоположение клиента: виртуальное местоположение, представляющее место назначения для продуктов, отправленных вашим клиентам\n"
+"* Убыток запасов: виртуальное местоположение, служащее копией для операций инвентаризации, используемых для корректировки уровней запасов (физические инвентаризации)\n"
+"* Заготовка: виртуальное местоположение, которое служит временным партнером для закупочных операций, когда источник (поставщик или производство) еще не известен. Это место должно быть пустым, когда планировщик закупки завершил работу.\n"
+"* Производство: виртуальное параллельное место для производственных операций: это место потребляет сырье и производит готовые изделия\n"
+"* Место транзита: место контрагента, которое должно использоваться в операциях между компаниями или между складами"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
 msgid ", if accounting or purchase is installed"
-msgstr ", если установлен модуль \"Бухгалтерский учёт\" или \"Закупки\""
+msgstr ", если учетная запись или покупка установлена"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
@@ -317,7 +325,7 @@ msgstr ""
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.report_delivery_document
 msgid "<span class=\"pull-left\">Lot/Serial Number</span>"
-msgstr ""
+msgstr "<span class=\"pull-left\">Лоты/Серийный номер</span>"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.report_delivery_document
@@ -672,11 +680,14 @@ msgid ""
 "                        you may find yourself out of stock) and not too high (your products occupy\n"
 "                        space and may lose value)."
 msgstr ""
+"Хорошее управление запасами направлено на оптимизацию уровней запасов: не слишком низкое (или\n"
+"                         вы можете найти себя в наличии) и не слишком высоко (ваши товары занимают\n"
+"                         пространства и может потерять ценность)."
 
 #. module: stock
 #: model:res.groups,name:stock.group_warning_stock
 msgid "A warning can be set on a partner (Stock)"
-msgstr ""
+msgstr "Предупреждение может быть настроено на партнера (Склад)"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
@@ -712,6 +723,8 @@ msgstr ""
 msgid ""
 "Add an internal note that will be printed on the Picking Operations sheet"
 msgstr ""
+"Добавить внутреннюю заметку, которая будет напечатана на листе операций по "
+"комплектованию"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_picking_form
@@ -752,7 +765,7 @@ msgstr "Все"
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_quant_package_children_quant_ids
 msgid "All Bulk Content"
-msgstr ""
+msgstr "Весь массовый контент"
 
 #. module: stock
 #: model:ir.actions.act_window,name:stock.action_picking_type_list
@@ -776,6 +789,8 @@ msgid ""
 "All items couldn't be shipped, the remaining ones will be shipped as soon as"
 " they become available."
 msgstr ""
+"Все товары не могут быть отправлены, остальные будут отправлены, как только "
+"они станут доступны."
 
 #. module: stock
 #: code:addons/stock/models/stock_inventory.py:90
@@ -802,7 +817,7 @@ msgstr "Все перемещения запасов были отменены �
 #. module: stock
 #: selection:stock.config.settings,group_warning_stock:0
 msgid "All the partners can be used in pickings"
-msgstr ""
+msgstr "Все партнеры могут использоваться в упаковке"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking_picking_type_entire_packs
@@ -822,6 +837,9 @@ msgid ""
 "        products when confirming a sale order.\n"
 "            This installs the module procurement_jit."
 msgstr ""
+"Позволяет автоматически резервировать доступные\n"
+"         при подтверждении заказа на продажу.\n"
+"             Это устанавливает модуль procurement_jit."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_config_settings_group_stock_packaging
@@ -847,7 +865,7 @@ msgstr "Партнёру можно установить предупрежда�
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_quant_package_ancestor_ids
 msgid "Ancestors"
-msgstr ""
+msgstr "Предки"
 
 #. module: stock
 #: model:stock.inventory.line,product_name:stock.stock_inventory_line_2
@@ -1089,7 +1107,7 @@ msgid ""
 "Odoo will not automatically generate a back order."
 msgstr ""
 "Путем изменения этой величины здесь, вы принимаете новую величину в качестве"
-" завершения: Odoo не будет автоматически генерировать заказ возврата"
+" завершения: Odoo не будет автоматически генерировать заказ возврата."
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
@@ -1109,6 +1127,11 @@ msgid ""
 "stock) to gather products. If we want to chain moves and have this one to "
 "wait for the previous,this second option should be chosen."
 msgstr ""
+"По умолчанию система будет извлекать из запаса в исходном местоположении и "
+"пассивно ждать доступности. Другая возможность позволяет напрямую создавать "
+"закупки в исходном местоположении (и, следовательно, игнорировать текущий "
+"запас) для сбора продуктов. Если мы хотим сцепить ходы и подождать этого для"
+" предыдущего, этот второй вариант должен быть выбран."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_location_active
@@ -1127,18 +1150,38 @@ msgstr ""
 "удаления."
 
 #. module: stock
+#: model:stock.incoterms,name:stock.incoterm_CIP
+msgid "CARRIAGE AND INSURANCE PAID TO"
+msgstr ""
+
+#. module: stock
+#: model:stock.incoterms,name:stock.incoterm_CPT
+msgid "CARRIAGE PAID TO"
+msgstr ""
+
+#. module: stock
+#: model:stock.incoterms,name:stock.incoterm_CFR
+msgid "COST AND FREIGHT"
+msgstr ""
+
+#. module: stock
+#: model:stock.incoterms,name:stock.incoterm_CIF
+msgid "COST, INSURANCE AND FREIGHT"
+msgstr ""
+
+#. module: stock
 #: model:ir.ui.view,arch_db:stock.stock_picking_calendar
 msgid "Calendar View"
 msgstr "Вид календаря"
 
 #. module: stock
-#: code:addons/stock/models/stock_warehouse.py:396
+#: code:addons/stock/models/stock_warehouse.py:400
 #, python-format
 msgid "Can't find any customer or supplier location."
 msgstr "Не могу найти ни одного места хранения заказчика или поставщика."
 
 #. module: stock
-#: code:addons/stock/models/stock_warehouse.py:444
+#: code:addons/stock/models/stock_warehouse.py:448
 #, python-format
 msgid "Can't find any generic Make To Order route."
 msgstr "Не могу найти никакого общего маршрута Сделать На Заказ."
@@ -1200,7 +1243,7 @@ msgstr "Проверьте существование квантов, связа
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_picking_pack_operation_exist
 msgid "Check the existence of pack operation on the picking"
-msgstr ""
+msgstr "Проверьте наличие операции упаковки при упаковке"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_location_return_location
@@ -1254,7 +1297,7 @@ msgstr "Нажмите, чтобы добавить место хранения.
 #. module: stock
 #: model:ir.actions.act_window,help:stock.action_production_lot_form
 msgid "Click to add a lot/serial number."
-msgstr ""
+msgstr "Нажмите, чтобы добавить лот/серийный номер."
 
 #. module: stock
 #: model:ir.actions.act_window,help:stock.action_orderpoint_form
@@ -1309,7 +1352,7 @@ msgstr "Нажмите, чтобы зарегистрировать получе
 #. module: stock
 #: model:ir.actions.act_window,help:stock.action_stock_scrap
 msgid "Click to scrap products."
-msgstr ""
+msgstr "Нажмите для отхода продуктов"
 
 #. module: stock
 #: model:ir.actions.act_window,help:stock.action_inventory_form
@@ -1434,32 +1477,32 @@ msgstr ""
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking_type_count_picking
 msgid "Count picking"
-msgstr ""
+msgstr "Подсчет упаковки"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking_type_count_picking_backorders
 msgid "Count picking backorders"
-msgstr ""
+msgstr "Подсчет отставаний упаковки"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking_type_count_picking_draft
 msgid "Count picking draft"
-msgstr ""
+msgstr "Подсчет черновых упаковок"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking_type_count_picking_late
 msgid "Count picking late"
-msgstr ""
+msgstr "Подсчет опоздавших упаковок"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking_type_count_picking_ready
 msgid "Count picking ready"
-msgstr ""
+msgstr "Подсчет готовой упаковки"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking_type_count_picking_waiting
 msgid "Count picking waiting"
-msgstr ""
+msgstr "Подсчет ожидания упаковки"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_backorder_confirmation
@@ -1480,7 +1523,7 @@ msgstr "Дата создания"
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking_type_use_create_lots
 msgid "Create New Lots/Serial Numbers"
-msgstr ""
+msgstr "Создание новых лотов/Серийных номеров"
 
 #. module: stock
 #: selection:procurement.rule,procure_method:0
@@ -1692,6 +1735,41 @@ msgid "Customers"
 msgstr "Клиенты"
 
 #. module: stock
+#: model:stock.incoterms,name:stock.incoterm_DAF
+msgid "DELIVERED AT FRONTIER"
+msgstr ""
+
+#. module: stock
+#: model:stock.incoterms,name:stock.incoterm_DAP
+msgid "DELIVERED AT PLACE"
+msgstr ""
+
+#. module: stock
+#: model:stock.incoterms,name:stock.incoterm_DAT
+msgid "DELIVERED AT TERMINAL"
+msgstr ""
+
+#. module: stock
+#: model:stock.incoterms,name:stock.incoterm_DDP
+msgid "DELIVERED DUTY PAID"
+msgstr ""
+
+#. module: stock
+#: model:stock.incoterms,name:stock.incoterm_DDU
+msgid "DELIVERED DUTY UNPAID"
+msgstr ""
+
+#. module: stock
+#: model:stock.incoterms,name:stock.incoterm_DEQ
+msgid "DELIVERED EX QUAY"
+msgstr ""
+
+#. module: stock
+#: model:stock.incoterms,name:stock.incoterm_DES
+msgid "DELIVERED EX SHIP"
+msgstr ""
+
+#. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_config_settings_module_delivery_dhl
 msgid "DHL integration"
 msgstr "Интеграция с DHL"
@@ -1859,6 +1937,12 @@ msgid ""
 "            the stock operations like the manufacturing orders\n"
 "            consumptions, inventories, etc."
 msgstr ""
+"Определите свои местоположения, чтобы отразить структуру склада и\n"
+"             организации. Odoo может управлять физическими местоположениями\n"
+"             (склады, полки, бункер и т. д.), места партнеров (клиенты,\n"
+"             поставщиками) и виртуальными объектами, которые являются аналогами\n"
+"             операции с запасами, такие как производственные заказы\n"
+"             потребления, запасов и т. д."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_location_putaway_strategy_id
@@ -2119,7 +2203,7 @@ msgstr "Не отслеживать отдельные элементы прод
 #. module: stock
 #: selection:stock.config.settings,module_product_expiry:0
 msgid "Do not use Expiration Date on serial numbers"
-msgstr ""
+msgstr "Не используйте дату окончания срока действия для серийных номеров"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_pack_operation_is_done
@@ -2166,6 +2250,11 @@ msgid "Dropshipping"
 msgstr "Дроп-шиппинг"
 
 #. module: stock
+#: model:stock.incoterms,name:stock.incoterm_EXW
+msgid "EX WORKS"
+msgstr ""
+
+#. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
 msgid "Edit its details or add new ones"
 msgstr "Редактировать свои данные или добавлять новые"
@@ -2189,6 +2278,11 @@ msgid ""
 "            location to the Stock location. Each report can be performed on\n"
 "            physical, partner or virtual locations."
 msgstr ""
+"Каждая операция на складе в Odoo перемещает продукты с одного\n"
+"             расположение к другому. Например, если вы получаете продукты\n"
+"             от поставщика, Odoo будет перемещать продукты от Вендора\n"
+"             местоположение к месту склада. Каждый отчет может быть\n"
+"             физического, партнерского или виртуального местоположения."
 
 #. module: stock
 #: code:addons/stock/models/stock_quant.py:647
@@ -2232,12 +2326,27 @@ msgstr "Дополнительные возможности"
 #: code:addons/stock/models/stock_picking.py:949
 #, python-format
 msgid "Extra Move: "
-msgstr "Дополнительное Перемещение:"
+msgstr "Дополнительное Перемещение: "
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_product_removal_method
 msgid "FIFO, LIFO..."
 msgstr "ФИФО, ЛИФО,..."
+
+#. module: stock
+#: model:stock.incoterms,name:stock.incoterm_FAS
+msgid "FREE ALONGSIDE SHIP"
+msgstr ""
+
+#. module: stock
+#: model:stock.incoterms,name:stock.incoterm_FCA
+msgid "FREE CARRIER"
+msgstr ""
+
+#. module: stock
+#: model:stock.incoterms,name:stock.incoterm_FOB
+msgid "FREE ON BOARD"
+msgstr ""
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_config_settings_module_delivery_fedex
@@ -2433,7 +2542,7 @@ msgstr "Имеет операции упаковки"
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking_has_scrap_move
 msgid "Has Scrap Moves"
-msgstr ""
+msgstr "Это перемещение отходов?"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking_quant_reserved_exist
@@ -2684,6 +2793,8 @@ msgid ""
 "If this is checked only, it will suppose you want to create new Lots/Serial "
 "Numbers, so you can provide them in a text field. "
 msgstr ""
+"Если это только отмечено, предполагается, что вы хотите создать новые "
+"Лоты/Серийные номера, поэтому вы можете предоставить их в текстовом поле."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_picking_type_use_existing_lots
@@ -2692,6 +2803,9 @@ msgid ""
 "can also decide to not put lots in this picking type.  This means it will "
 "create stock with no lot or not put a restriction on the lot taken. "
 msgstr ""
+"Если этот  установлено, вы сможете выбрать Лоты/Серийные номера. Вы также "
+"можете решить не размещать лоты в этом типе комплектования. Это означает, "
+"что он создаст запас без лота или не наложит ограничение на принятый лот."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_backorder_id
@@ -2736,11 +2850,11 @@ msgid ""
 "the system won't propose anything.  You can also let the system propose for "
 "a single product / lot /... "
 msgstr ""
-"Если вы делаете целую инвентаризации, вы можете выбрать \"Все продукты\" и "
-"это будет заполнять опись с текущего запаса. Если вы только делаете "
-"некоторые продукты (например, Периодический Подсчет ) вы можете выбрать "
-"\"Ручной выбор продуктов\" и система не предложит ничего. Вы можете также "
-"позволить системе предложить для одного продукта / партии /..."
+"Если вы делаете целую инвентаризации, вы можете выбрать 'Все продукты' и это"
+" будет заполнять опись с текущего запаса. Если вы только делаете некоторые "
+"продукты (например, Периодический Подсчет ) вы можете выбрать 'Ручной выбор "
+"продуктов' и система не предложит ничего. Вы можете также позволить системе "
+"предложить для одного продукта / партии /... "
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
@@ -2829,7 +2943,7 @@ msgstr ""
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_inventory_exhausted
 msgid "Include Exhausted Products"
-msgstr ""
+msgstr "Включить израсходованные продукты"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_product_product_incoming_qty
@@ -2966,11 +3080,31 @@ msgid ""
 "Internal reference number in case it differs from the manufacturer's "
 "lot/serial number"
 msgstr ""
+"Внутренняя ссылка номер в случае, если он отличается от производителя "
+"лот/серийный номер"
+
+#. module: stock
+#: code:addons/stock/models/product.py:257
+#, python-format
+msgid "Invalid domain left operand %s"
+msgstr ""
+
+#. module: stock
+#: code:addons/stock/models/product.py:259
+#, python-format
+msgid "Invalid domain operator %s"
+msgstr ""
+
+#. module: stock
+#: code:addons/stock/models/product.py:261
+#, python-format
+msgid "Invalid domain right operand %s"
+msgstr ""
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_inventory_category_id
 msgid "Inventoried Category"
-msgstr ""
+msgstr "Инвентаризационная категория"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_inventory_location_id
@@ -3111,7 +3245,7 @@ msgstr "Запасы Значение"
 #. module: stock
 #: model:stock.location,name:stock.location_inventory
 msgid "Inventory adjustment"
-msgstr ""
+msgstr "Корректировка инвентаря"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_inventory_form
@@ -3377,7 +3511,7 @@ msgstr "Локализация"
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_production_lot_form
 msgid "Locate"
-msgstr ""
+msgstr "Расположение"
 
 #. module: stock
 #: code:addons/stock/models/barcode.py:12
@@ -3494,23 +3628,23 @@ msgstr "Партия/Серийный номер"
 #: code:addons/stock/models/stock_pack_operation.py:198
 #, python-format
 msgid "Lot/Serial Number Details"
-msgstr ""
+msgstr "Лот/Детали серийного номера"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_inventory_tree
 msgid "Lot/Serial Number Inventory"
-msgstr ""
+msgstr "Лот/Серийный номер инвентаризации"
 
 #. module: stock
 #: code:addons/stock/models/stock_pack_operation.py:268
 #, python-format
 msgid "Lot/Serial Number required"
-msgstr ""
+msgstr "Требуемый Лот/Серийный номер"
 
 #. module: stock
 #: model:ir.model,name:stock.model_stock_pack_operation_lot
 msgid "Lot/Serial number for pack ops"
-msgstr ""
+msgstr "Партия/Серийный номер для упаковки ops"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_config_settings_group_stock_production_lot
@@ -3533,7 +3667,7 @@ msgstr ""
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_pack_operation_lots_visible
 msgid "Lots visible"
-msgstr ""
+msgstr "Видимы лоты"
 
 #. module: stock
 #: model:ir.actions.act_window,name:stock.action_production_lot_form
@@ -3542,18 +3676,18 @@ msgstr ""
 #: model:ir.ui.view,arch_db:stock.view_production_lot_form
 #: model:ir.ui.view,arch_db:stock.view_production_lot_tree
 msgid "Lots/Serial Numbers"
-msgstr ""
+msgstr "Лоты/Серийные номера"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_pack_operation_pack_lot_ids
 msgid "Lots/Serial Numbers Used"
-msgstr ""
+msgstr "Используемые Лоты/Серийные номера"
 
 #. module: stock
 #: code:addons/stock/models/stock_warehouse.py:504
 #, python-format
 msgid "MTO"
-msgstr ""
+msgstr "MTO"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_warehouse_mto_pull_id
@@ -3599,7 +3733,7 @@ msgstr "Управление упаковкой"
 #. module: stock
 #: model:res.groups,name:stock.group_adv_location
 msgid "Manage Push and Pull inventory flows"
-msgstr "Управление толкать и тянуть потоков инвентаризации "
+msgstr "Управление толкать и тянуть потоков инвентаризации"
 
 #. module: stock
 #: selection:stock.config.settings,group_stock_packaging:0
@@ -3619,22 +3753,22 @@ msgstr "Управление местоположениями по умолча�
 #. module: stock
 #: model:res.groups,name:stock.group_stock_multi_locations
 msgid "Manage multiple stock_locations"
-msgstr ""
+msgstr "Управление несколькими stock_locations"
 
 #. module: stock
 #: model:res.groups,name:stock.group_stock_multi_warehouses
 msgid "Manage multiple warehouses"
-msgstr ""
+msgstr "Управление несколькими складами"
 
 #. module: stock
 #: selection:stock.config.settings,warehouse_and_location_usage_level:0
 msgid "Manage only 1 Warehouse with only 1 stock location"
-msgstr ""
+msgstr "Управление только 1 складом с одним складом"
 
 #. module: stock
 #: selection:stock.config.settings,warehouse_and_location_usage_level:0
 msgid "Manage only 1 Warehouse, composed by several stock locations"
-msgstr ""
+msgstr "Управлять только 1 складом, состоящим из нескольких мест склада"
 
 #. module: stock
 #: selection:stock.config.settings,module_stock_picking_wave:0
@@ -3661,16 +3795,18 @@ msgstr "Управление точками контроля, проверкам
 msgid ""
 "Manage several Warehouses, each one composed by several stock locations"
 msgstr ""
+"Управлять несколькими складами, каждый из которых состоит из нескольких "
+"складских мест"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_config_settings_group_stock_multi_locations
 msgid "Manage several stock locations"
-msgstr ""
+msgstr "Управление несколькими складами"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_config_settings_group_stock_multi_warehouses
 msgid "Manage several warehouses"
-msgstr ""
+msgstr "Управление несколькими складами"
 
 #. module: stock
 #: model:res.groups,name:stock.group_stock_manager
@@ -3685,7 +3821,7 @@ msgstr "Ручное управление"
 #. module: stock
 #: selection:stock.picking.type,code:0
 msgid "Manufacturing Operation"
-msgstr ""
+msgstr "Производственные операции"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_picking_form
@@ -3828,7 +3964,7 @@ msgstr ""
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_origin_returned_move_id
 msgid "Move that created the return move"
-msgstr ""
+msgstr "Перемещение, которое создало возврат перемещения"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_procurement_order_move_dest_id
@@ -4055,6 +4191,8 @@ msgid ""
 "Odoo handles <strong>advanced push/pull routes configuration</strong>, for "
 "example:"
 msgstr ""
+"Odoo обрабатывает <strong> расширенную конфигурацию толкать/тянуть маршруты "
+"</strong>, для например:"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
@@ -4091,6 +4229,9 @@ msgid ""
 "convert units within the same category, for example, liters to gallons in "
 "the volume category"
 msgstr ""
+"Конечно, не стесняйтесь добавлять свои собственные. Обратите внимание, что "
+"Odoo может конвертировать единицы той же категории, например, литры в "
+"галлоны в категории объема"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.product_form_view_procurement_button
@@ -4115,6 +4256,9 @@ msgid ""
 "customer. It would be great if you could send us a photo of your warehouse "
 "to"
 msgstr ""
+"Когда он полностью работает, дайте нам обратную связь: мы рады услышать от "
+"наших клиентов. Было бы здорово, если бы вы могли отправить нам фотографию "
+"своего склада, чтобы"
 
 #. module: stock
 #: code:addons/stock/models/stock_inventory.py:100
@@ -4132,7 +4276,7 @@ msgstr "Только один владелец"
 #: code:addons/stock/models/stock_inventory.py:91
 #, python-format
 msgid "One product category"
-msgstr ""
+msgstr "Одна категория продукта"
 
 #. module: stock
 #: code:addons/stock/models/stock_inventory.py:98
@@ -4166,13 +4310,14 @@ msgstr "Название действия"
 #: model:ir.ui.view,arch_db:stock.view_picking_type_form
 #: model:ir.ui.view,arch_db:stock.view_picking_type_list
 #: model:ir.ui.view,arch_db:stock.view_picking_type_tree
+#: model:ir.ui.view,arch_db:stock.view_warehouse
 msgid "Operation Types"
-msgstr ""
+msgstr "Типы операций"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_pack_operation_lot_operation_id
 msgid "Operation id"
-msgstr ""
+msgstr "Oперации id"
 
 #. module: stock
 #: model:ir.ui.menu,name:stock.menu_stock_warehouse_mgmt
@@ -4191,6 +4336,7 @@ msgid ""
 "Operations that impact this move for the computation of the remaining "
 "quantities"
 msgstr ""
+"Операции, которые влияют на этот шаг, для вычисления оставшихся количеств"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_partner_id
@@ -4221,7 +4367,7 @@ msgstr "Опционально: следующее перемещение ТМЦ
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_move_orig_ids
 msgid "Optional: previous stock move when chaining them"
-msgstr ""
+msgstr "Необязательно: предыдущее перемещение запаса при объединении цепочки"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_picking_internal_search
@@ -4263,13 +4409,13 @@ msgstr "Оригинал Перемещения"
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_return_picking_original_location_id
 msgid "Original location id"
-msgstr ""
+msgstr "Исходное местоположение id"
 
 #. module: stock
 #: code:addons/stock/models/stock_quant.py:222
 #, python-format
 msgid "Otherwise make sure the right stock/owner is set."
-msgstr ""
+msgstr "В противном случае убедитесь, что выбран правильный запас/владелец."
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_warehouse_out_type_id
@@ -4314,7 +4460,7 @@ msgstr "Владелец"
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_move_restrict_partner_id
 msgid "Owner "
-msgstr "Владелец"
+msgstr "Владелец "
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_location_partner_id
@@ -4348,7 +4494,7 @@ msgstr "Детали упаковки"
 #. module: stock
 #: model:ir.model,name:stock.model_stock_move_operation_link
 msgid "Pack Operation / Moves Link"
-msgstr ""
+msgstr "Операция упаковки / Перемещение ссылки"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_warehouse_pack_type_id
@@ -4401,12 +4547,12 @@ msgstr "Трансферы Пакетов"
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_quant_package_packaging_id
 msgid "Package Type"
-msgstr ""
+msgstr "Тип упаковки"
 
 #. module: stock
 #: model:ir.ui.menu,name:stock.menu_packagings
 msgid "Package Types"
-msgstr ""
+msgstr "Типы упаковок"
 
 #. module: stock
 #: model:ir.actions.act_window,name:stock.action_package_view
@@ -4426,6 +4572,12 @@ msgid ""
 " A package can also be unpacked, allowing the disposal of its former content"
 " as single units again."
 msgstr ""
+"Пакеты обычно создаются пакетными операциями, выполняемыми при передаче, и "
+"могут содержать несколько разных продуктов. Затем вы можете повторно "
+"использовать пакет, чтобы переместить весь его контент куда-нибудь еще, или "
+"упаковать его в другой более крупный пакет. Пакет также может быть "
+"распакован, что позволяет повторно использовать его прежнее содержимое как "
+"отдельные единицы."
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.quant_package_search_view
@@ -4478,7 +4630,7 @@ msgstr "Родительская упаковска"
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_return_picking_parent_location_id
 msgid "Parent location id"
-msgstr ""
+msgstr "Главное расположение id"
 
 #. module: stock
 #: selection:stock.picking,move_type:0
@@ -4517,6 +4669,10 @@ msgid ""
 "            the general inventory or whenever you need it, to adapt the\n"
 "            current inventory level of a product."
 msgstr ""
+"Периодические запасы используются для подсчета количества продуктов\n"
+"             доступно для каждого местоположения. Вы можете использовать его один раз в годe, когда вы делаете\n"
+"             общего инвентаря или когда вам это нужно, адаптировать\n"
+"             текущий уровень запасов продукта."
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
@@ -4669,6 +4825,8 @@ msgid ""
 "Please create some Initial Demand or Mark as Todo and create some "
 "Operations. "
 msgstr ""
+"Создайте некоторый начальный спрос или отметьте как К исполнению и создайте "
+"несколько операций. "
 
 #. module: stock
 #: code:addons/stock/models/stock_picking.py:1008
@@ -4685,7 +4843,7 @@ msgstr "Пожалуйста укажите как минимум одно не�
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_pack_operation_lot_plus_visible
 msgid "Plus visible"
-msgstr ""
+msgstr "Плюс видимый"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.quant_search_view
@@ -4695,7 +4853,7 @@ msgstr "Положительный"
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_move_product_packaging
 msgid "Preferred Packaging"
-msgstr ""
+msgstr "Предпочтительная упаковка"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_make_procurement_route_ids
@@ -4706,7 +4864,7 @@ msgstr "Предпочтительные маршруты"
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_route_ids
 msgid "Preferred route to be followed by the procurement order"
-msgstr ""
+msgstr "Предпочтительный маршрут, за которым следует заказ на поставку"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_procurement_order_route_ids
@@ -4714,6 +4872,8 @@ msgid ""
 "Preferred route to be followed by the procurement order. Usually copied from"
 " the generating document (SO) but could be set up manually."
 msgstr ""
+"Предпочтительный маршрут, за которым следует заказ на поставку. Обычно "
+"копируется из генерирующего документа (SO), но может быть настроен вручную."
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_picking_form
@@ -4738,6 +4898,8 @@ msgid ""
 "Priority for this picking. Setting manually a value here would set it as "
 "priority for all the moves"
 msgstr ""
+"Приоритет для этого упаковки. Установка значения вручную здесь задала бы его"
+" приоритетом для всех передвижений"
 
 #. module: stock
 #: model:ir.model,name:stock.model_procurement_order
@@ -4945,6 +5107,8 @@ msgid ""
 "Products you scrap will be removed from the stock and moved to a specific "
 "scrap location, for reporting purposes."
 msgstr ""
+"Продукты, которые вы перерабатываете, будут удалены из запаса и перенесены в"
+" конкретное место для отходов, для целей отчетности."
 
 #. module: stock
 #: code:addons/stock/models/product.py:326
@@ -4979,7 +5143,7 @@ msgstr "Push Правила"
 #. module: stock
 #: model:ir.model,name:stock.model_stock_location_path
 msgid "Pushed Flow"
-msgstr ""
+msgstr "Толкаемый поток"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_fixed_putaway_strat_putaway_id
@@ -5128,6 +5292,9 @@ msgid ""
 " pack operation towards the remaining quantity of the move (and inverse). "
 "Given in the product main uom."
 msgstr ""
+"Количество продуктов, которые следует учитывать, когда речь идет о вкладе "
+"этой операции упаковки в оставшееся количество движения (и обратно). Дано в "
+"основном продукте uom."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_reserved_availability
@@ -5150,12 +5317,12 @@ msgstr "RAM SR5"
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking_type_rate_picking_backorders
 msgid "Rate picking backorders"
-msgstr ""
+msgstr "Штрих код тарифа упаковки"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking_type_rate_picking_late
 msgid "Rate picking late"
-msgstr ""
+msgstr "Тариф сборов за опоздание"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.stock_picking_type_kanban
@@ -5281,11 +5448,13 @@ msgid ""
 "Remaining Quantity in default UoM according to operations matched with this "
 "move"
 msgstr ""
+"Остаточное количество по умолчанию UoM в соответствии с операциями, "
+"соответствующими этому перемещению"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_picking_internal_search
 msgid "Remaining parts of picking partially processed"
-msgstr ""
+msgstr "Остальные части упаковки частично обработаны"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_pack_operation_remaining_qty
@@ -5293,6 +5462,8 @@ msgid ""
 "Remaining quantity in default UoM according to moves matched with this "
 "operation."
 msgstr ""
+"Оставшееся количество в UoM в соответствии с перемещениями, согласованными с"
+" этой операцией."
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_removal
@@ -5334,13 +5505,13 @@ msgstr "Поиск правил упорядочивания"
 #: model:ir.model.fields,field_description:stock.field_product_product_reordering_max_qty
 #: model:ir.model.fields,field_description:stock.field_product_template_reordering_max_qty
 msgid "Reordering max qty"
-msgstr ""
+msgstr "Переупорядочение максимальное кол"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_product_product_reordering_min_qty
 #: model:ir.model.fields,field_description:stock.field_product_template_reordering_min_qty
 msgid "Reordering min qty"
-msgstr ""
+msgstr "Переупорядочение минимум кол"
 
 #. module: stock
 #: model:ir.ui.menu,name:stock.menu_warehouse_report
@@ -5350,7 +5521,7 @@ msgstr "Отчеты"
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_make_procurement_res_model
 msgid "Res Model"
-msgstr ""
+msgstr "Res Model"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_picking_form
@@ -5360,12 +5531,13 @@ msgstr "Резерв"
 #. module: stock
 #: selection:stock.config.settings,module_procurement_jit:0
 msgid "Reserve products immediately after the sale order confirmation"
-msgstr ""
+msgstr "Зарезервировать родукты сразу же после подтверждения заказа продажи"
 
 #. module: stock
 #: selection:stock.config.settings,module_procurement_jit:0
 msgid "Reserve products manually or based on automatic scheduler"
 msgstr ""
+"Зарезервировать продукты вручную или на основе автоматического планировщика"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_move_picking_form
@@ -5395,7 +5567,7 @@ msgstr "Зарезервированные кванты"
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_picking_form
 msgid "Reset Operations"
-msgstr " Сброс и Повторная установка Операции"
+msgstr "Сброс операции"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
@@ -5603,7 +5775,7 @@ msgstr "Искать инвентаризацию"
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.stock_scrap_search_view
 msgid "Search Scrap"
-msgstr ""
+msgstr "Поиск отходов"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.stock_location_path_filter
@@ -5628,9 +5800,9 @@ msgid ""
 "Selecting \"Blocking Message\" will throw an exception with the message and "
 "block the flow. The Message has to be written in the next field."
 msgstr ""
-"\"Предупреждение\" - сообщить пользователю. \"Блокирующее сообщение\" - "
-"исключительная ситуация, сообщить пользователю и заблокировать рабочий "
-"процесс. Текст сообщения должен быть записан в следующее поле."
+"Выбор опции \"Предупреждение\" уведомит пользователя об этом сообщением. При"
+" выборе \"Блокировать сообщение\" будет выдано исключение с сообщением и "
+"заблокирован поток. Сообщение должно быть написано в следующем поле."
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_location_path_sequence
@@ -5645,31 +5817,31 @@ msgstr "Последовательность"
 #: code:addons/stock/models/stock_warehouse.py:658
 #, python-format
 msgid "Sequence in"
-msgstr ""
+msgstr "Последовательность в"
 
 #. module: stock
 #: code:addons/stock/models/stock_warehouse.py:662
 #, python-format
 msgid "Sequence internal"
-msgstr ""
+msgstr "Внутренняя последовательность"
 
 #. module: stock
 #: code:addons/stock/models/stock_warehouse.py:659
 #, python-format
 msgid "Sequence out"
-msgstr ""
+msgstr "Последовательность из"
 
 #. module: stock
 #: code:addons/stock/models/stock_warehouse.py:660
 #, python-format
 msgid "Sequence packing"
-msgstr ""
+msgstr "Последовательность упаковки"
 
 #. module: stock
 #: code:addons/stock/models/stock_warehouse.py:661
 #, python-format
 msgid "Sequence picking"
-msgstr ""
+msgstr "Последовательность упаковки"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_inventory_line_prodlot_name
@@ -5710,6 +5882,8 @@ msgid ""
 "Set the products you want to track with lots or serial numbers by setting "
 "the Tracking field on the product form"
 msgstr ""
+"Установите продукты, которые нужно отслеживать, с лотами или серийными "
+"номерами, установив поле Отслеживание в форме продукта"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_inventory_form
@@ -5788,6 +5962,8 @@ msgstr "Маленький холодильник"
 msgid ""
 "Some products may be sold/purchased in different units of measure (advanced)"
 msgstr ""
+"Некоторые продукты могут быть проданы / куплены в разных единицах измерения "
+"(расширенный)"
 
 #. module: stock
 #: code:addons/stock/models/stock_picking.py:787
@@ -5796,6 +5972,8 @@ msgid ""
 "Some products require lots/serial numbers, so you need to specify those "
 "first!"
 msgstr ""
+"Некоторые продукты требуют Лоты/Серийных номеров, поэтому сначала необходимо"
+" указать их!"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_move_search
@@ -5860,6 +6038,8 @@ msgstr ""
 msgid ""
 "Specify Product Category to focus your inventory on a particular Category."
 msgstr ""
+"Укажите категорию продукта, чтобы сфокусировать ресурсы на определенной "
+"категории."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_inventory_product_id
@@ -5964,7 +6144,7 @@ msgstr "Товар в наличии"
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.stock_scrap_form_view
 msgid "Stock Operation"
-msgstr ""
+msgstr "Операции с запасами"
 
 #. module: stock
 #: model:ir.actions.act_window,name:stock.action_picking_tree_all
@@ -5980,12 +6160,12 @@ msgstr "Комплектование запасов"
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_product_product_stock_move_ids
 msgid "Stock move ids"
-msgstr ""
+msgstr "Движение запасов ids"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_move_search
 msgid "Stock moves that are Available (Ready to process)"
-msgstr "Доступные для обработки перемещения"
+msgstr "Доступные перемещения (Готовность к обработке)"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_move_search
@@ -6000,7 +6180,7 @@ msgstr "Складские перемещения, которые были об�
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_product_product_stock_quant_ids
 msgid "Stock quant ids"
-msgstr ""
+msgstr "Количество запасов ids"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.report_stock_lines_date_search
@@ -6049,6 +6229,9 @@ msgid ""
 "operation and a stock move. Used at the stock_move_obj.action_done() time to"
 " avoid seeking a matching quant again"
 msgstr ""
+"Техническое поле, содержащее квант, создавший эту связь между операцией и "
+"перемещением запаса. Используется во время stock_move_obj.action_done() "
+"чтобы избежать повторного поиска соответствующего кванта"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_warehouse_id
@@ -6056,6 +6239,8 @@ msgid ""
 "Technical field depicting the warehouse to consider for the route selection "
 "on the next procurement (if any)."
 msgstr ""
+"Техническое поле, представляющее склад для рассмотрения выбора маршрута при "
+"следующей закупке (при наличии)."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_res_company_internal_transit_location_id
@@ -6063,6 +6248,8 @@ msgid ""
 "Technical field used for resupply routes between warehouses that belong to "
 "this company"
 msgstr ""
+"Техническое поле, используемое для маршрутов пополнения запасов между "
+"складами, принадлежащими этой компании"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_restrict_lot_id
@@ -6070,6 +6257,9 @@ msgid ""
 "Technical field used to depict a restriction on the lot/serial number of "
 "quants to consider when marking this move as 'done'"
 msgstr ""
+"Техническое поле, используемое для обозначения ограничения на количество "
+"лота/серийный номер квот, которые необходимо учитывать при маркировке этого "
+"передвежения как 'сделано'"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_restrict_partner_id
@@ -6077,6 +6267,9 @@ msgid ""
 "Technical field used to depict a restriction on the ownership of quants to "
 "consider when marking this move as 'done'"
 msgstr ""
+"Техническое поле, используемое для обозначения ограничения на владение "
+"квантами, которое необходимо учитывать при маркировке этого перемещения как "
+"'сделано'"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_quant_negative_dest_location_id
@@ -6084,6 +6277,8 @@ msgid ""
 "Technical field used to record the destination location of a move that "
 "created a negative quant"
 msgstr ""
+"Техническое поле, используемое для записи места назначения перемещения, "
+"создавшего отрицательный квант"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_price_unit
@@ -6092,6 +6287,10 @@ msgid ""
 "picking confirmation (when costing method used is 'average price' or "
 "'real'). Value given in company currency and in product uom."
 msgstr ""
+"Техническое поле, используемое для записи стоимости продукта, заданной "
+"пользователем во время подтверждения комплектования (когда используется "
+"метод калькуляции 'средняя цена' или 'реальный'). Значение, указанное в "
+"валюте компании и в продукте uom."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_split_from
@@ -6099,17 +6298,19 @@ msgid ""
 "Technical field used to track the origin of a split move, which can be "
 "useful in case of debug"
 msgstr ""
+"Техническое поле, используемое для отслеживания происхождения раздельного "
+"перемещения, которое может быть полезно в случае отладки"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_product_tmpl_id
 msgid "Technical: used in views"
-msgstr ""
+msgstr "Технический: используется в видах"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_product_product_stock_move_ids
 #: model:ir.model.fields,help:stock.field_product_product_stock_quant_ids
 msgid "Technical: used to compute quantities."
-msgstr ""
+msgstr "Технический: используется для вычисления количества."
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_config_settings_module_delivery_temando
@@ -6129,6 +6330,9 @@ msgid ""
 "one.With 'Automatic No Step Added', the location is replaced in the original"
 " move."
 msgstr ""
+"Значение 'Ручная операция' создаст перемещение запаса после текущего. При "
+"'Автоматическом добавлении без шага' местоположение заменяется в исходном "
+"перемещении."
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
@@ -6165,6 +6369,7 @@ msgstr "Сочетание серийного номера и продукта �
 #: model:ir.model.fields,help:stock.field_stock_warehouse_company_id
 msgid "The company is automatically set from your user preferences."
 msgstr ""
+"Компания автоматически устанавливается из ваших пользовательских настроек."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_quant_company_id
@@ -6241,6 +6446,8 @@ msgid ""
 "The parent location that includes this location. Example : The 'Dispatch "
 "Zone' is the 'Gate 1' parent location."
 msgstr ""
+"Родительское местоположение, которое включает это местоположение. Пример: "
+"'Зоной отправки' является родительское местоположение 'Gate 1'."
 
 #. module: stock
 #: model:ir.model,name:stock.model_stock_picking_type
@@ -6255,6 +6462,10 @@ msgid ""
 "                On the picking type you could e.g. specify if packing is needed by default,\n"
 "                if it should show the customer."
 msgstr ""
+"Система типа упаковки позволяет вам назначать каждый запас\n"
+"                 который будет изменять свое мнение соответственно.\n"
+"                 По типу комплектования вы можете, нап. указать, нужна ли упаковка по умолчанию,\n"
+"                 если он должен показать клиента."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_warehouse_orderpoint_qty_multiple
@@ -6262,6 +6473,8 @@ msgid ""
 "The procurement quantity will be rounded up to this multiple.  If it is 0, "
 "the exact quantity will be used."
 msgstr ""
+"Количество закупок будет округлено до этого множителя. Если оно равно 0, "
+"будет использовано точное количество."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_rule_id
@@ -6271,18 +6484,22 @@ msgstr "Правило закупок, которое создало это ск
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_push_rule_id
 msgid "The push rule that created this stock move"
-msgstr ""
+msgstr "Правило пуш, создавшее это перемещение запаса"
 
 #. module: stock
 #: code:addons/stock/models/stock_pack_operation.py:170
 #, python-format
 msgid "The quantity to split should be smaller than the quantity To Do.  "
 msgstr ""
+"Количество, которое нужно разделить, должно быть меньше количества, которое "
+"необходимо выполнить. "
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
 msgid "The quotation becomes a Sale Order and a Transfer Order is created"
 msgstr ""
+"Коммерческое предложение становится заказом на продажу и создается платежный"
+" заказ"
 
 #. module: stock
 #: code:addons/stock/models/stock_move.py:166
@@ -6291,6 +6508,8 @@ msgid ""
 "The requested operation cannot be processed because of a programming error "
 "setting the `product_qty` field instead of the `product_uom_qty`."
 msgstr ""
+"Запрошенная операция не может быть обработана из-за ошибки программирования,"
+" устанавливающей поле `product_qty` вместо` product_uom_qty`."
 
 #. module: stock
 #: code:addons/stock/models/stock_move.py:817
@@ -6300,6 +6519,8 @@ msgid ""
 "don't allow to do these operations or you are not transferring the picking "
 "at once. "
 msgstr ""
+"Округления вашей единицы измерения %s в перемещение против %s на продукте не"
+" позволяют выполнять эти операции или вы не передаете сбор сразу. "
 
 #. module: stock
 #: code:addons/stock/models/stock_inventory.py:126
@@ -6314,7 +6535,7 @@ msgstr "Выбранные параметры запасов, не связан�
 #: code:addons/stock/models/stock_quant.py:222
 #, python-format
 msgid "The serial number %s is already in stock."
-msgstr ""
+msgstr "Серийный номер %s уже на складе."
 
 #. module: stock
 #: code:addons/stock/models/stock_picking.py:515
@@ -6341,6 +6562,9 @@ msgid ""
 "different of the warehouse this rule is for (e.g for resupplying rules from "
 "another warehouse)"
 msgstr ""
+"Склад для распространения по созданному перемещению/заготовке, которое может"
+" отличаться от склада, для которого это правило предназначено (например, для"
+" повторной поставки правил с другого склада)"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_inventory_line_theoretical_qty
@@ -6354,6 +6578,9 @@ msgid ""
 "something from a package, but also move entire packages and put them even in"
 " another package.  "
 msgstr ""
+"Это позволяет манипулировать пакетами. Вы можете что-то вставить, взять что-"
+"то из пакета, но также перемещать целые пакеты и помещать их даже в другой "
+"пакет. "
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_config_settings_group_stock_production_lot
@@ -6362,6 +6589,9 @@ msgid ""
 "moves.  This can make it possible to know which production lot was sent to a"
 " certain client, ..."
 msgstr ""
+"Это позволяет вам назначить лот (или серийный номер) для упаковки и "
+"перемещения. Это может позволить узнать, какая лот продукции была отправлена"
+" определенному клиенту, ..."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_config_settings_module_stock_calendar
@@ -6369,6 +6599,8 @@ msgid ""
 "This allows you to handle minimum stock rules differently by the possibility to take into account the purchase and delivery calendars \n"
 "-This installs the module stock_calendar."
 msgstr ""
+"Это позволяет по-разному регулировать правила минимального запаса за счет возможности учитывать календари покупки и доставки\n"
+"-Это устанавливает модуль stock_calendar."
 
 #. module: stock
 #: model:ir.actions.act_window,help:stock.quantsact
@@ -6376,6 +6608,8 @@ msgid ""
 "This analysis gives you a fast overview on the current stock level of your "
 "products and their current inventory value."
 msgstr ""
+"Этот анализ дает вам быстрый обзор текущего уровня запасов ваших продуктов и"
+" их текущей стоимости запасов."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_quant_package_packaging_id
@@ -6384,6 +6618,8 @@ msgid ""
 "This field should be completed only if everything inside the package share "
 "the same product, otherwise it doesn't really makes sense."
 msgstr ""
+"Это поле должно быть заполнено только в том случае, если все внутри пакета "
+"используют один и тот же продукт, иначе это не имеет смысла."
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
@@ -6391,6 +6627,8 @@ msgid ""
 "This guide helps getting started with Odoo Inventory.\n"
 "                        Once you are done, you will benefit from:"
 msgstr ""
+"Это руководство помогает начать работу с инвентаризацией Odoo.\n"
+"                         Как только вы закончите, вы получите выгоду от:"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
@@ -6398,6 +6636,8 @@ msgid ""
 "This is quite complex to set up, so <strong>contact your Project "
 "Manager</strong> to address this."
 msgstr ""
+"Это довольно сложная настройка, поэтому <strong>свяжитесь со своим Проект "
+"Менеджером </strong>, чтобы решить это."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_picking_type_default_location_dest_id
@@ -6407,6 +6647,10 @@ msgid ""
 "routes put another location. If it is empty, it will check for the customer "
 "location on the partner. "
 msgstr ""
+"Это место назначения по умолчанию, когда вы создаете подбор вручную в этом "
+"типе комплектования. Можно, однако, изменить его или что маршруты помещают "
+"другое место. Если он пуст, он будет проверять местоположение клиента на "
+"партнере. "
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_picking_type_default_location_src_id
@@ -6416,6 +6660,10 @@ msgid ""
 "put another location. If it is empty, it will check for the supplier "
 "location on the partner. "
 msgstr ""
+"Это местоположение источника по умолчанию, когда вы создаете подбор вручную "
+"в этом типе комплектования. Можно, однако, изменить его или что маршруты "
+"помещают другое место. Если он пуст, он будет проверять местоположение "
+"поставщика на партнере. "
 
 #. module: stock
 #: model:ir.actions.act_window,help:stock.action_production_lot_form
@@ -6423,6 +6671,8 @@ msgid ""
 "This is the list of all the production lots you recorded. When\n"
 "            you select a lot, you can get the traceability of the products contained in lot."
 msgstr ""
+"Это список всех продуктовых лотов которые вы записали. Когда\n"
+"             вы выбираете лота, вы можете получить прослеживаемость продуктов, содержащихся в лоте."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_quant_owner_id
@@ -6432,7 +6682,7 @@ msgstr "Это владелец кванта"
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_location_path_picking_type_id
 msgid "This is the picking type that will be put on the stock moves"
-msgstr ""
+msgstr "Это тип упаковки, который будет помещен на перемещение запаса"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_move_product_uom_qty
@@ -6444,6 +6694,12 @@ msgid ""
 "this quantity on assigned moves affects the product reservation, and should "
 "be done with care."
 msgstr ""
+"Это количество продуктов с точки зрения запасов. Для перемещений в состоянии"
+" 'сделано' это количество продуктов, которые были фактически перемещены. Для"
+" других перемещений это количество продукта, которое планируется перенести. "
+"Понижение этой величины не приводит к освобождению от заказа. Изменение "
+"этого количества в назначенных перемещениях влияет на резервирование "
+"продукта, и должно быть сделано с осторожностью."
 
 #. module: stock
 #: model:ir.actions.act_window,help:stock.stock_move_action
@@ -6460,6 +6716,8 @@ msgstr ""
 #: model:ir.model.fields,help:stock.field_stock_config_settings_module_quality
 msgid "This module allows you to generate quality alerts and quality check"
 msgstr ""
+"Этот модуль позволяет генерировать качественные оповещения и проверку "
+"качества"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_config_settings_group_stock_adv_location
@@ -6467,6 +6725,8 @@ msgid ""
 "This option supplements the warehouse application by effectively "
 "implementing Push and Pull inventory flows through Routes."
 msgstr ""
+"Этот вариант дополняет приложение склад, эффективно реализуя потоки ресурсов"
+" толкая и тянуть через маршруты."
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_stock_return_picking_form
@@ -6476,6 +6736,10 @@ msgid ""
 "returned picking in order to avoid logistic rules to be applied again (which"
 " would create duplicated operations)"
 msgstr ""
+"Эта подборка оказывается связанной с другой операцией. Позже, если вы "
+"получаете товары, которые вы возвращаете сейчас, убедитесь, что "
+"<b>реверс</b> вернули сборку, чтобы избежать повторного применения "
+"логистических правил (что создало бы дублированные операции)"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_change_product_qty_new_quantity
@@ -6489,11 +6753,13 @@ msgid ""
 "This rule can be applied when a move is confirmed that has this location as "
 "destination location"
 msgstr ""
+"Это правило может быть применено, когда перемещение подтверждено и имеет это"
+" местоположение в качестве места назначения"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.report_delivery_document
 msgid "This shipment is a backorder of"
-msgstr ""
+msgstr "Эта поставка является недопоставкой"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_res_partner_property_stock_customer
@@ -6551,7 +6817,7 @@ msgstr ""
 msgid "This way you can receive products attributed to a certain owner. "
 msgstr ""
 "Таким образом, Вы можете получить продукты, привязанные к определенному "
-"владельцу."
+"владельцу. "
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_pack_operation_to_loc
@@ -6580,6 +6846,10 @@ msgid ""
 "                            Shipping area, Merchandise return, Shelf 34 etc).\n"
 "                            Do not use Locations if you do not manage inventory per zone."
 msgstr ""
+"Чтобы лучше организовать свой запас, вы можете создать\n"
+"                             подразделения вашего склада, которые называются <strong>местоположениями </strong> (например:\n"
+"                             зона отгрузки, возврат товара, полка 34 и т. Д.).\n"
+"                             Не используйте местоположения, если вы не управляете инвентарем для каждой зоны."
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
@@ -6588,6 +6858,9 @@ msgid ""
 "                       Choose a lot in the list and click on <i>Traceability</i>i&gt;. You may also\n"
 "                       filter the Quantitative Valuation of a product with a certain lot."
 msgstr ""
+"Чтобы проверить траекторию партии, верните ее в <strong><i> Управление ресурсами &gt; Серийные номера/ партии </i> </strong>.\n"
+"                        Выберите в списке партия и нажмите <i> Отслеживание </i>i&gt;. Вы можете также\n"
+"                        отфильтровать количественную оценку продукта с определенной партией."
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
@@ -6605,6 +6878,9 @@ msgid ""
 "products may be sold/purchased in different unit of measures (advanced)</i> "
 "in the"
 msgstr ""
+"Чтобы использовать более точные единицы измерения, такие как фунты или "
+"килограммы, активируйте <i>Некоторые продукты могут быть проданы / куплены в"
+" разных единицах измерения (продвинутых) </i> в"
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.view_move_search
@@ -6643,6 +6919,13 @@ msgid ""
 "                - alert date.\n"
 "                This installs the module product_expiry."
 msgstr ""
+"Отслеживайте разные даты продуктов и серийных номеров.\n"
+"                 Можно отслеживать следующие даты:\n"
+"                 - конец жизни\n"
+"                 - использовать до\n"
+"                 - дата удаления\n"
+"                 - дата предупреждения.\n"
+"                 Это устанавливает модуль product_expiry."
 
 #. module: stock
 #: selection:stock.config.settings,group_stock_production_lot:0
@@ -6697,6 +6980,8 @@ msgid ""
 "True if reserved quants changed, which mean we might need to recompute the "
 "package operations"
 msgstr ""
+"Истинно, если зарезервированные кванты изменены, что означает, что нам может"
+" потребоваться пересчитать операции упаковки"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_picking_picking_type_code
@@ -6723,7 +7008,7 @@ msgstr "Интеграция с USPS"
 #: code:addons/stock/models/stock_quant.py:98
 #, python-format
 msgid "Under no circumstances should you delete or change quants yourselves!"
-msgstr ""
+msgstr "Ни в коем случае не удаляйте и не изменяйте кванты!"
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_inventory_line_prodlot_name
@@ -6861,6 +7146,10 @@ msgid ""
 "                    trigger a draft purchase order, a manufacturing order or\n"
 "                    a new task."
 msgstr ""
+"Используйте этого помощника для создания запроса на закупку для этого\n"
+"                     продукта. В соответствии с конфигурацией продукта это может\n"
+"                     запускать проект заказа на поставку, производственный заказ или\n"
+"                     новая задача."
 
 #. module: stock
 #: model:ir.model.fields,help:stock.field_stock_picking_type_sequence
@@ -6895,7 +7184,7 @@ msgstr "Проверено"
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_stock_change_product_qty_product_variant_count
 msgid "Variant Count"
-msgstr ""
+msgstr "Подсчет вариантов"
 
 #. module: stock
 #: model:ir.model.fields,field_description:stock.field_make_procurement_product_variant_count
@@ -7085,6 +7374,10 @@ msgid ""
 "                                        manager a CSV file containing all your\n"
 "                                        products."
 msgstr ""
+"Мы обрабатываем весь процесс импорта\n"
+"                                         для вас: просто отправьте свой проект Odoo\n"
+"                                         менеджер CSV-файла, содержащего все ваши\n"
+"                                         продукты."
 
 #. module: stock
 #: model:ir.ui.view,arch_db:stock.inventory_planner
@@ -7248,6 +7541,9 @@ msgid ""
 "You can either do it immediately or mark it as Todo for future processing. "
 "Use your scanner to validate the transferred quantity quicker."
 msgstr ""
+"Вы можете сделать это немедленно или пометить его как Выполнено для "
+"дальнейшей обработки. Используйте сканер, чтобы быстрее проверять переданное"
+" количество."
 
 #. module: stock
 #: code:addons/stock/models/product.py:486
@@ -7304,12 +7600,16 @@ msgid ""
 "Please first validatethe first inventory adjustement with this product "
 "before creating another one."
 msgstr ""
+"У вас не может быть двух настроек инвентаря в состоянии 'в Процессе' с тем "
+"же продуктом(%s), с тем же местоположением(%s), с той же упаковкой, с тем же"
+" владельцем и с той же партией. Прежде всего, сначала настройте первую "
+"настройку инвентаризации с этим продуктом, прежде чем создавать другую."
 
 #. module: stock
 #: code:addons/stock/models/stock_quant.py:176
 #, python-format
 msgid "You cannot move to a location of type view %s."
-msgstr ""
+msgstr "Вы не можете перейти к расположению типа вида %s."
 
 #. module: stock
 #: code:addons/stock/models/stock_scrap.py:85
@@ -7318,6 +7618,8 @@ msgid ""
 "You cannot scrap a move without having available stock for %s. You can "
 "correct it with an inventory adjustment."
 msgstr ""
+"Вы не можете отказаться от перемещения без наличия запаса для %s. Вы можете "
+"исправить это с помощью корректировки запасов."
 
 #. module: stock
 #: code:addons/stock/models/stock_inventory.py:144
@@ -7360,7 +7662,7 @@ msgid ""
 "quantities specified for the lots. "
 msgstr ""
 "У вас есть разница между количеством по операции и количеством, указанным "
-"для партий."
+"для партий. "
 
 #. module: stock
 #: sql_constraint:stock.pack.operation.lot:0
@@ -7411,12 +7713,20 @@ msgid ""
 "You haven't set processed (<i>done</i>) quantities. Click <i>apply</i> and\n"
 "                        Odoo will process all quantities to do."
 msgstr ""
+"Вы не задали обработанные (<i> done </i>) количества. Нажмите <i> применить </i> и\n"
+"                         Odoo будет обрабатывать все величины, которые необходимо выполнить."
 
 #. module: stock
 #: code:addons/stock/wizard/stock_picking_return.py:43
 #, python-format
 msgid "You may only return Done pickings"
-msgstr ""
+msgstr "Вы можете возвращать только готовые комплекты"
+
+#. module: stock
+#: code:addons/stock/models/stock_inventory.py:21
+#, python-format
+msgid "You must define a warehouse for the company: %s."
+msgstr "Необходимо определить склад для компании: %s."
 
 #. module: stock
 #: code:addons/stock/models/stock_move.py:553

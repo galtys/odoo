@@ -16,7 +16,7 @@ class MassMailingTag(models.Model):
     _description = 'Mass Mailing Tag'
     _order = 'name'
 
-    name = fields.Char(required=True)
+    name = fields.Char(required=True, translate=True)
     color = fields.Integer(string='Color Index')
 
     _sql_constraints = [
@@ -464,7 +464,7 @@ class MassMailing(models.Model):
             return super(MassMailing, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby)
 
     def update_opt_out(self, email, res_ids, value):
-        model = self.env[self.mailing_model]
+        model = self.env[self.mailing_model].with_context(active_test=False)
         if 'opt_out' in model._fields:
             email_fname = 'email_from'
             if 'email' in model._fields:

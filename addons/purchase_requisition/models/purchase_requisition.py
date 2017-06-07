@@ -189,7 +189,7 @@ class PurchaseOrder(models.Model):
 
             # Compute taxes
             if fpos:
-                taxes_ids = fpos.map_tax(line.product_id.supplier_taxes_id.filtered(lambda tax: tax.company_id == requisition.company_id))
+                taxes_ids = fpos.map_tax(line.product_id.supplier_taxes_id.filtered(lambda tax: tax.company_id == requisition.company_id)).ids
             else:
                 taxes_ids = line.product_id.supplier_taxes_id.filtered(lambda tax: tax.company_id == requisition.company_id).ids
 
@@ -268,8 +268,8 @@ class PurchaseOrderLine(models.Model):
             for line in self.order_id.requisition_id.line_ids:
                 if line.product_id == self.product_id:
                     if line.product_uom_id != self.product_uom:
-                        self.price_unit = self.env['product.uom']._compute_price(
-                            line.product_uom_id.id, line.price_unit, to_uom_id=self.product_uom.id)
+                        self.price_unit = line.product_uom_id._compute_price(
+                            line.price_unit, self.product_uom)
                     else:
                         self.price_unit = line.price_unit
                     break

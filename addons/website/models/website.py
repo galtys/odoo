@@ -164,7 +164,7 @@ class Website(models.Model):
     domain = fields.Char('Website Domain')
     company_id = fields.Many2one('res.company', string="Company", default=lambda self: self.env.ref('base.main_company').id)
     language_ids = fields.Many2many('res.lang', 'website_lang_rel', 'website_id', 'lang_id', 'Languages', default=_active_languages)
-    default_lang_id = fields.Many2one('res.lang', string="Default Language", default=_default_language)
+    default_lang_id = fields.Many2one('res.lang', string="Default Language", default=_default_language, required=True)
     default_lang_code = fields.Char(related='default_lang_id.code', string="Default language code", store=True)
 
     social_twitter = fields.Char('Twitter Account')
@@ -526,6 +526,7 @@ class Website(models.Model):
                       of the same.
             :rtype: list({name: str, url: str})
         """
+        request.context = dict(request.context, **self.env.context)
         router = request.httprequest.app.get_db_router(request.db)
         # Force enumeration to be performed as public user
         url_set = set()
@@ -569,12 +570,12 @@ class Website(models.Model):
     @api.multi
     def search_pages(self, needle=None, limit=None):
         name = re.sub(r"^/p(a(g(e(/(w(e(b(s(i(t(e(\.)?)?)?)?)?)?)?)?)?)?)?)?", "", needle or "")
+        name = slugify(name, max_length=50)
         res = []
         for page in self.enumerate_pages(query_string=name):
-            if needle in page['loc']:
-                res.append(page)
-                if len(res) == limit:
-                    break
+            res.append(page)
+            if len(res) == limit:
+                break
         return res
 
     @api.model

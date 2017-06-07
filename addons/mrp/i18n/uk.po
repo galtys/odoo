@@ -2154,7 +2154,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:mrp.field_mrp_config_settings_module_quality_mrp
 #: selection:mrp.workcenter.productivity.loss,loss_type:0
 msgid "Quality"
-msgstr ""
+msgstr "Якість"
 
 #. module: mrp
 #: model:ir.ui.view,arch_db:mrp.oee_search_view
@@ -3090,7 +3090,7 @@ msgstr ""
 #: model:ir.model.fields,help:mrp.field_stock_warehouse_manufacture_to_resupply
 msgid ""
 "When products are manufactured, they can be manufactured in this warehouse."
-msgstr ""
+msgstr "При виготовленні товарів вони можуть виготовлятися в цьому складі."
 
 #. module: mrp
 #: model:ir.model.fields,help:mrp.field_mrp_routing_workcenter_batch
@@ -3346,9 +3346,21 @@ msgid ""
 msgstr ""
 
 #. module: mrp
-#: code:addons/mrp/models/stock_move.py:123
+#: code:addons/mrp/models/stock_move.py:40
+#, python-format
+msgid "You can only produce 1.0 %s for products with unique serial number."
+msgstr ""
+
+#. module: mrp
+#: code:addons/mrp/models/stock_move.py:135
 #, python-format
 msgid "You cannot cancel a move move having already consumed material"
+msgstr ""
+
+#. module: mrp
+#: code:addons/mrp/models/stock_move.py:40
+#, python-format
+msgid "You cannot use the same serial number in two different lines."
 msgstr ""
 
 #. module: mrp

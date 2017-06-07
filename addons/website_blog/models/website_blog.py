@@ -26,12 +26,14 @@ class Blog(models.Model):
         if 'active' in vals:
             # archiving/unarchiving a blog does it on its posts, too
             post_ids = self.env['blog.post'].with_context(active_test=False).search([
-                ('blog_id', 'in', self)
+                ('blog_id', 'in', self.ids)
             ])
-            post_ids.write({'active': vals['active']})
+            for blog_post in post_ids:
+                blog_post.active = vals['active']
         return res
 
     @api.multi
+    @api.returns('self', lambda value: value.id)
     def message_post(self, parent_id=False, subtype=None, **kwargs):
         """ Temporary workaround to avoid spam. If someone replies on a channel
         through the 'Presentation Published' email, it should be considered as a
@@ -79,7 +81,7 @@ class BlogTag(models.Model):
     _inherit = ['website.seo.metadata']
     _order = 'name'
 
-    name = fields.Char('Name', required=True)
+    name = fields.Char('Name', required=True, translate=True)
     post_ids = fields.Many2many('blog.post', string='Posts')
 
     _sql_constraints = [

@@ -11,13 +11,16 @@
 # UAB "Draugiški sprendimai" <transifex@draugiskisprendimai.lt>, 2016
 # Šarūnas Ažna <sarunas.azna@gmail.com>, 2016
 # Elvinas Černys <elvinas@digitouch.lt>, 2016
+# Monika Raciunaite <monika.raciunaite@gmail.com>, 2016
+# Antanas Muliuolis <an.muliuolis@gmail.com>, 2017
+# Aiste Sutkute <digitouchagencyeur@gmail.com>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-10-10 08:42+0000\n"
 "PO-Revision-Date: 2016-10-10 08:42+0000\n"
-"Last-Translator: Elvinas Černys <elvinas@digitouch.lt>, 2016\n"
+"Last-Translator: Aiste Sutkute <digitouchagencyeur@gmail.com>, 2017\n"
 "Language-Team: Lithuanian (https://www.transifex.com/odoo/teams/41243/lt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -834,7 +837,7 @@ msgstr ""
 #. module: project
 #: model:ir.ui.view,arch_db:project.edit_project
 msgid "Accept Emails From"
-msgstr ""
+msgstr "Priimti laiškus iš"
 
 #. module: project
 #: model:ir.ui.view,arch_db:project.project_planner
@@ -905,7 +908,7 @@ msgstr "Alternatyvus vardas"
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_project_alias_contact
 msgid "Alias Contact Security"
-msgstr ""
+msgstr "Kolegų apsauga"
 
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_project_alias_model
@@ -915,17 +918,17 @@ msgstr ""
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_project_alias_name
 msgid "Alias Name"
-msgstr ""
+msgstr "Alternatyvus vardas"
 
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_project_alias_domain
 msgid "Alias domain"
-msgstr ""
+msgstr "Alternatyvaus vardo domenas"
 
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_project_alias_model_id
 msgid "Aliased Model"
-msgstr ""
+msgstr "Alternatyvaus vardo modelis"
 
 #. module: project
 #: model:ir.ui.view,arch_db:project.project_planner
@@ -983,7 +986,7 @@ msgstr "Archyvuojamas"
 #. module: project
 #: model:ir.model.fields,field_description:project.field_report_project_task_user_date_start
 msgid "Assignation Date"
-msgstr ""
+msgstr "Priskyrimo data"
 
 #. module: project
 #: model:ir.ui.view,arch_db:project.view_task_project_user_search
@@ -1193,7 +1196,7 @@ msgstr ""
 #. module: project
 #: model:ir.actions.act_window,help:project.project_tags_action
 msgid "Click to add a new tag."
-msgstr ""
+msgstr "Spauskite pridėti naują žymą."
 
 #. module: project
 #: model:ir.actions.act_window,help:project.open_task_type_form
@@ -1582,7 +1585,7 @@ msgstr "Dokumentacija"
 #. module: project
 #: model:ir.ui.view,arch_db:project.edit_project
 msgid "Documents"
-msgstr ""
+msgstr "Dokumentai"
 
 #. module: project
 #: model:ir.ui.view,arch_db:project.project_planner
@@ -1641,12 +1644,12 @@ msgstr ""
 #. module: project
 #: model:ir.ui.view,arch_db:project.edit_project
 msgid "Email Alias"
-msgstr ""
+msgstr "Alternatyvus el. paštas"
 
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_task_type_mail_template_id
 msgid "Email Template"
-msgstr ""
+msgstr "El. laiško šablonas"
 
 #. module: project
 #: model:ir.ui.view,arch_db:project.edit_project
@@ -1928,6 +1931,8 @@ msgid ""
 "ID of the parent record holding the alias (example: project holding the task"
 " creation alias)"
 msgstr ""
+"Tėvinio įrašo ID, kuris laiko savyje dukterinį įrašą (pvz.: projektas "
+"laikantis sukurtas užduotis)"
 
 #. module: project
 #. openerp-web
@@ -2196,7 +2201,7 @@ msgstr "Paskutinį kartą keista"
 #: model:ir.model.fields,field_description:project.field_project_task_date_last_stage_update
 #: model:ir.model.fields,field_description:project.field_report_project_task_user_date_last_stage_update
 msgid "Last Stage Update"
-msgstr ""
+msgstr "Paskutinis etapas atnaujintas"
 
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_config_settings_write_uid
@@ -2464,6 +2469,8 @@ msgid ""
 "attached, even if they did not reply to it. If set, this will disable the "
 "creation of new records completely."
 msgstr ""
+"Pasirinkto įrašo ID prie kurio bus prisegti visi įeinantys laiškai. Jei "
+"nustatyta, nauji laiškai nebus kuriami."
 
 #. module: project
 #: model:ir.actions.act_window,help:project.open_view_project_all
@@ -2542,7 +2549,7 @@ msgstr "Tėvinis modelis"
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_project_alias_parent_thread_id
 msgid "Parent Record Thread ID"
-msgstr ""
+msgstr "Tėvinio įrašo temos ID"
 
 #. module: project
 #: model:ir.model.fields,help:project.field_project_project_alias_parent_model_id
@@ -3020,7 +3027,7 @@ msgstr "Pradžios data"
 #. module: project
 #: sql_constraint:project.tags:0
 msgid "Tag name already exists !"
-msgstr ""
+msgstr "Žymos pavadinimas jau egzistuoja!"
 
 #. module: project
 #: model:ir.actions.act_window,name:project.project_tags_action
@@ -3561,7 +3568,7 @@ msgstr ""
 #. module: project
 #: model:ir.ui.view,arch_db:project.project_planner
 msgid "Welcome"
-msgstr ""
+msgstr "Sveiki"
 
 #. module: project
 #: model:ir.ui.view,arch_db:project.project_planner
@@ -3745,7 +3752,7 @@ msgstr ""
 #. module: project
 #: model:ir.ui.view,arch_db:project.project_planner
 msgid "send us an email"
-msgstr ""
+msgstr "atsiųskite mums el. laišką"
 
 #. module: project
 #: code:addons/project/models/project.py:466
