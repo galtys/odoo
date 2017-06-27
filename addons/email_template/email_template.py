@@ -380,6 +380,7 @@ class email_template(osv.osv):
         values = self.generate_email(cr, uid, template_id, res_id, context=context)
         if not values.get('email_from'):
             raise osv.except_osv(_('Warning!'),_("Sender email is missing or empty after template rendering. Specify one to deliver your message"))
+        values['email_from']='sales@bridgman.co.uk'
         # process email_recipients field that is a comma separated list of partner_ids -> recipient_ids
         # NOTE: only usable if force_send is True, because otherwise the value is
         # not stored on the mail_mail, and therefore lost -> fixed in v8

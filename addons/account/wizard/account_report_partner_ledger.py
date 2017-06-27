@@ -86,6 +86,7 @@ class account_partner_ledger(osv.osv_memory):
             context = {}
         data = self.pre_print_report(cr, uid, ids, data, context=context)
         data['form'].update(self.read(cr, uid, ids, ['initial_balance', 'filter', 'page_split', 'amount_currency'])[0])
+        print 44*'ocas_'
         return {
             'type': 'ir.actions.report.xml',
             'report_name': 'partner.overdue.webkit',
@@ -100,7 +101,9 @@ class account_partner_ledger(osv.osv_memory):
         }
         return {
                 'type': 'ir.actions.report.xml',
-                'report_name': 'account.third_party_ledger_other',
+                #'report_name': 'account.third_party_ledger_other',
+                'report_name': 'partner.overdue.webkit45',
+#partner.overdue.webkit
                 'datas': data,
         }
 
