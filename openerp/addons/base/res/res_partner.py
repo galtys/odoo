@@ -330,7 +330,8 @@ class res_partner(osv.osv, format_address):
         'company_id': lambda self, cr, uid, ctx: self.pool.get('res.company')._company_default_get(cr, uid, 'res.partner', context=ctx),
         'color': 0,
         'is_company': False,
-        'type': 'contact', # type 'default' is wildcard and thus inappropriate
+        #'type': 'contact', # type 'default' is wildcard and thus inappropriate
+        'type': 'default', # type 'default' is wildcard and thus inappropriate
         'use_parent_address': False,
         'image': False,
     }
