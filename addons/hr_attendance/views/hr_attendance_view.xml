@@ -8,9 +8,14 @@
         <field name="model">hr.attendance</field>
         <field name="arch" type="xml">
             <tree string="Employee attendances">
-                <field name="employee_id"/>
                 <field name="check_in"/>
                 <field name="check_out"/>
+		<field name="fingerprint_code"/>
+		<field name="task_code"/>
+		<field name="site_code"/>
+		<field name="gps"/>
+                <field name="employee_id"/>
+		<field name="verified"/>
             </tree>
         </field>
     </record>
@@ -21,11 +26,27 @@
         <field name="arch" type="xml">
             <form string="Employee attendances">
                 <sheet>
-                    <group>
-                        <field name="employee_id"/>
+		    <group string="A) Message">
+		      <field name="message"/>
+		    </group>
+		    <button name="parse_message" type="object" string="Parse Message"/>
+                    <group string="B) Message Components">			
                         <field name="check_in"/>
                         <field name="check_out"/>
-                    </group>
+			<field name="fingerprint_code"/>
+			<field name="task_code"/>
+			<field name="site_code"/>
+			<field name="gps"/>
+		        <field name="signature"/>
+		    </group>
+		    <group string="C) Cleaner Proof of Work">
+                        <field name="employee_id"/>
+			<field name="site_public_key"/>
+			<field name="verified"/>
+		    </group>
+		    <button name="verify_site_and_cleaner" type="object" string="Verify Site and Cleaner"/>
+
+
                 </sheet>
             </form>
         </field>

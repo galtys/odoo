@@ -166,6 +166,17 @@ class Project(models.Model):
         result['use_tasks'] = True
         return result
 
+    #__________________________________________________
+    #For CLEAN SPACE
+    site_secret_key=fields.Char("Site Secret Key", size=444)
+    site_public_key=fields.Char("Site Public Key", size=444)
+    site_code=fields.Char("Site Code", size=444)
+    verify_gps=fields.Boolean("Verify GPS")
+    verify_timestamp=fields.Boolean("Verify Timestamps")
+    verify_fingerprint=fields.Boolean("Verify FingerPrint")
+
+    #__________________________________________________
+
     # Lambda indirection method to avoid passing a copy of the overridable method when declaring the field
     _alias_models = lambda self: self._get_alias_models()
 
@@ -322,6 +333,43 @@ class Task(models.Model):
         return stages.browse(stage_ids)
 
     active = fields.Boolean(default=True)
+    #__________________________________________________
+    #For CLEAN SPACE
+    repeat = fields.Boolean(default=True, string="Repeat")
+    repeats = fields.Selection([('weekly','Weekly')],
+                               string="Repeats",
+                               default='weekly')
+    repeat_every=fields.Selection([('1','1'),
+                                   ('2','2'),
+                                   ('3','3')],
+                                  string="Repeat Every",
+                                  default='1')
+    repeat_mon=fields.Boolean(default=False, string="Mon")
+    repeat_tue=fields.Boolean(default=False, string="Tue")
+    repeat_wed=fields.Boolean(default=False, string="Wed")
+    repeat_thu=fields.Boolean(default=False, string="Thu")
+    repeat_fri=fields.Boolean(default=False, string="Fri")
+    repeat_sat=fields.Boolean(default=False, string="Sat")
+    repeat_sun=fields.Boolean(default=False, string="Sun")
+    repetition_ends=fields.Selection([('never','Never'),
+                                      ('after','After # Occurences'),
+                                      ('end_date', 'Specific End Date'),
+                                      ],
+                                     string="Repetition Ends",
+                                     default="after")
+    repetition_occurences=fields.Integer(string="After Occurences", default=35)
+
+
+    task_secret_key=fields.Char("Task Secret Key")
+    task_public_key=fields.Char("Task Public Key")
+    task_code=fields.Char("Task Code")
+    time_start=fields.Float("Time Start")
+    time_stop=fields.Float("Time Stop")
+
+    #__________________________________________________
+
+
+
     name = fields.Char(string='Task Title', track_visibility='always', required=True, index=True)
     description = fields.Html(string='Description')
     priority = fields.Selection([
@@ -348,9 +396,15 @@ class Task(models.Model):
              " * Ready for next stage indicates the task is ready to be pulled to the next stage")
     create_date = fields.Datetime(index=True)
     write_date = fields.Datetime(index=True)  #not displayed in the view but it might be useful with base_action_rule module (and it needs to be defined first for that)
-    date_start = fields.Datetime(string='Starting Date',
+    #date_start = fields.Datetime(string='Starting Date',
+    #default=fields.Datetime.now,
+    #index=True, copy=False)
+
+    date_start = fields.Date(string='Starting Date',
     default=fields.Datetime.now,
     index=True, copy=False)
+
+
     date_end = fields.Datetime(string='Ending Date', index=True, copy=False)
     date_assign = fields.Datetime(string='Assigning Date', index=True, copy=False, readonly=True)
     date_deadline = fields.Date(string='Deadline', index=True, copy=False)

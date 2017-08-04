@@ -344,8 +344,8 @@ class Field(object):
     def __init__(self, string=Default, **kwargs):
         kwargs['string'] = string
         args = {key: val for key, val in kwargs.iteritems() if val is not Default}
-        if 'required' in args:
-            args['required']=False
+        #if 'required' in args:
+        #    args['required']=False
         self.args = args or EMPTY_DICT
         self._setup_done = None
 

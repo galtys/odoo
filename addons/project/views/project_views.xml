@@ -2,7 +2,7 @@
 <odoo>
 
         <!-- Top menu item -->
-        <menuitem name="Project"
+        <menuitem name="Sites"
             id="menu_main_pm"
             groups="group_project_manager,group_project_user"
             web_icon="project,static/description/icon.png"
@@ -105,12 +105,20 @@
                     </div>
                     <notebook>
                         <page string="Settings">
-                            <group>
+                            <group string="General">
                                 <field name="user_id" string="Project Manager"
                                         attrs="{'readonly':[('active','=',False)]}"/>
                                 <field name="privacy_visibility" widget="radio"/>
                                 <field name="partner_id" string="Customer"/>
                             </group>
+			    <group string="Site Work Verification">
+			        <field name="site_secret_key"/>
+				<field name="site_public_key"/>
+				<field name="site_code"/>
+				<field name="verify_gps"/>
+				<field name="verify_timestamp"/>
+				<field name="verify_fingerprint"/>
+			    </group>
                             <group name="misc">
                                 <group string="Configuration" groups="base.group_no_one">
                                     <field name="sequence" groups="base.group_no_one"/>
@@ -174,7 +182,12 @@
                     <field name="sequence" widget="handle"/>
                     <field name="message_needaction" invisible="1"/>
                     <field name="active" invisible="1"/>
-                    <field name="name" string="Project Name"/>
+                    <field name="name" string="Site Name"/>
+		    <field name="site_code"/>
+		    <field name="verify_gps"/>
+		    <field name="verify_timestamp"/>
+		    <field name="verify_fingerprint"/>
+
                     <field name="user_id" string="Project Manager"/>
                     <field name="partner_id" string="Contact"/>
                 </tree>
@@ -373,6 +386,29 @@ action = model.activate_sample_project()
                             <field name="date_deadline"/>
                             <field name="tag_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
                         </group>
+			<group string="Repetition">
+			   <field name="date_start"/>
+			   <field name="time_start"/>
+			   <field name="time_stop"/>
+			   <field name="repeat"/>
+			   <field name="repeats"/>
+			   <field name="repeat_every"/>
+			   <field name="repeat_mon"/>
+			   <field name="repeat_tue"/>
+			   <field name="repeat_wed"/>
+			   <field name="repeat_thu"/>
+			   <field name="repeat_fri"/>
+			   <field name="repeat_sat"/>
+			   <field name="repeat_sun"/>
+			   <field name="repetition_ends"/>
+			   <field name="repetition_occurences"/>
+			</group>
+			<group string="Proof of Work">
+			   <field name="task_secret_key"/>
+			   <field name="task_public_key"/>
+			   <field name="task_code"/>
+
+			</group>
                     </group>
                     <notebook>
                         <page name="description_page" string="Description">
@@ -486,9 +522,25 @@ action = model.activate_sample_project()
                     <field name="message_needaction" invisible="1"/>
                     <field name="sequence" invisible="not context.get('seq_visible', False)"/>
                     <field name="name"/>
+		    <field name="task_code"/>
                     <field name="project_id" invisible="context.get('user_invisible', False)"/>
+		    <field name="date_start"/>
+		    <field name="time_start"/>
+		    <field name="time_stop"/>
+		    <field name="repeat"/>
+		    <field name="repeats"/>
+		    <field name="repeat_mon"/>
+		    <field name="repeat_tue"/>
+		    <field name="repeat_wed"/>
+		    <field name="repeat_thu"/>
+		    <field name="repeat_fri"/>
+		    <field name="repeat_sat"/>
+		    <field name="repeat_sun"/>
+
                     <field name="user_id" invisible="context.get('user_invisible', False)"/>
+
                     <field name="date_deadline" invisible="context.get('deadline_visible',True)"/>
+
                     <field name="stage_id" invisible="context.get('set_visible',False)"/>
                 </tree>
             </field>

@@ -103,6 +103,11 @@
                                         <field name="user_id" string="Related User"/>
                                     </group>
                                 </group>
+				<group string="Proof of Work">
+<!--                                    <field name="fingerprint"/>
+				    <field name="fingerprint_public/> -->
+				    <field name="fingerprint_code"/>
+				</group>
                             </page>
                         </notebook>
                     </sheet>
@@ -120,6 +125,7 @@
             <field name="arch" type="xml">
                 <tree string="Employees" decoration-bf="message_needaction==True">
                     <field name="name"/>
+		    <field name="fingerprint_code"/>
                     <field name="work_phone"/>
                     <field name="work_email"/>
                     <field name="company_id" groups="base.group_multi_company"/>

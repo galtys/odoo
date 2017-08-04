@@ -107,6 +107,15 @@ class Employee(models.Model):
         image_path = get_module_resource('hr', 'static/src/img', 'default_image.png')
         return tools.image_resize_image_big(open(image_path, 'rb').read().encode('base64'))
 
+    #__________________________________________________
+    #For CLEAN SPACE
+    fingerprint=fields.Char("Fingerprint", size=444)
+    fingerprint_public=fields.Char("Fingerprint Public Key", size=444)
+    fingerprint_code=fields.Char("Fingerprint Code", size=444)
+
+    #__________________________________________________
+
+
     # we need a related field in order to be able to sort the employee by name
     name_related = fields.Char(related='resource_id.name', string="Resource Name", readonly=True, store=True)
     country_id = fields.Many2one('res.country', string='Nationality (Country)')
