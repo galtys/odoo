@@ -165,12 +165,16 @@ class Project(models.Model):
         result = super(Project, self).default_get(flds)
         result['use_tasks'] = True
         return result
-
     #__________________________________________________
     #For CLEAN SPACE
-    site_secret_key=fields.Char("Site Secret Key", size=444)
-    site_public_key=fields.Char("Site Public Key", size=444)
-    site_code=fields.Char("Site Code", size=444)
+    def _default_code_id(self):
+        res=self.env["skynet.code"].create({})
+        return res.id
+
+    code_id=fields.Many2one("skynet.code", 'Code', default=_default_code_id)
+    site_secret_key=fields.Char("Site Secret Key", related='code_id.secret_key')
+    site_public_key=fields.Char("Site Public Key", related='code_id.public_key')
+    site_code=fields.Char("Site Code", related='code_id.code')
     verify_gps=fields.Boolean("Verify GPS")
     verify_timestamp=fields.Boolean("Verify Timestamps")
     verify_fingerprint=fields.Boolean("Verify FingerPrint")
@@ -360,9 +364,16 @@ class Task(models.Model):
     repetition_occurences=fields.Integer(string="After Occurences", default=35)
 
 
-    task_secret_key=fields.Char("Task Secret Key")
-    task_public_key=fields.Char("Task Public Key")
-    task_code=fields.Char("Task Code")
+    def _default_code_id(self):
+        res=self.env["skynet.code"].create({})
+        return res.id
+    #__________________________________________________
+    #For CLEAN SPACE
+    code_id=fields.Many2one("skynet.code", 'Code', default=_default_code_id)
+
+    task_secret_key=fields.Char("Task Secret Key", related='code_id.secret_key')
+    task_public_key=fields.Char("Task Public Key", related='code_id.public_key')
+    task_code=fields.Char("Task Code", related='code_id.code')
     time_start=fields.Float("Time Start")
     time_stop=fields.Float("Time Stop")
 

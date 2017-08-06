@@ -109,9 +109,13 @@ class Employee(models.Model):
 
     #__________________________________________________
     #For CLEAN SPACE
-    fingerprint=fields.Char("Fingerprint", size=444)
-    fingerprint_public=fields.Char("Fingerprint Public Key", size=444)
-    fingerprint_code=fields.Char("Fingerprint Code", size=444)
+    def _default_code_id(self):
+        res=self.env["skynet.code"].create({})
+        return res.id
+    code_id=fields.Many2one("skynet.code", 'Code', default=_default_code_id)
+    fingerprint=fields.Char("Fingerprint", related='code_id.secret_key')
+    fingerprint_public=fields.Char("Fingerprint Public Key", related='code_id.public_key')
+    fingerprint_code=fields.Char("Fingerprint Code", related='code_id.code')
 
     #__________________________________________________
 

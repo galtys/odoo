@@ -17,6 +17,7 @@
         'web_kanban',
         'web_planner',
         'web_tour',
+        'galtys_skynet',
     ],
     'description': """
 Track multi-level projects, tasks, work done on tasks
