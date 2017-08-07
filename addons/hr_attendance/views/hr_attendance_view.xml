@@ -45,7 +45,14 @@
 			<field name="verified"/>
 		    </group>
 		    <button name="verify_site_and_cleaner" type="object" string="Verify Site and Cleaner"/>
-
+		    <group string="D) Award hours to timesheet">
+			<field name="task_id"/>
+			<field name="site_id"/>		     
+			<field name="msg_sha1"/>
+			<field name="worked_hours"/>
+		    </group>
+		    <button name="award_hours" type="object" string="Award Hours"/>
+		    
 
                 </sheet>
             </form>

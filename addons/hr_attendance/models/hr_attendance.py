@@ -6,6 +6,12 @@ from datetime import datetime
 from odoo import models, fields, api, exceptions, _
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
+import base58
+from bitcoin import ecdsa_sign, ecdsa_verify
+
+#from odoo.addons.cs_signing_device.att_msg import  HrAttendanceSigned, HrAttendance
+from odoo.addons.cs_signing_device.att_msg.clean_space_pb2 import  HrAttendanceSigned, HrAttendance
+import hashlib
 
 class HrAttendance(models.Model):
     _name = "hr.attendance"
@@ -24,21 +30,90 @@ class HrAttendance(models.Model):
     check_in = fields.Datetime(string="Check In")
     #check_in = fields.Datetime(string="Check In", default=fields.Datetime.now, required=True)
     check_out = fields.Datetime(string="Check Out")
-    worked_hours = fields.Float(string='Worked Hours', compute='_compute_worked_hours', store=True, readonly=True)
+    worked_hours = fields.Float(string='Worked Hours', compute='_compute_worked_hours', readonly=True)
     message=fields.Text("Message")
     fingerprint_code=fields.Char("Fingerprint Code",size=444)
     task_code=fields.Char("Task Code", size=444)
     site_code=fields.Char("Site Code", size=444)
     gps=fields.Char("GPS", size=444)
+    signed_msg=fields.Char("Signed Message")
     signature=fields.Text("Signature")
     site_public_key=fields.Char("Site Public Key", size=444)
     verified=fields.Boolean("VERIFIED", compute='_verified', readonly=True)
 
-    @api.depends('signature','site_public_key')
+    def parse_message(self):
+        for a in self:
+            msg58c=a.message
+            msg=base58.b58decode_check( msg58c )
+            att_msg2 = HrAttendanceSigned()
+            att_msg2.ParseFromString( msg )
+            a.check_in=att_msg2.attendance.check_in
+            a.check_out=att_msg2.attendance.check_out
+            a.fingerprint_code=att_msg2.attendance.fingerprint_code
+            a.task_code = att_msg2.attendance.task_code
+            a.site_code = att_msg2.attendance.site_code
+            a.signature = att_msg2.signature
+            a.signed_msg = att_msg2.attendance.SerializeToString()
+
+    def verify_site_and_cleaner(self):
+        for a in self:
+            s = self.env['project.project'].search( [('code_id.code','=',a.site_code)] )
+            a.site_public_key=s.code_id.public_key
+            e = self.env['hr.employee'].search( [('code_id.code','=',a.fingerprint_code)] )
+            if e:
+                a.employee_id = e.id
+            else:
+                a.employee_id=False
+
+    @api.depends('task_code','site_code')
+    def _get_site_and_task(self):
+        for a in self:
+            if a.verified:
+                if a.site_code:
+                    s = self.env['project.project'].search( [('code_id.code','=',a.site_code)] )
+                    print [s]
+                    if s:
+                        a.site_id=s.id
+                if a.task_code:
+                    t = self.env['project.task'].search( [('code_id.code','=',a.task_code)] )
+                    print [t]
+                    if t:
+                        a.task_id=t.id
+                if a.site_id and a.task_id and a.signed_msg:
+                    a.msg_sha1=hashlib.sha1(a.signed_msg).hexdigest()
+                    
+    site_id=fields.Many2one('project.project',string='Site',compute='_get_site_and_task')
+    task_id=fields.Many2one('project.task',string='Task',compute='_get_site_and_task')
+    msg_sha1=fields.Char('TimeSheet SHA1', compute='_get_site_and_task')
+    #site_id=fields.Many2one('project.project',string='Site')
+    #task_id=fields.Many2one('project.task',string='Task')
+
+    def award_hours(self):
+        for a in self:
+            if a.verified and a.msg_sha1 and a.employee_id and a.site_id and a.task_id:
+                t_exist=self.env['account.analytic.line'].search( [('name','=',a.msg_sha1)] )
+                val={'user_id':a.employee_id.user_id.id,
+                     'name':a.msg_sha1,
+                     'project_id':a.site_id.id,
+                     'task_id':a.task_id.id,
+                     'unit_amount':a.worked_hours,
+                     'date':a.check_out}
+                #print t_exist, val
+                if t_exist:
+                    t_exist.write(val)
+                else:
+                    t_ = self.env['account.analytic.line'].create(val)
+                    
+
+    @api.depends('signed_msg', 'signature','site_public_key',)
     def _verified(self):
         for a in self:
-            if a.signature:
-                a.verified=True
+            if a.signed_msg and a.signature and a.site_public_key:
+                a.verified=ecdsa_verify(str(a.signed_msg), 
+                                        str(a.signature), 
+                                        str(a.site_public_key)
+                )
+
             else:
                 a.verified=False
 
@@ -63,8 +138,10 @@ class HrAttendance(models.Model):
     def _compute_worked_hours(self):
         for attendance in self:
             if attendance.check_out:
-                delta = datetime.strptime(attendance.check_out, DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(
-                    attendance.check_in, DEFAULT_SERVER_DATETIME_FORMAT)
+                delta = datetime.strptime(attendance.check_out, DEFAULT_SERVER_DATETIME_FORMAT) - datetime.strptime(attendance.check_in, DEFAULT_SERVER_DATETIME_FORMAT)
+                a=attendance
+                #print 44*'_'
+                #print [a.check_out, a.check_in, delta]
                 attendance.worked_hours = delta.total_seconds() / 3600.0
 
     @api.constrains('check_in', 'check_out')
