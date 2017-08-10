@@ -158,7 +158,7 @@ class picking_operations(osv.osv):
             return [x.id for x in move_line.sale_line_id.tax_id]
         else:
             _logger.error("could not get tax codes for move_line: %s, %s", move_line.picking_id.name, move_line.name)
-        return super(stock_picking, self)._get_taxes_invoice(cursor, user, move_line, type)
+        return super(picking_operations, self)._get_taxes_invoice(cursor, user, move_line, type)
 
     def _get_price_unit_invoice_galtys(self, cursor, user, move_line, type):
 
