@@ -185,7 +185,7 @@
                         <group>
                             <field name="debit" attrs="{'readonly':[('type','=','view')]}"/>
                             <field name="credit" attrs="{'readonly':[('type','=','view')]}"/>
-                            <field name="balance"/>
+<!--                            <field name="balance"/> -->
                         </group>
                         <group>
                             <field name="tax_ids" domain="[('parent_id','=',False)]" widget="many2many_tags"/>
