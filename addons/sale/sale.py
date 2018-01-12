@@ -112,7 +112,7 @@ class sale_order(osv.osv):
                 res['bank_account']='Sort Code: %s, Bank Account: %s' % (o.bank.bank_bic, o.bank.acc_number)
                 res['bank_address']='Bank Address: '+ o.bank.bank.name+', '+o.bank.bank.street+', ' + o.bank.bank.zip+', '+o.bank.bank.city+', ' + o.bank.bank.country.name
             if o.state in ['draft','sent'] and o.proforma:
-                res['title']='PROFORMA'
+                res['title']='PROFORMA INVOICE'
             elif o.state in ['draft','sent'] and not o.proforma:
                 res['title']='QUOTE'
             else:
