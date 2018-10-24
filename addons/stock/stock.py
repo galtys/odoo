@@ -685,11 +685,16 @@ class stock_picking(osv.osv):
         'product_id': fields.related('move_lines', 'product_id', type='many2one', relation='product.product', string='Product'),
         'auto_picking': fields.boolean('Auto-Picking', states={'done':[('readonly', True)], 'cancel':[('readonly',True)]}),
         'partner_id': fields.many2one('res.partner', 'Partner', states={'done':[('readonly', True)], 'cancel':[('readonly',True)]}),
+        #'invoice_state': fields.selection([
+         #   ("invoiced", "Invoiced"),
+        #    ("2binvoiced", "To Be Invoiced"),
+         #   ("none", "Not Applicable")], "Invoice Control",
+        #    select=True, required=True, readonly=True, track_visibility='onchange', states={'draft': [('readonly', False)]}),
         'invoice_state': fields.selection([
             ("invoiced", "Invoiced"),
             ("2binvoiced", "To Be Invoiced"),
             ("none", "Not Applicable")], "Invoice Control",
-            select=True, required=True, readonly=True, track_visibility='onchange', states={'draft': [('readonly', False)]}),
+            select=True, required=True, track_visibility='onchange', states={'draft': [('readonly', False)]}),
         'company_id': fields.many2one('res.company', 'Company', required=True, select=True, states={'done':[('readonly', True)], 'cancel':[('readonly',True)]}),
     }
     _defaults = {
