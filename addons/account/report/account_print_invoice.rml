@@ -332,7 +332,7 @@
             </para>
           </td>
           <td>
-            <para style="terp_5f_default_5f_Right_5f_9">[[ formatLang(l.price_subtotal, digits=get_digits(dp='Account')) ]] [[ o.currency_id.symbol ]]</para>
+            <para style="terp_5f_default_5f_Right_5f_9">[[ o.currency_id.symbol ]] [[ formatLang(l.price_subtotal, digits=get_digits(dp='Account')) ]] </para>
           </td>
         </tr>
         <tr>
@@ -378,7 +378,7 @@
           <para style="terp_5f_default_5f_9">Net Total:</para>
         </td>
         <td>
-          <para style="terp_5f_default_5f_Right_5f_9">[[ formatLang(o.amount_untaxed, digits=get_digits(dp='Account')) ]] [[ o.currency_id.symbol ]]</para>
+          <para style="terp_5f_default_5f_Right_5f_9">[[ o.currency_id.symbol ]] [[ formatLang(o.amount_untaxed, digits=get_digits(dp='Account')) ]] </para>
         </td>
       </tr>
       <tr>
@@ -391,7 +391,7 @@
           <para style="terp_5f_default_5f_9">VAT:</para>
         </td>
         <td>
-          <para style="terp_5f_default_5f_Right_5f_9">[[ formatLang(o.amount_tax, digits=get_digits(dp='Account')) ]] [[ o.currency_id.symbol ]]</para>
+          <para style="terp_5f_default_5f_Right_5f_9">[[ o.currency_id.symbol ]] [[ formatLang(o.amount_tax, digits=get_digits(dp='Account')) ]] </para>
         </td>
       </tr>
       <tr>
@@ -404,7 +404,7 @@
           <para style="terp_5f_tblheader_5f_Details">Total:</para>
         </td>
         <td>
-          <para style="terp_5f_default_5f_Bold_5f_Right_5f_9">[[ formatLang(o.amount_total, digits=get_digits(dp='Account')) ]] [[ o.currency_id.symbol ]]</para>
+          <para style="terp_5f_default_5f_Bold_5f_Right_5f_9">[[ o.currency_id.symbol ]] [[ formatLang(o.amount_total, digits=get_digits(dp='Account')) ]] </para>
         </td>
       </tr>
     </blockTable>
