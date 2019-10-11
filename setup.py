@@ -132,7 +132,7 @@ setup(
         'pychart',  # not on pypi, use: pip install http://download.gna.org/pychart/PyChart-1.39.tar.gz
         'pydot',
         #'python-dateutil < 2',
-        'python-dateutil < 2',
+        'python-dateutil',
         'python-ldap',  # optional
         'python-openid',
         'pytz',
