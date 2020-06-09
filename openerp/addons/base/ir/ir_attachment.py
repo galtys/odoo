@@ -77,7 +77,8 @@ class ir_attachment(osv.osv):
 
         path = re.sub('[.]','',path)
         path = path.strip('/\\')
-        return os.path.join(tools.config['root_path'], location, cr.dbname, path)
+        #return os.path.join(tools.config['root_path'], location, cr.dbname, path)
+        return os.path.join( '/home/jan/erp_data', location, cr.dbname, path)
 
     def _file_read(self, cr, uid, location, fname, bin_size=False):
         full_path = self._full_path(cr, uid, location, fname)
