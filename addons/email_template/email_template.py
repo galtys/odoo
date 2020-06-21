@@ -142,7 +142,7 @@ class email_template(osv.osv):
                                          help="If checked, the user's signature will be appended to the text version "
                                               "of the message"),
         'subject': fields.char('Subject', translate=True, help="Subject (placeholders may be used here)",),
-        'active':fields.Boolean('Active'),
+        'active':fields.boolean('Active'),
         'email_from': fields.char('From',
             help="Sender address (placeholders may be used here). If not set, the default "
                     "value will be the author's email alias if configured, or email address."),
