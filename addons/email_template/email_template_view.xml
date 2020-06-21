@@ -34,6 +34,7 @@
                                       <field name="email_cc"/>
                                       <field name="reply_to"/>
                                       <field name="user_signature"/>
+				      <field name="active"/>
                                     </group>
                                     <group string="Dynamic Value Builder" class="oe_edit_only">
                                             <field name="model_object_field" domain="[('model_id','=',model_id),('ttype','!=','one2many'),('ttype','!=','many2many')]" on_change="onchange_sub_model_object_value_field(model_object_field)"/>
