@@ -289,6 +289,15 @@
           <para style="terp_5f_default_5f_9">[[picking.weight ]]</para>
         </td>
       </tr>
+      <tr>
+        <td>
+          <para style="P3">TRACKING REF:</para>
+        </td>
+        <td>
+          <para style="P5">[[picking.carrier_tracking_ref]]</para>
+        </td>
+      </tr>
+      
     </blockTable>
     <para style="terp_5f_header">
       <font color="white"> </font>
