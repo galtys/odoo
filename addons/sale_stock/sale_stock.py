@@ -694,7 +694,7 @@ class sale_order_line(osv.osv):
             packaging = products.packaging[0].id
             result['product_packaging'] = packaging
 
-        if packaging:
+        if 0:# packaging:
             default_uom = products.uom_id and products.uom_id.id
             pack = pack_obj.browse(cr, uid, packaging, context=context)
             q = product_uom_obj._compute_qty(cr, uid, uom, pack.qty, default_uom)
@@ -712,7 +712,7 @@ class sale_order_line(osv.osv):
                     warning_msgs += _("Picking Information ! : ") + warn_msg + "\n\n"
                 warning = {
                        'title': _('Configuration Error!'),
-                       'message': warning_msgs
+                       'message':  warning_msgs
                 }
             result['product_uom_qty'] = qty
 
@@ -759,7 +759,7 @@ class sale_order_line(osv.osv):
         # Calling product_packaging_change function after updating UoM
         res_packing = self.product_packaging_change(cr, uid, ids, pricelist, product, qty, uom, partner_id, packaging, context=context)
         res['value'].update(res_packing.get('value', {}))
-        warning_msgs = '' #res_packing.get('warning') and res_packing['warning']['message'] or ''
+        warning_msgs = res_packing.get('warning') and res_packing['warning']['message'] or ''
         compare_qty = float_compare(product_obj.virtual_available, qty, precision_rounding=uom2.rounding)
         if (product_obj.type=='product') and int(compare_qty) == -1 \
            and (product_obj.procure_method=='make_to_stock'):
