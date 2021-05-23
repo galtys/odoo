@@ -699,7 +699,7 @@ class sale_order_line(osv.osv):
             pack = pack_obj.browse(cr, uid, packaging, context=context)
             q = product_uom_obj._compute_qty(cr, uid, uom, pack.qty, default_uom)
 #            qty = qty - qty % q + q
-            if qty and (q and not (qty % q) == 0):
+            if 0: #qty and (q and not (qty % q) == 0):
                 ean = pack.ean or _('(n/a)')
                 qty_pack = pack.qty
                 type_ul = pack.ul
