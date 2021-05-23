@@ -694,7 +694,7 @@ class sale_order_line(osv.osv):
             packaging = products.packaging[0].id
             result['product_packaging'] = packaging
 
-        if 0:# packaging:
+        if packaging:
             default_uom = products.uom_id and products.uom_id.id
             pack = pack_obj.browse(cr, uid, packaging, context=context)
             q = product_uom_obj._compute_qty(cr, uid, uom, pack.qty, default_uom)
@@ -712,7 +712,7 @@ class sale_order_line(osv.osv):
                     warning_msgs += _("Picking Information ! : ") + warn_msg + "\n\n"
                 warning = {
                        'title': _('Configuration Error!'),
-                       'message':  warning_msgs
+                       'message': warning_msgs
                 }
             result['product_uom_qty'] = qty
 
