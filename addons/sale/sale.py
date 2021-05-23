@@ -1114,6 +1114,7 @@ class mail_compose_message(osv.Model):
         #   raise osv.except_osv(_('Alert!'), _('Please download the quotation and send it via outlook.'))
         if 1:
           if context.get('default_model') == 'sale.order' and context.get('default_res_id') and context.get('mark_so_as_sent'):
+            raise osv.except_osv(_('Alert!'), _('Please download the quotation and send it via outlook.'))
             context = dict(context, mail_post_autofollow=True)
             wf_service = netsvc.LocalService("workflow")
             wf_service.trg_validate(uid, 'sale.order', context['default_res_id'], 'quotation_sent', cr)
