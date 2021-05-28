@@ -1113,7 +1113,9 @@ class mail_compose_message(osv.Model):
         #if context.get('default_model') == 'sale.order':
         #   raise osv.except_osv(_('Alert!'), _('Please download the quotation and send it via outlook.'))
         if 1:
-          if context.get('default_model') == 'sale.order' and context.get('default_res_id') and context.get('mark_so_as_sent'):
+          print 44*'_'
+          print context
+          if context.get('default_model') == 'sale.order': # and context.get('default_res_id') and context.get('mark_so_as_sent'):
             raise osv.except_osv(_('Alert!'), _('Please download the quotation and send it via outlook.'))
             context = dict(context, mail_post_autofollow=True)
             wf_service = netsvc.LocalService("workflow")
