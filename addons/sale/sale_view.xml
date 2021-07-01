@@ -21,15 +21,18 @@
                 <form string="Sales Shop" version="7.0">
                     <label for="name" class="oe_edit_only"/>
                     <h1><field name="name"/></h1>
+
                     <group name="shop">
                         <group>
                             <field name="payment_default_id"/>
                             <field domain="[('type','in',['sale','trade','retail','contract'])]" required="True" name="pricelist_id" groups="product.group_sale_pricelist"/>
+			    <field name="tp_location"/>
                         </group>
                         <group>
                             <field name="project_id" groups="analytic.group_analytic_accounting"/>
                             <field name="company_id" widget="selection" groups="base.group_multi_company"/>
                         </group>
+
                     </group>
                 </form>
            </field>
@@ -43,6 +46,7 @@
                     <field name="name"/>
                     <field name="pricelist_id" groups="product.group_sale_pricelist"/>
                     <field name="project_id" groups="analytic.group_analytic_accounting"/>
+		    <field name="tp_location"/>		    
                 </tree>
             </field>
         </record>
