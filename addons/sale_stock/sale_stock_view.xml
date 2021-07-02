@@ -153,7 +153,7 @@
 	    <field name="inherit_id" ref="stock.view_picking_out_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="/tree/field[@name='state']" position="after">
-		  <field name="shop_id" readonly="1"/>
+		  <!--		  <field name="shop_id" readonly="1"/> -->
                 </xpath>
             </field>
         </record>
