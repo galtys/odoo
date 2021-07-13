@@ -47,6 +47,7 @@
 		    <field name="contract" groups="base.group_user"/>
 		    <field name="retail" groups="base.group_user"/>
                     <field name="list_price" groups="base.group_user"/>
+		    
                     <field name="price" invisible="not context.get('pricelist',False)" groups="base.group_user"/>
                     <field name="standard_price" invisible="1"/>
                     <field name="state" groups="base.group_user"/>
@@ -93,6 +94,10 @@
 					<field name="retail"/>
                                         <field name="list_price"/>
 					<field name="user_price_unit"/>
+					<field name="shopify_id"/>
+					<field name="shopify_url" widget="url"/>
+					<field name="shopify_image_src" widget="url"/>
+					
                                     </group>
                                     <group>
                                         <field name="default_code"/>
