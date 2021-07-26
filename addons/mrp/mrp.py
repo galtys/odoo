@@ -226,6 +226,26 @@ class mrp_bom(osv.osv):
                     res[bom.id]=0
 
         return res
+    def _qty_forecast(self, cr, uid, ids, field_name, arg, context=None):
+        res = {}
+        if 1:
+            for bom in self.browse(cr, uid, ids, context=context):
+                if bom.product_id:
+                    res[bom.id]= bom.product_id.virtual_available
+                else:
+                    res[bom.id]=0
+
+        return res
+    def _qty_allocated(self, cr, uid, ids, field_name, arg, context=None):
+        res = {}
+        if 1:
+            for bom in self.browse(cr, uid, ids, context=context):
+                if bom.product_id:
+                    res[bom.id]= bom.product_id.allocated_available
+                else:
+                    res[bom.id]=0
+
+        return res
 
     _columns = {
         'name': fields.char('Name', size=64),
@@ -246,6 +266,12 @@ class mrp_bom(osv.osv):
         'position': fields.char('Internal Reference', size=64, help="Reference to a position in an external plan."),
         'product_id': fields.many2one('product.product', 'Product', required=True),
         'qty_theoretical': fields.function(_qty_theoretical, string='Qty Theoretical',type='float', digits_compute=dp.get_precision('Product Unit of Measure')),
+        'forecast': fields.function(_qty_forecast, string='Forecast',type='float', digits_compute=dp.get_precision('Product Unit of Measure')),
+        'qty_allocated': fields.function(_qty_allocated, string='Qty Allocated',type='float', digits_compute=dp.get_precision('Product Unit of Measure')),       
+        'allocation_factor': fields.float(string='Allocation Factor', digits_compute=dp.get_precision('Product Unit of Measure')),
+        
+
+        
         'product_uos_qty': fields.float('Product UOS Qty'),
         'product_uos': fields.many2one('product.uom', 'Product UOS', help="Product UOS (Unit of Sale) is the unit of measurement for the invoicing and promotion of stock."),
         'product_qty': fields.float('Product Quantity', required=True, digits_compute=dp.get_precision('Product Unit of Measure')),

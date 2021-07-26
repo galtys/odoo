@@ -376,7 +376,12 @@
                             <field name="company_id" groups="base.group_multi_company" widget="selection"/>
                         </group>
 			<group>
-			<field name="qty_theoretical"/>
+			  <field name="qty_theoretical"/>
+			  <field name="forecast"/>			  			  
+			  <field name="allocation_factor"/>
+			  <field name="qty_allocated"/>
+			  
+			  
 			</group>
                     </group>
                     <notebook>
@@ -389,6 +394,9 @@
                                     <field name="name" invisible="1"/>
                                     <field name="date_start"/>
                                     <field name="date_stop"/>
+				    <field name="forecast"/>			  				    
+				    <field name="allocation_factor"/>
+				    <field name="qty_allocated"/>				    
                                 </tree>
                             </field>
                         </page>
@@ -456,6 +464,9 @@
                     <field name="routing_id" groups="mrp.group_mrp_routings"/>
                     <field name="date_start"/>
                     <field name="date_stop"/>
+		    <field name="forecast"/>			  		    
+		    <field name="allocation_factor"/>
+		    <field name="qty_allocated"/>		    
                 </tree>
             </field>
         </record>
@@ -477,6 +488,9 @@
                     <field name="routing_id" groups="mrp.group_mrp_routings"/>
                     <field name="date_start"/>
                     <field name="date_stop"/>
+		    <field name="forecast"/>			  		    
+		    <field name="allocation_factor"/>
+		    <field name="qty_allocated"/>		    
                 </tree>
             </field>
         </record>
