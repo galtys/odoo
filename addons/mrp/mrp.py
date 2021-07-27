@@ -216,7 +216,8 @@ class mrp_bom(osv.osv):
                 for x in prod:
                     p=self.pool.get('product.product').browse(cr, uid, x['product_id'])
                     if x['product_qty']>0:
-                        q = (p.qty_available - p.outgoing_qty)/x['product_qty']
+                        #q = (p.qty_available - p.outgoing_qty)/x['product_qty']
+                        q = (p.allocated_available)/x['product_qty']
                     else:
                         q=0
                     qtys.append(q)
@@ -278,7 +279,7 @@ class mrp_bom(osv.osv):
         'qty_theoretical': fields.function(_qty_theoretical, string='Qty Theoretical',type='float', digits_compute=dp.get_precision('Product Unit of Measure')),
         'forecast': fields.function(_qty_forecast, string='Forecast',type='float', digits_compute=dp.get_precision('Product Unit of Measure')),
         'qty_allocated': fields.function(_qty_allocated, string='Qty Allocated',type='float', digits_compute=dp.get_precision('Product Unit of Measure')),       
-        'allocation_factor': fields.float(string='Allocation Factor', digits_compute=dp.get_precision('Product Unit of Measure')),
+        #'allocation_factor': fields.float(string='Allocation Factor', digits_compute=dp.get_precision('Product Unit of Measure')),
         'no_sold': fields.function(_qty_sold,string="# Sold"),
 
         

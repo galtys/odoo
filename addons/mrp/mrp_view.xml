@@ -379,7 +379,7 @@
 			  <field name="qty_theoretical"/>
 			  <field name="no_sold"/>
 			  <field name="forecast"/>			  			  
-			  <field name="allocation_factor"/>
+
 			  <field name="qty_allocated"/>
 			  
 			  
@@ -397,7 +397,7 @@
                                     <field name="date_stop"/>
 				    <field name="no_sold"/>
 				    <field name="forecast"/>			  				    
-				    <field name="allocation_factor"/>
+
 				    <field name="qty_allocated"/>				    
                                 </tree>
                             </field>
@@ -468,7 +468,7 @@
                     <field name="date_stop"/>
 		    <field name="no_sold"/>
 		    <field name="forecast"/>			  		    
-		    <field name="allocation_factor"/>
+
 		    <field name="qty_allocated"/>		    
                 </tree>
             </field>
@@ -493,7 +493,7 @@
                     <field name="date_stop"/>
 		    <field name="no_sold"/>
 		    <field name="forecast"/>			  		    
-		    <field name="allocation_factor"/>
+
 		    <field name="qty_allocated"/>		    
                 </tree>
             </field>
