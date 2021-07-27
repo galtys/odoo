@@ -596,9 +596,8 @@ class product_product(osv.osv):
 
         'retail': fields.float('Retail', digits_compute=dp.get_precision('Retail Price')),
         'trade': fields.float('Trade', digits_compute=dp.get_precision('Trade Price')),
-        'shopify_image_src':fields.char("Shopify Image Src", size=444),
-        'shopify_url':fields.char("Shopify URL", size=444),
-        'shopify_id':fields.char("Shopify URL", size=444),
+        
+        
         'stock_alert':fields.integer('Stock Alert'),
         'report_stock_alert':fields.boolean('Report Stock Alert'),
         'contract': fields.float('Contract', digits_compute=dp.get_precision('Contract Price')),

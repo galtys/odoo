@@ -94,9 +94,6 @@
 					<field name="retail"/>
                                         <field name="list_price"/>
 					<field name="user_price_unit"/>
-					<field name="shopify_id"/>
-					<field name="shopify_url" widget="url"/>
-					<field name="shopify_image_src" widget="url"/>
 					
                                     </group>
                                     <group>
