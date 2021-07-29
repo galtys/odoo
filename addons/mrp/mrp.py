@@ -290,9 +290,9 @@ class mrp_bom(osv.osv):
         'forecast': fields.function(_qty_forecast, string='Forecast',type='float', digits_compute=dp.get_precision('Product Unit of Measure')),
         'qty_allocated': fields.function(_qty_allocated, string='Qty Allocated',type='float', digits_compute=dp.get_precision('Product Unit of Measure')),       
         #'allocation_factor': fields.float(string='Allocation Factor', digits_compute=dp.get_precision('Product Unit of Measure')),
+
         'no_sold': fields.function(_qty_sold,type="integer",string="#Sales#"),
         'no_sold_total': fields.function(_qty_sold_total,type="integer",string="#SalesToal#"),
-        
         'product_uos_qty': fields.float('Product UOS Qty'),
         'product_uos': fields.many2one('product.uom', 'Product UOS', help="Product UOS (Unit of Sale) is the unit of measurement for the invoicing and promotion of stock."),
         'product_qty': fields.float('Product Quantity', required=True, digits_compute=dp.get_precision('Product Unit of Measure')),
