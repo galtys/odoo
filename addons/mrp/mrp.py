@@ -209,18 +209,23 @@ class mrp_bom(osv.osv):
 
         #for bom in self.browse(cr, uid, ids, context=context):
         #    res[bom.id]=0
+        #print 44*'_'
         if 1:
             for bom in self.browse(cr, uid, ids, context=context):
                 prod,ret =  self._bom_explode(cr, uid, bom, 1)
                 qtys=[]
                 for x in prod:
                     p=self.pool.get('product.product').browse(cr, uid, x['product_id'])
-                    if x['product_qty']>0:
+                    if (x['product_qty']>0) and (p.n_sold_total>0):
                         #q = (p.qty_available - p.outgoing_qty)/x['product_qty']
-                        q = (p.allocated_available)/x['product_qty']
+                        #print [p.virtual_available, bom.product_id.n_sold, p.n_sold_total,x['product_qty']]
+                        
+                        q = p.virtual_available*( (1.0)*bom.product_id.n_sold/p.n_sold_total)/x['product_qty']
+                        
                     else:
                         q=0
                     qtys.append(q)
+                print [bom.product_id.default_code, qtys]
                 if qtys:
                     res[bom.id] = min(qtys)/bom.product_qty
                 else:
