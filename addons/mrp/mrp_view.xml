@@ -378,9 +378,10 @@
 			<group>
 			  <field name="qty_theoretical"/>
 			  <field name="no_sold"/>
+
 			  <field name="forecast"/>			  			  
 
-			  <field name="qty_allocated"/>
+<!--			  <field name="qty_allocated"/> -->
 			  
 			  
 			</group>
@@ -396,6 +397,7 @@
                                     <field name="date_start"/>
                                     <field name="date_stop"/>
 				    <field name="no_sold"/>
+				    <field name="no_sold_total"/>
 				    <field name="forecast"/>			  				    
 
 				    <field name="qty_allocated"/>				    
@@ -469,7 +471,7 @@
 		    <field name="no_sold"/>
 		    <field name="forecast"/>			  		    
 
-		    <field name="qty_allocated"/>		    
+    <!-- <field name="qty_allocated"/>  -->
                 </tree>
             </field>
         </record>
@@ -494,7 +496,7 @@
 		    <field name="no_sold"/>
 		    <field name="forecast"/>			  		    
 
-		    <field name="qty_allocated"/>		    
+    <!-- <field name="qty_allocated"/>		    -->
                 </tree>
             </field>
         </record>

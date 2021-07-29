@@ -257,6 +257,16 @@ class mrp_bom(osv.osv):
                     res[bom.id]=0
 
         return res
+    def _qty_sold_total(self, cr, uid, ids, field_name, arg, context=None):
+        res = {}
+        if 1:
+            for bom in self.browse(cr, uid, ids, context=context):
+                if bom.product_id:
+                    res[bom.id]= bom.product_id.n_sold_total
+                else:
+                    res[bom.id]=0
+
+        return res
 
     _columns = {
         'name': fields.char('Name', size=64),
@@ -280,8 +290,8 @@ class mrp_bom(osv.osv):
         'forecast': fields.function(_qty_forecast, string='Forecast',type='float', digits_compute=dp.get_precision('Product Unit of Measure')),
         'qty_allocated': fields.function(_qty_allocated, string='Qty Allocated',type='float', digits_compute=dp.get_precision('Product Unit of Measure')),       
         #'allocation_factor': fields.float(string='Allocation Factor', digits_compute=dp.get_precision('Product Unit of Measure')),
-        'no_sold': fields.function(_qty_sold,string="# Sold"),
-
+        'no_sold': fields.function(_qty_sold,type="integer",string="#Sales#"),
+        'no_sold_total': fields.function(_qty_sold_total,type="integer",string="#SalesToal#"),
         
         'product_uos_qty': fields.float('Product UOS Qty'),
         'product_uos': fields.many2one('product.uom', 'Product UOS', help="Product UOS (Unit of Sale) is the unit of measurement for the invoicing and promotion of stock."),
