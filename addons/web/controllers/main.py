@@ -1115,15 +1115,19 @@ class DataSet(openerpweb.Controller):
         #print [model, method, args, kwargs]
         #print req.httprequest.url, req.session._db
         #print openerp.tools.misc.DEFAULT_SERVER_DATETIME_FORMAT
-        f="%Y-%m-%d_%H:%M:%S"
+        f="%Y-%m-%d_%H-%M-%S"
         pth_root = os.path.join('/home/jan/oerp_events', req.session._db)
-        if method not in ['read','name_get','message_read', 'fields_get', 'fields_view_get', 'set_message_read','search_read']:
+        if method not in ['read','name_get','message_read', 'fields_get', 'fields_view_get', 'set_message_read','search_read','list','get_filters']:
           model_root = os.path.join(pth_root, model)
           #print model_root
           
           if os.path.isdir(pth_root):
               time_now = datetime.datetime.today().strftime(f)
               val = {'method':method,
+                     'db': req.session._db,
+                     'uid':req.session._uid,
+                     'session_id': req.session_id,
+                     'time': time_now,
                      'model':model,
                      'args':args,
                      'kwargs':kwargs}
