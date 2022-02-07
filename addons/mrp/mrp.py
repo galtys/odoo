@@ -219,9 +219,10 @@ class mrp_bom(osv.osv):
                     if (x['product_qty']>0) and (p.n_sold_total>0):
                         #q = (p.qty_available - p.outgoing_qty)/x['product_qty']
                         #print [p.virtual_available, bom.product_id.n_sold, p.n_sold_total,x['product_qty']]
+                        ava_to_sell = (p.virtual_available - p.stock_alert)
                         n_sold = (1.0)*bom.product_id.n_sold + p.n_sold_total
                         n_total = (1.0)*p.n_bundles * p.n_sold_total
-                        q = p.virtual_available*( n_sold/n_total)/x['product_qty']
+                        q = ava_to_sell*( n_sold/n_total)/x['product_qty']
                         #q = p.virtual_available*( (1.0)*bom.product_id.n_sold/p.n_sold_total)/x['product_qty']
                         
                     else:

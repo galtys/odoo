@@ -376,7 +376,7 @@
                             <field name="company_id" groups="base.group_multi_company" widget="selection"/>
                         </group>
 			<group>
-			  <field name="qty_theoretical"/>
+			  <field name="qty_allocated"/>
 			  <field name="no_sold"/>
 			  <field name="no_sold_total"/>
 			  <field name="forecast"/>			  			  
@@ -400,7 +400,7 @@
 				    <field name="no_sold_total"/>
 				    <field name="forecast"/>			  				    
 
-				    <field name="qty_allocated"/>				    
+				    <!-- <field name="qty_allocated"/>	-->
                                 </tree>
                             </field>
                         </page>
@@ -469,7 +469,8 @@
                     <field name="date_start"/>
                     <field name="date_stop"/>
 		    <field name="no_sold"/>
-		    <field name="no_sold_total"/>
+				    <field name="no_sold_total"/>
+				    <field name="qty_allocated"/>
 		    <field name="forecast"/>			  		    
 
     <!-- <field name="qty_allocated"/>  -->
@@ -496,6 +497,7 @@
                     <field name="date_stop"/>
 		    <field name="no_sold"/>
 		    <field name="no_sold_total"/>
+				    <field name="qty_allocated"/>		    
 		    <field name="forecast"/>			  		    
 
     <!-- <field name="qty_allocated"/>		    -->
