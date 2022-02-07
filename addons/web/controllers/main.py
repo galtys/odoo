@@ -34,6 +34,9 @@ import openerp.modules.registry
 from openerp.tools.translate import _
 from openerp.tools import config, ustr
 
+import json
+import hashlib
+
 from .. import http
 openerpweb = http
 
@@ -1109,6 +1112,31 @@ class DataSet(openerpweb.Controller):
 
     def _call_kw(self, req, model, method, args, kwargs):
         # Temporary implements future display_name special field for model#read()
+        #print [model, method, args, kwargs]
+        #print req.httprequest.url, req.session._db
+        #print openerp.tools.misc.DEFAULT_SERVER_DATETIME_FORMAT
+        f="%Y-%m-%d_%H:%M:%S"
+        pth_root = os.path.join('/home/jan/oerp_events', req.session._db)
+        if method not in ['read','name_get','message_read', 'fields_get', 'fields_view_get', 'set_message_read','search_read']:
+          model_root = os.path.join(pth_root, model)
+          #print model_root
+          
+          if os.path.isdir(pth_root):
+              time_now = datetime.datetime.today().strftime(f)
+              val = {'method':method,
+                     'model':model,
+                     'args':args,
+                     'kwargs':kwargs}
+              s = json.dumps(val)
+              h = hashlib.sha256(s)
+              hd = h.hexdigest()
+              fn = os.path.join(model_root,'%s_%s.json'%(time_now,hd))
+              if os.path.isdir(model_root):
+                  pass
+              else:
+                  os.mkdir(model_root)
+              file(fn, 'wb').write( s)
+        
         if method in ('read', 'search_read') and kwargs.get('context', {}).get('future_display_name'):
             if 'display_name' in args[1]:
                 if method == 'read':
