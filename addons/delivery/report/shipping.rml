@@ -175,7 +175,7 @@
     <blockTable colWidths="540.0" style="Table_Title_String">
       <tr>
         <td>
-          <para style="P1">DELIVERY SLIP [[ (picking.type == 'out' or removeParentNode('para')) and '' ]] </para>
+          <para style="P1">DELIVERY SLIT [[ (picking.type == 'out' or removeParentNode('para')) and '' ]] </para>
           <para style="P1">Incoming Shipment [[ (picking.type == 'in' or removeParentNode('para')) and '' ]] </para>
           <para style="P1">Internal Shipment [[ (picking.type == 'internal' or removeParentNode('para')) and '' ]] </para>
         </td>

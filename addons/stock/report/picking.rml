@@ -115,13 +115,13 @@
           <para style="terp_5f_default_5f_Bold_5f_9">
             <font color="white"> </font>
           </para>
-	  <para style="terp_5f_default_5f_9">Name ____________________________ </para>
+	  <para style="terp_5f_default_5f_9">Picker ____________________________ </para>
 	  
 	  <para style="terp_5f_default_5f_9">       <font color="white">space </font>   </para>
 	  <para style="terp_5f_default_5f_9">       <font color="white">space </font>   </para>
 	  
 	  
-	  <para style="terp_5f_default_5f_9">Signature _________________________ </para>
+	  <para style="terp_5f_default_5f_9">Packer ____________________________ </para>
         </td>
         <td>
           <para style="terp_5f_default_5f_8">
@@ -255,7 +255,10 @@
           <para style="terp_5f_default_5f_Bold_5f_8">TRANSPORT BY:</para>
         </td>
         <td>
+          <para style="terp_5f_default_5f_9">[[ picking.delivery_partner_id.name ]]</para>
+	  <!--
           <para style="terp_5f_default_5f_9">[[ picking.carrier_id.partner_id.name ]]</para>
+          -->
         </td>
       </tr>
       <tr>
@@ -274,7 +277,10 @@
           <para style="terp_5f_default_5f_Bold_5f_8">DELIVERY:</para>
         </td>
         <td>
+         <para style="terp_5f_default_5f_9">[[ picking.carrier_id.delivery_option_info ]]</para>	  
+	  <!--
           <para style="terp_5f_default_5f_9">[[ picking.delivery_partner_id.name ]]</para>
+          -->
         </td>
       </tr>
       <tr>
