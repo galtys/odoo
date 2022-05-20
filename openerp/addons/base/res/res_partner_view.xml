@@ -76,7 +76,8 @@
             <field name="model">res.partner</field>
             <field eval="8" name="priority"/>
             <field name="arch" type="xml">
-                <tree string="Contacts">
+              <tree string="Contacts">
+		    <field name="ref"/>
                     <field name="name"/>
                     <field name="function" invisible="1"/>
                     <field name="phone"/>
