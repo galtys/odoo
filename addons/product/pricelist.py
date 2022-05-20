@@ -389,8 +389,8 @@ class product_pricelist_version(osv.osv):
         return True
 
     _constraints = [
-        (_check_date, 'You cannot have 2 pricelist versions that overlap!',
-            ['date_start', 'date_end'])
+        #(_check_date, 'You cannot have 2 pricelist versions that overlap!',
+        #    ['date_start', 'date_end'])
     ]
 
 product_pricelist_version()
