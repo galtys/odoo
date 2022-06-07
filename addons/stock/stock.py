@@ -1712,6 +1712,8 @@ class stock_move(osv.osv):
         'move_history_ids2': fields.many2many('stock.move', 'stock_move_history_ids', 'child_id', 'parent_id', 'Move History (parent moves)'),
         'picking_id': fields.many2one('stock.picking', 'Reference', select=True,states={'done': [('readonly', True)]}),
         'note': fields.text('Notes'),
+        'message_type':fields.selection([('control','Control'), ('assigned','Assigned'), ('forecast','Forecast')],'Message Type' ),
+        
         'state': fields.selection([('draft', 'New'),
                                    ('cancel', 'Cancelled'),
                                    ('waiting', 'Waiting Another Move'),
@@ -1851,6 +1853,7 @@ class stock_move(osv.osv):
         'date': lambda *a: time.strftime('%Y-%m-%d %H:%M:%S'),
         'company_id': lambda self,cr,uid,c: self.pool.get('res.company')._company_default_get(cr, uid, 'stock.move', context=c),
         'date_expected': lambda *a: time.strftime('%Y-%m-%d %H:%M:%S'),
+        'message_type': 'control'
     }
 
     def write(self, cr, uid, ids, vals, context=None):
