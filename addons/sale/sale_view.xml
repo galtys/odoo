@@ -27,6 +27,7 @@
                             <field name="payment_default_id"/>
                             <field domain="[('type','in',['sale','trade','retail','contract'])]" required="True" name="pricelist_id" groups="product.group_sale_pricelist"/>
 			    <field name="tp_location"/>
+			    <field name="pos_location"/>
                         </group>
                         <group>
                             <field name="project_id" groups="analytic.group_analytic_accounting"/>

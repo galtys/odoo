@@ -1712,7 +1712,7 @@ class stock_move(osv.osv):
         'move_history_ids2': fields.many2many('stock.move', 'stock_move_history_ids', 'child_id', 'parent_id', 'Move History (parent moves)'),
         'picking_id': fields.many2one('stock.picking', 'Reference', select=True,states={'done': [('readonly', True)]}),
         'note': fields.text('Notes'),
-        'message_type':fields.selection([('control','Control'), ('assigned','Assigned'), ('forecast','Forecast')],'Message Type' ),
+        'message_type':fields.selection([('control','Control'), ('assigned','Assigned'), ('forecast','Forecast'),('init','Init')],'Message Type' ),
         
         'state': fields.selection([('draft', 'New'),
                                    ('cancel', 'Cancelled'),

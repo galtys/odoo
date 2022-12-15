@@ -36,6 +36,7 @@ class sale_shop(osv.osv):
     _columns = {
         'name': fields.char('Shop Name', size=64, required=True),
         'tp_location':fields.char("TP Location",size=64,help="The TrustPilot Location Number. For example Enfield is 01"),
+        'pos_location':fields.char("POS Location",size=64,help="POS Location ID."),
         'payment_default_id': fields.many2one('account.payment.term', 'Default Payment Term', required=True),
         'pricelist_id': fields.many2one('product.pricelist', 'Pricelist'),
         'project_id': fields.many2one('account.analytic.account', 'Analytic Account', domain=[('parent_id', '!=', False)]),
