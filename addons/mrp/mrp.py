@@ -216,7 +216,7 @@ class mrp_bom(osv.osv):
                 qtys=[]
                 for x in prod:
                     p=self.pool.get('product.product').browse(cr, uid, x['product_id'])
-                    if (x['product_qty']>0) and (p.n_sold_total>0):
+                    if (x['product_qty']>0):
                         #q = (p.qty_available - p.outgoing_qty)/x['product_qty']
                         #print [p.virtual_available, bom.product_id.n_sold, p.n_sold_total,x['product_qty']]
                         ava_to_sell = (p.virtual_available - p.stock_alert)
