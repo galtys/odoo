@@ -382,7 +382,7 @@ class product_product(osv.osv):
                  "with 'internal' type."),
         'virtual_available': fields.function(_product_available, multi='qty_available',
             type='float',  digits_compute=dp.get_precision('Product Unit of Measure'),
-            string='Forecasted Quantity',
+            string='Available',
             help="Forecast quantity (computed as Quantity On Hand "
                  "- Outgoing + Incoming)\n"
                  "In a context with a single Stock Location, this includes "
