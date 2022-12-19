@@ -50,10 +50,12 @@
 		    <field name="retail" groups="base.group_user"/>
                     <field name="standard_price" invisible="1"/>
                      -->
-
-		    <field name="contract" groups="base.group_user"/>
+		     <field name="standard_price"/>
+		     <field name="trade"/>
+		     <field name="contract" groups="base.group_user"/>
+		     <field name="retail"/>
                     <field name="list_price" groups="base.group_user"/>
-		    <field name="standard_price"/>
+
 		    
                     <field name="price" invisible="not context.get('pricelist',False)" groups="base.group_user"/>
 
