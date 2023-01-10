@@ -2851,6 +2851,7 @@ stock_move()
 class stock_inventory(osv.osv):
     _name = "stock.inventory"
     _description = "Inventory"
+    _order = "date desc"
     _columns = {
         'name': fields.char('Inventory Reference', size=64, required=True, readonly=True, states={'draft': [('readonly', False)]}),
         'date': fields.datetime('Creation Date', required=True, readonly=True, states={'draft': [('readonly', False)]}),
