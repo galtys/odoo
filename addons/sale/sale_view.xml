@@ -169,7 +169,8 @@
                             <field name="project_id" context="{'partner_id':partner_invoice_id, 'default_pricelist_id':pricelist_id, 'default_name':name, 'default_type': 'contract'}" groups="sale.group_analytic_accounting" domain="[('type','in',['view','normal','contract'])]"/>
                         </group>
                         <group>
-                            <field name="date_order"/>
+                          <field name="date_order"/>
+			  <field name="date_confirm"/>
 			    <field name="tax_codes_reviewed" />
                             <field name="shop_id" groups="base.group_no_one" on_change="onchange_shop_id(shop_id, context)" widget="selection"/>
                             <field name="client_order_ref"/>
