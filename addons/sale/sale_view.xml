@@ -170,7 +170,7 @@
                         </group>
                         <group>
                           <field name="date_order"/>
-			  <field name="date_confirm"/>
+			  <field name="date_confirm" readonly="1"/>
 			    <field name="tax_codes_reviewed" />
                             <field name="shop_id" groups="base.group_no_one" on_change="onchange_shop_id(shop_id, context)" widget="selection"/>
                             <field name="client_order_ref"/>
