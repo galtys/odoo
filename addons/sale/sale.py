@@ -1020,7 +1020,7 @@ class sale_order_line(osv.osv):
         if not flag:
             result['name'] = self.pool.get('product.product').name_get(cr, uid, [product_obj.id], context=context_partner)[0][1]
             if product_obj.description_sale:
-                result['name'] += '\n'+product_obj.description_sale
+                result['name'] = product_obj.description_sale
         domain = {}
         if (not uom) and (not uos):
             result['product_uom'] = product_obj.uom_id.id
