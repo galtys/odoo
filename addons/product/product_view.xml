@@ -55,7 +55,7 @@
 		     <field name="contract" groups="base.group_user"/>
 		     <field name="retail"/>
                     <field name="list_price" groups="base.group_user"/>
-
+		     <field name="shopify"/>
 		    
                     <field name="price" invisible="not context.get('pricelist',False)" groups="base.group_user"/>
 
@@ -107,6 +107,7 @@
 					
 					
                                         <field name="list_price"/>
+					<field name="shopify" readonly="1"/>
 					<field name="user_price_unit"/>
 					
                                     </group>

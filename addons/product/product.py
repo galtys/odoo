@@ -595,6 +595,7 @@ class product_product(osv.osv):
         'opera_sell': fields.float('OperaSell', digits_compute=dp.get_precision('Product Price')),
 
         'retail': fields.float('Retail', digits_compute=dp.get_precision('Retail Price')),
+        'shopify': fields.float('Shopify', digits_compute=dp.get_precision('Retail Price')),
         'trade': fields.float('Trade', digits_compute=dp.get_precision('Trade Price')),
         
         
