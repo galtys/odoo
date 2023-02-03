@@ -803,12 +803,14 @@ class stock_picking(osv.osv):
         """ Changes state of picking to available if moves are confirmed or waiting.
         @return: True
         """
-        wf_service = netsvc.LocalService("workflow")
-        for pick in self.browse(cr, uid, ids):
-            move_ids = [x.id for x in pick.move_lines if x.state in ['confirmed','waiting']]
-            self.pool.get('stock.move').force_assign(cr, uid, move_ids)
-            wf_service.trg_write(uid, 'stock.picking', pick.id, cr)
+        raise osv.except_osv(_('Warning!'),_('Forcing Availability has been disabled. Ask Norbert for instructions.'))
         return True
+        #wf_service = netsvc.LocalService("workflow")
+        #for pick in self.browse(cr, uid, ids):
+        #    move_ids = [x.id for x in pick.move_lines if x.state in ['confirmed','waiting']]
+        #    self.pool.get('stock.move').force_assign(cr, uid, move_ids)
+        #    wf_service.trg_write(uid, 'stock.picking', pick.id, cr)
+        #return True
 
     def draft_force_assign(self, cr, uid, ids, *args):
         """ Confirms picking directly from draft state.
