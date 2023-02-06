@@ -660,9 +660,9 @@ class product_product(osv.osv):
             return []
         def _name_get(d):
             
-            name = d.get('description_sale', None)
-            if name is None:
-               name = d.get('name','')
+            #name = d.get('description_sale', None)
+            #if name is None:
+            name = d.get('name','')
             
             code = d.get('default_code',False)
             if code:
@@ -686,10 +686,14 @@ class product_product(osv.osv):
                               }
                     result.append(_name_get(mydict))
             else:
+                if product.description_sale:
+                    ds = product.description_sale
+                else:
+                    ds = None
                 mydict = {
                           'id': product.id,
                           'name': product.name,
-                          'description_sale':product.description_sale,
+                          'description_sale':ds,
                           'default_code': product.default_code,
                           'variants': product.variants
                           }
