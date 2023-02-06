@@ -803,12 +803,14 @@ class stock_picking(osv.osv):
         """ Changes state of picking to available if moves are confirmed or waiting.
         @return: True
         """
-        wf_service = netsvc.LocalService("workflow")
-        for pick in self.browse(cr, uid, ids):
-            move_ids = [x.id for x in pick.move_lines if x.state in ['confirmed','waiting']]
-            self.pool.get('stock.move').force_assign(cr, uid, move_ids)
-            wf_service.trg_write(uid, 'stock.picking', pick.id, cr)
+        raise osv.except_osv(_('Warning!'),_('Forcing Availability has been disabled. Ask Norbert for instructions.'))
         return True
+        #wf_service = netsvc.LocalService("workflow")
+        #for pick in self.browse(cr, uid, ids):
+        #    move_ids = [x.id for x in pick.move_lines if x.state in ['confirmed','waiting']]
+        #    self.pool.get('stock.move').force_assign(cr, uid, move_ids)
+        #    wf_service.trg_write(uid, 'stock.picking', pick.id, cr)
+        #return True
 
     def draft_force_assign(self, cr, uid, ids, *args):
         """ Confirms picking directly from draft state.
@@ -1712,7 +1714,7 @@ class stock_move(osv.osv):
         'move_history_ids2': fields.many2many('stock.move', 'stock_move_history_ids', 'child_id', 'parent_id', 'Move History (parent moves)'),
         'picking_id': fields.many2one('stock.picking', 'Reference', select=True,states={'done': [('readonly', True)]}),
         'note': fields.text('Notes'),
-        'message_type':fields.selection([('control','Control'), ('assigned','Assigned'), ('forecast','Forecast')],'Message Type' ),
+        'message_type':fields.selection([('control','Control'), ('assigned','Assigned'), ('forecast','Forecast'),('init','Init')],'Message Type' ),
         
         'state': fields.selection([('draft', 'New'),
                                    ('cancel', 'Cancelled'),
@@ -2851,6 +2853,7 @@ stock_move()
 class stock_inventory(osv.osv):
     _name = "stock.inventory"
     _description = "Inventory"
+    _order = "date desc"
     _columns = {
         'name': fields.char('Inventory Reference', size=64, required=True, readonly=True, states={'draft': [('readonly', False)]}),
         'date': fields.datetime('Creation Date', required=True, readonly=True, states={'draft': [('readonly', False)]}),

@@ -39,17 +39,26 @@
                     <field name="categ_id" invisible="1"/>
                     <field name="type" invisible="1"/>
                     <field name="variants" groups="product.group_product_variant"/>
+		    <!--
                     <field name="uom_id" string="Unit of Measure" groups="product.group_uom"/>
+                    -->
                     <field name="qty_available" groups="base.group_user"/>
                     <field name="virtual_available" groups="base.group_user"/>
 		    <field name="stock_alert" groups="base.group_user"/>
+		    <!--
 		    <field name="trade" groups="base.group_user"/>
-		    <field name="contract" groups="base.group_user"/>
 		    <field name="retail" groups="base.group_user"/>
+                    <field name="standard_price" invisible="1"/>
+                     -->
+		     <field name="standard_price"/>
+		     <field name="trade"/>
+		     <field name="contract" groups="base.group_user"/>
+		     <field name="retail"/>
                     <field name="list_price" groups="base.group_user"/>
+		     <field name="shopify"/>
 		    
                     <field name="price" invisible="not context.get('pricelist',False)" groups="base.group_user"/>
-                    <field name="standard_price" invisible="1"/>
+
                     <field name="state" groups="base.group_user"/>
                     <field name="company_id" groups="base.group_multi_company" invisible="1"/>
 <!--		    <field name="portal"/> -->
@@ -88,11 +97,17 @@
                                     <group>
                                         <field name="type"/>
 <!--					<field name="portal"/> -->
-                                        <field name="uom_id" on_change="onchange_uom(uom_id,uom_po_id)" groups="product.group_uom"/>
+                                          <field name="uom_id" on_change="onchange_uom(uom_id,uom_po_id)" groups="product.group_uom"/>
+                                         <field name="standard_price"/>
 					<field name="trade"/>
 					<field name="contract"/>
+					
+
 					<field name="retail"/>
+					
+					
                                         <field name="list_price"/>
+					<field name="shopify" readonly="1"/>
 					<field name="user_price_unit"/>
 					
                                     </group>
@@ -114,8 +129,10 @@
                             <page string="Procurements" groups="base.group_user">
                                 <group name="procurement">
                                     <group name="general">
-                                        <field name="cost_method" groups="product.group_costing_method"/>
+                                      <field name="cost_method" groups="product.group_costing_method"/>
+				      <!--
                                         <field name="standard_price" attrs="{'readonly':[('cost_method','=','average')]}"/>
+                                      -->
                                     </group>
                                     <group name="procurement_uom" groups="product.group_uom" string="Purchase">
                                         <field name="uom_po_id"/>

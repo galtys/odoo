@@ -28,13 +28,16 @@ class res_partner(osv.osv):
     _inherit = 'res.partner'
 
     _columns = {
-        'opt_out': fields.boolean('Opt-Out',
-            help="If opt-out is checked, this contact has refused to receive emails for mass mailing and marketing campaign. "
-                    "Filter 'Available for Mass Mailing' allows users to filter the partners when performing mass mailing."),
+
+        'opt_out': fields.selection( [('optin','Opt In'), ('optout','Opt Out')], string="Opt In/Out"),
+        'opt_out_bkup':fields.boolean('optout2'),
+        #'opt_out': fields.boolean('Opt-Out',
+        #    help="If opt-out is checked, this contact has refused to receive emails for mass mailing and marketing campaign. "
+        #            "Filter 'Available for Mass Mailing' allows users to filter the partners when performing mass mailing."),
     }
 
-    _defaults = {
-        'opt_out': False,
-    }
+#    _defaults = {
+#        'opt_out': False,
+#    }
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

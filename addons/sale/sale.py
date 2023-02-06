@@ -36,6 +36,7 @@ class sale_shop(osv.osv):
     _columns = {
         'name': fields.char('Shop Name', size=64, required=True),
         'tp_location':fields.char("TP Location",size=64,help="The TrustPilot Location Number. For example Enfield is 01"),
+        'pos_location':fields.char("POS Location",size=64,help="POS Location ID."),
         'payment_default_id': fields.many2one('account.payment.term', 'Default Payment Term', required=True),
         'pricelist_id': fields.many2one('product.pricelist', 'Pricelist'),
         'project_id': fields.many2one('account.analytic.account', 'Analytic Account', domain=[('parent_id', '!=', False)]),
@@ -1018,8 +1019,11 @@ class sale_order_line(osv.osv):
 
         if not flag:
             result['name'] = self.pool.get('product.product').name_get(cr, uid, [product_obj.id], context=context_partner)[0][1]
-            if product_obj.description_sale:
-                result['name'] += '\n'+product_obj.description_sale
+            #if product_obj.description_sale:
+            #    result['name'] = product_obj.description_sale
+            if product_obj.name:
+                result['name'] = product_obj.name
+            
         domain = {}
         if (not uom) and (not uos):
             result['product_uom'] = product_obj.uom_id.id

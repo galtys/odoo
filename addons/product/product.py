@@ -545,8 +545,8 @@ class product_product(osv.osv):
     _inherit = ['mail.thread']
     _order = 'default_code,name_template'
     _columns = {
-        'qty_available': fields.function(_product_qty_available, type='float', string='Quantity On Hand'),
-        'virtual_available': fields.function(_product_virtual_available, type='float', string='Quantity Available'),
+        'qty_available': fields.function(_product_qty_available, type='float', string='On Hand'),
+        'virtual_available': fields.function(_product_virtual_available, type='float', string='Available'),
         'incoming_qty': fields.function(_product_incoming_qty, type='float', string='Incoming'),
         'outgoing_qty': fields.function(_product_outgoing_qty, type='float', string='Outgoing'),
         'price': fields.function(_product_price, type='float', string='Price', digits_compute=dp.get_precision('Product Price')),
@@ -595,6 +595,7 @@ class product_product(osv.osv):
         'opera_sell': fields.float('OperaSell', digits_compute=dp.get_precision('Product Price')),
 
         'retail': fields.float('Retail', digits_compute=dp.get_precision('Retail Price')),
+        'shopify': fields.float('Shopify', digits_compute=dp.get_precision('Retail Price')),
         'trade': fields.float('Trade', digits_compute=dp.get_precision('Trade Price')),
         
         
@@ -658,7 +659,11 @@ class product_product(osv.osv):
         if not len(ids):
             return []
         def _name_get(d):
-            name = d.get('name','')
+            
+            name = d.get('description_sale', None)
+            if name is None:
+               name = d.get('name','')
+            
             code = d.get('default_code',False)
             if code:
                 name = '[%s] %s' % (code,name)
@@ -676,7 +681,7 @@ class product_product(osv.osv):
                     mydict = {
                               'id': product.id,
                               'name': s.product_name or product.name,
-                              'default_code': s.product_code or product.default_code,
+                              'default_code': s.product_code or product.default_code,                        
                               'variants': product.variants
                               }
                     result.append(_name_get(mydict))
@@ -684,6 +689,7 @@ class product_product(osv.osv):
                 mydict = {
                           'id': product.id,
                           'name': product.name,
+                          'description_sale':product.description_sale,
                           'default_code': product.default_code,
                           'variants': product.variants
                           }

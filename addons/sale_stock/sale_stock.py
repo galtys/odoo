@@ -270,7 +270,7 @@ class sale_order(osv.osv):
     _constraints = [
         (_pjb_check_pricelist_type, 'Pricelist type on shop on must equal to pricelist type on order (i.e. Retail Shop - Retail Pricelist)', []),
         (_pjb_check_fiscal_position_empty, 'Only UK Retail Sale Orders can have fiscal position empty.', []),
-        (_pjb_check_fiscal_position_partner, 'Fiscal position on order must equal partner fiscal position.', []),
+        #(_pjb_check_fiscal_position_partner, 'Fiscal position on order must equal partner fiscal position.', []),
         (_pjb_check_fiscal_position_pricelist, 'EXVAT Fiscal positions (0%VAT or 20EXVAT CODES) must be used with EXVAT Pricelists.', []),
         (_pjb_check_order_policy_manual, 'After 17.6.2014, "Create Invoice" for Retail must be "On Demand", for Trade and Contract must be "On Delivery Order". Please see Other Information tab', []),
        # (_pjb_check_taxes, 'Only one tax code per line allowed.', []),
@@ -437,7 +437,10 @@ class sale_order(osv.osv):
         }
 
     def _prepare_order_line_move(self, cr, uid, order, line, picking_id, date_planned, context=None):
-        location_id = order.shop_id.warehouse_id.lot_stock_id.id
+        if line.product_id.default_source_location:
+            location_id = line.product_id.default_source_location.id
+        else:
+            location_id = order.shop_id.warehouse_id.lot_stock_id.id
         output_id = order.shop_id.warehouse_id.lot_output_id.id
         return {
             'name': line.name,
