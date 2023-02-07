@@ -807,6 +807,8 @@ class product_product(osv.osv):
                 ids_sku= super(product_product, self).search(cr, uid, args, offset=offset, limit=limit, order=order, context=context, count=count)
                                 
                 ids = list( set(ids_name+ids_sku)  )
+            else:
+                ids = super(product_product, self).search(cr, uid, args, offset=offset, limit=limit, order=order, context=context, count=count)
         else:
             ids = super(product_product, self).search(cr, uid, args, offset=offset, limit=limit, order=order, context=context, count=count)
             
