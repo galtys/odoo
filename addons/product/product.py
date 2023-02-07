@@ -794,15 +794,30 @@ class product_product(osv.osv):
             context = {}
         if context and context.get('search_default_categ_id', False):
             args.append((('categ_id', 'child_of', context['search_default_categ_id'])))
-        ids= super(product_product, self).search(cr, uid, args, offset=offset, limit=limit, order=order, context=context, count=count)
-        qty_map={}
-        if isinstance(ids, list):
-            for p in self.pool.get('product.product').browse(cr, uid, ids):
-                qty_map[p.id]=p.qty_available
-            out = sorted(ids, key=lambda a: qty_map[a], reverse=True)
+        
+        if len(args)==1:
+            if (args[0][0]=='name') and (args[0][1]=='ilike'):                
+                term = args[0][2]
+                terms = term.split(' ')
+                args = [ ['name', 'ilike', x] for x in terms ]
+                print args        
+                ids_name= super(product_product, self).search(cr, uid, args, offset=offset, limit=limit, order=order, context=context, count=count)
+                
+                args = [ ['default_code', 'ilike', term] ]
+                ids_sku= super(product_product, self).search(cr, uid, args, offset=offset, limit=limit, order=order, context=context, count=count)
+                                
+                ids = list( set(ids_name+ids_sku)  )
         else:
-            out=ids
-        return out
+            ids = super(product_product, self).search(cr, uid, args, offset=offset, limit=limit, order=order, context=context, count=count)
+            
+        #qty_map={}
+        #if isinstance(ids, list):
+        #    for p in self.pool.get('product.product').browse(cr, uid, ids):
+        #        qty_map[p.id]=p.qty_available
+        #    out = sorted(ids, key=lambda a: qty_map[a], reverse=True)
+        #else:
+        #    out=ids
+        return ids
 
 product_product()
 

@@ -8,7 +8,9 @@
             <field name="model">product.product</field>
             <field name="arch" type="xml">
                 <search string="Product">
-                   <field name="name" string="Product" filter_domain="['|',('name','ilike',self),('default_code','ilike',self)]"/>
+                  <!-- <field name="name" string="Product" filter_domain="['|',('name','ilike',self),('default_code','ilike',self)]"/>  -->
+		   <field name="name" string="Product" filter_domain="[('name','ilike',self)]"/>
+		  
                    <filter string="Services" icon="terp-accessories-archiver" domain="[('type','=','service')]"/>
                    <filter string="Consumable" name="consumable" icon="terp-accessories-archiver" domain="[('type','=','consu')]" help="Consumable products"/>
                    <separator/>
