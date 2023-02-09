@@ -23,7 +23,7 @@ from openerp.osv import fields
 from openerp.osv import osv
 from openerp import netsvc
 
-
+import pprint
 class StockMove(osv.osv):
     _inherit = 'stock.move'
     
@@ -43,11 +43,16 @@ class StockMove(osv.osv):
         """
         bom_obj = self.pool.get('mrp.bom')
         move_obj = self.pool.get('stock.move')
+        loc_obj = self.pool.get('stock.location')
         procurement_obj = self.pool.get('procurement.order')
         product_obj = self.pool.get('product.product')
         wf_service = netsvc.LocalService("workflow")
+        def loc_id_to_name(l_id):
+            return loc_obj.browse(cr, uid, l_id).name
+        
         processed_ids = [move.id]
         if move.product_id.supply_method == 'produce':
+            print 'expanding: ', move.id
             bis = bom_obj.search(cr, uid, [
                 ('product_id','=',move.product_id.id),
                 ('bom_id','=',False),
@@ -56,6 +61,7 @@ class StockMove(osv.osv):
                 factor = move.product_qty
                 bom_point = bom_obj.browse(cr, uid, bis[0], context=context)
                 res = bom_obj._bom_explode(cr, uid, bom_point, factor, [])
+                #pprint.pprint( res[0] )
                 for line in res[0]: 
                     valdef = {
                         'picking_id': move.picking_id.id,
@@ -73,7 +79,15 @@ class StockMove(osv.osv):
                     }
                     mid = move_obj.copy(cr, uid, move.id, default=valdef)
                     processed_ids.append(mid)
-                    prodobj = product_obj.browse(cr, uid, line['product_id'], context=context)
+                    
+                    prodobj = product_obj.browse(cr, uid, line['product_id'], context=context)                    
+                    if prodobj.default_source_location:
+                      location_id = prodobj.default_source_location.id
+                    else:
+                      location_id = move.location_id.id
+                    print '  location_id', loc_id_to_name(move.location_id.id), loc_id_to_name(location_id)
+                    move_obj.write(cr, uid, mid, {'location_id':location_id})
+                    
                     proc_id = procurement_obj.create(cr, uid, {
                         'name': (move.picking_id.origin or ''),
                         'origin': (move.picking_id.origin or ''),
@@ -83,14 +97,18 @@ class StockMove(osv.osv):
                         'product_uom': line['product_uom'],
                         'product_uos_qty': line['product_uos'] and line['product_uos_qty'] or False,
                         'product_uos':  line['product_uos'],
-                        'location_id': move.location_id.id,
+                        'location_id': location_id,                        
+                        #'location_id': move.location_id.id,
                         'procure_method': prodobj.procure_method,
                         'move_id': mid,
                     })
                     wf_service.trg_validate(uid, 'procurement.order', proc_id, 'button_confirm', cr)
+
+                    
                 move_obj.write(cr, uid, [move.id], {
                     'location_dest_id': move.location_id.id, # dummy move for the kit
                     'auto_validate': True,
+                    #'location_id':location_id,
                     'picking_id': False,
                     'state': 'confirmed'
                 })
