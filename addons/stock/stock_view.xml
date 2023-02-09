@@ -1208,6 +1208,7 @@
                         groups="stock.group_tracking_lot"
                         icon="terp-accessories-archiver+"
                         states="draft,assigned,confirmed"/>
+		      <field name="location_id" groups="stock.group_locations"/>
                       <field name="location_dest_id" groups="stock.group_locations"/>
                       <field name="state"/>
                 </tree>

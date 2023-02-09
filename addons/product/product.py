@@ -805,8 +805,14 @@ class product_product(osv.osv):
                 
                 args = [ ['default_code', 'ilike', term] ]
                 ids_sku= super(product_product, self).search(cr, uid, args, offset=offset, limit=limit, order=order, context=context, count=count)
-                                
-                ids = list( set(ids_name+ids_sku)  )
+                if isinstance(ids_name,list) and isinstance(ids_sku,list):                  
+                    ids = list( set(ids_name+ids_sku)  )
+                elif isinstance(ids_name,list) and (not isinstance(ids_sku,list)):
+                    ids = ids_name
+                elif isinstance(ids_sku,list):
+                    ids = ids_sku
+                else:
+                    ids = []
             else:
                 ids = super(product_product, self).search(cr, uid, args, offset=offset, limit=limit, order=order, context=context, count=count)
         else:
