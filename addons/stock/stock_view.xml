@@ -878,7 +878,7 @@
             <field name="name">stock.picking.out.tree</field>
             <field name="model">stock.picking.out</field>
             <field name="arch" type="xml">
-                <tree colors="blue:state == 'draft';grey:state == 'cancel';red:state not in ('cancel', 'done') and min_date &lt; current_date" string="Delivery Orders" editable="top">
+                <tree colors="blue:state == 'draft';grey:state == 'cancel';red:state not in ('cancel', 'done') and min_date &lt; current_date" string="Delivery Orders">
                     <field name="name" readonly="1"/>
                     <field name="partner_id" string="Customer" readonly="1"/>
                     <field name="origin" readonly="1"/>
