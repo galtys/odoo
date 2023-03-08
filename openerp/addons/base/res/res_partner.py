@@ -625,8 +625,10 @@ class res_partner(osv.osv, format_address):
         # a special ``domain`` is set on the ``child_ids`` o2m to bypass this logic, as it uses similar domain expressions
         if len(args) == 1 and len(args[0]) == 3 and args[0][:2] == ('parent_id','in'):
             context = dict(context or {}, active_test=False)
-        return super(res_partner, self)._search(cr, user, args, offset=offset, limit=limit, order=order, context=context,
+        ret = super(res_partner, self)._search(cr, user, args, offset=offset, limit=limit, order=order, context=context,
                                                 count=count, access_rights_uid=access_rights_uid)
+        print args
+        return ret
 
     def _get_display_name(self, unaccent):
         # TODO: simplify this in trunk with `display_name`, once it is stored

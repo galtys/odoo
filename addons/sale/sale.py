@@ -70,12 +70,12 @@ class sale_order(osv.osv):
             shop = self.pool.get('sale.shop').browse(cr, uid, shop_id, context=context)
             if shop.project_id.id:
                 v['project_id'] = shop.project_id.id
-            #print [so and so.partner_id.property_product_pricelist]
+            
             v['pricelist_id']=False
             if partner_id:
                 partner=self.pool.get('res.partner').browse(cr, uid, partner_id, context=context)
                 if partner.property_product_pricelist:
-                    print 'USING partner pricelist'
+                    
                     v['pricelist_id']=partner.property_product_pricelist.id
             if not v['pricelist_id']:
                 print 'USING shop pricelist'
@@ -407,7 +407,7 @@ class sale_order(osv.osv):
        
         return {'value': val}
     def pjb_validate(self, cr, uid, vals):
-        print 'create sale order', vals, #property_account_position, #property_product_pricelist
+        
         if not vals['pricelist_id']:            
             raise osv.except_osv(_('Error!'), _('No pricelist'))
         shop=self.pool.get('sale.shop').browse(cr, uid, vals['shop_id'])
