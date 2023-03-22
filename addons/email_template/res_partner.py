@@ -29,7 +29,7 @@ class res_partner(osv.osv):
 
     _columns = {
 
-        'opt_out': fields.selection( [('optin','Opt In'), ('optout','Opt Out')], string="Opt In/Out"),
+        'opt_out': fields.selection( [('optin','Opt In'), ('optout','Opt Out'), ('no_consent','Consent Not Given')], string="Opt In/Out"),
         'opt_out_bkup':fields.boolean('optout2'),
         #'opt_out': fields.boolean('Opt-Out',
         #    help="If opt-out is checked, this contact has refused to receive emails for mass mailing and marketing campaign. "
