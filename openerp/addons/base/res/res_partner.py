@@ -249,15 +249,15 @@ class res_partner(osv.osv, format_address):
                                    ('delivery', 'Shipping'), ('contact', 'Contact'),
                                    ('other', 'Other')], 'Type',
             help="Used to select automatically the right address according to the context in sales and purchases documents."),
-        'street': fields.char('Street', size=128),
-        'street2': fields.char('Street2', size=128),
-        'zip': fields.char('Zip', change_default=True, size=24),
-        'city': fields.char('City', size=128),
+        'street': fields.char('Street', size=128,required=True),
+        'street2': fields.char('Street2', size=128,required=True),
+        'zip': fields.char('Zip', change_default=True, size=24,required=True),
+        'city': fields.char('City', size=128,required=True),
         'state_id': fields.many2one("res.country.state", 'State'),
-        'country_id': fields.many2one('res.country', 'Country'),
+        'country_id': fields.many2one('res.country', 'Country',required=True),
         'country': fields.related('country_id', type='many2one', relation='res.country', string='Country',
                                   deprecated="This field will be removed as of OpenERP 7.1, use country_id instead"),
-        'email': fields.char('Email', size=240),
+        'email': fields.char('Email', size=240,required=True),
         'phone': fields.char('Phone', size=64),
         'fax': fields.char('Fax', size=64),
         'mobile': fields.char('Mobile', size=64),
@@ -545,6 +545,14 @@ class res_partner(osv.osv, format_address):
 
     def create(self, cr, uid, vals, context=None):
         vals['lang']=''
+        print ['partner create', vals]
+        if ('street' in vals) and ('street2' in vals) and ('zip' in vals):
+            pass
+        else:
+            if vals['street'] and vals['street2'] and vals['zip']:
+                pass
+            else:
+                raise osv.except_osv(_("Warning"),_("Please fill street, street2 and zip code"))
         new_id = super(res_partner, self).create(cr, uid, vals, context=context)
         partner = self.browse(cr, uid, new_id, context=context)
         self._fields_sync(cr, uid, partner, vals, context)
