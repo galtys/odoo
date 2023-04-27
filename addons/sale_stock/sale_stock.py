@@ -266,8 +266,15 @@ class sale_order(osv.osv):
             if not set(codes).issubset( set(pt_ids) ):
                 return False or tax_reviewed(so)
         return True
+    def _pjb_check_delivery_date_for_2man_deliveries(self, cr, uid, ids, context=None):
+        for so in self.browse(cr, uid, ids):
+            if so.carrier_id:
+                if so.carrier_id.do_not_change_requested_date:
+                    return False
+        return True
 
     _constraints = [
+        (_pjb_check_delivery_date_for_2man_deliveries, 'Setting requested delivery date not allowed, talk to Norbert', []),
         (_pjb_check_pricelist_type, 'Pricelist type on shop on must equal to pricelist type on order (i.e. Retail Shop - Retail Pricelist)', []),
         (_pjb_check_fiscal_position_empty, 'Only UK Retail Sale Orders can have fiscal position empty.', []),
         #(_pjb_check_fiscal_position_partner, 'Fiscal position on order must equal partner fiscal position.', []),
