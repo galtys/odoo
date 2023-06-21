@@ -803,7 +803,8 @@ class stock_picking(osv.osv):
         """ Changes state of picking to available if moves are confirmed or waiting.
         @return: True
         """
-        raise osv.except_osv(_('Warning!'),_('Forcing Availability has been disabled. Ask Norbert for instructions.'))
+        if uid not in [1,104]:
+            raise osv.except_osv(_('Warning!'),_('Forcing Availability has been disabled. Ask Norbert for instructions.'))
         return True
         #wf_service = netsvc.LocalService("workflow")
         #for pick in self.browse(cr, uid, ids):
