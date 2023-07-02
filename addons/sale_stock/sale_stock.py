@@ -225,12 +225,19 @@ class sale_order(osv.osv):
         for so in self.browse(cr, uid, ids):
             if self._is_older17jun14(so.date_order):
                 return True
-            if so.pricelist_id.type == 'retail' and so.order_policy != 'manual':
-                ok=False
-            if so.pricelist_id.type in ['trade','contract'] and so.order_policy != 'picking':
-                ok=False                
-            if so.name=='SO8762':
-                ok=True
+            #if so.pricelist_id.type == 'retail' and so.order_policy != 'manual':
+            #    ok=False
+            #if so.pricelist_id.type in ['trade','contract'] and so.order_policy != 'picking':
+            #    ok=False                
+            #if so.name=='SO8762':
+            #    ok=True
+            #if so.payment_term and (so.order_policy == 'picking'):
+            print [so.name,so.partner_id.property_payment_term,so.order_policy]
+            if not so.partner_id.property_payment_term:
+                print ['  no pay term set']
+                if not (so.order_policy == 'manual'):
+                   ok=False
+            
         return ok
     def _pjb_check_partner_pricelist(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
@@ -279,7 +286,7 @@ class sale_order(osv.osv):
         (_pjb_check_fiscal_position_empty, 'Only UK Retail Sale Orders can have fiscal position empty.', []),
         #(_pjb_check_fiscal_position_partner, 'Fiscal position on order must equal partner fiscal position.', []),
         (_pjb_check_fiscal_position_pricelist, 'EXVAT Fiscal positions (0%VAT or 20EXVAT CODES) must be used with EXVAT Pricelists.', []),
-        (_pjb_check_order_policy_manual, 'After 17.6.2014, "Create Invoice" for Retail must be "On Demand", for Trade and Contract must be "On Delivery Order". Please see Other Information tab', []),
+        (_pjb_check_order_policy_manual, 'After 17.6.2014, "Create Invoice" must be "On Demand" for partners without payment terms assigned', []),
        # (_pjb_check_taxes, 'Only one tax code per line allowed.', []),
         (_pjb_check_same_tax_codes, 'All tax codes used on an sale order must be the same.', []),
         (_pjb_check_tax_and_pricelist, 'The tax code must be allowed in the pricelist.', [] ),
