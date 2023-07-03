@@ -181,6 +181,15 @@ class sale_order(osv.osv):
         #order=date.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
         order = date(*x)
         return order < today
+    def _is_older5july23(self, date_order):
+        #today_tuple=tuple( map(int,time.strftime("%Y-%m-%d").split('-')) )
+        today_tuple=(2023,7,5)
+        from datetime import date
+        today=date(*today_tuple)
+        x=tuple( map(int, date_order.split('-') ) )
+        #order=date.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
+        order = date(*x)
+        return order < today
         
     def _pjb_check_pricelist_type(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
@@ -223,7 +232,7 @@ class sale_order(osv.osv):
     def _pjb_check_order_policy_manual(self, cr, uid, ids, context=None):
         ok=True
         for so in self.browse(cr, uid, ids):
-            if self._is_older17jun14(so.date_order):
+            if self._is_older5july23(so.date_order):
                 return True
             #if so.pricelist_id.type == 'retail' and so.order_policy != 'manual':
             #    ok=False
@@ -286,7 +295,7 @@ class sale_order(osv.osv):
         (_pjb_check_fiscal_position_empty, 'Only UK Retail Sale Orders can have fiscal position empty.', []),
         #(_pjb_check_fiscal_position_partner, 'Fiscal position on order must equal partner fiscal position.', []),
         (_pjb_check_fiscal_position_pricelist, 'EXVAT Fiscal positions (0%VAT or 20EXVAT CODES) must be used with EXVAT Pricelists.', []),
-       # (_pjb_check_order_policy_manual, 'After 17.6.2014, "Create Invoice" must be "On Demand" for partners without payment terms assigned', []),
+       (_pjb_check_order_policy_manual, 'After 3.7.2023, "Create Invoice" must be "On Demand" for partners without payment terms assigned', []),
        # (_pjb_check_taxes, 'Only one tax code per line allowed.', []),
         (_pjb_check_same_tax_codes, 'All tax codes used on an sale order must be the same.', []),
         (_pjb_check_tax_and_pricelist, 'The tax code must be allowed in the pricelist.', [] ),
