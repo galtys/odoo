@@ -231,6 +231,11 @@ class sale_order(osv.osv):
         return True
     def _pjb_check_order_policy_manual(self, cr, uid, ids, context=None):
         ok=True
+        if context is None:
+            context = {}
+        if 'script' in context:
+            if context['script']:
+                return True
         for so in self.browse(cr, uid, ids):
             if self._is_older5july23(so.date_order):
                 return True
@@ -241,9 +246,10 @@ class sale_order(osv.osv):
             #if so.name=='SO8762':
             #    ok=True
             #if so.payment_term and (so.order_policy == 'picking'):
-            print [so.name,so.partner_id.property_payment_term,so.order_policy]
+            #print [so.name,so.partner_id.property_payment_term,so.order_policy]
+            
             if not so.partner_id.property_payment_term:
-                print ['  no pay term set']
+                #print ['  no pay term set']
                 if not (so.order_policy == 'manual'):
                    ok=False
             
