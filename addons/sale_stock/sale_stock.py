@@ -231,6 +231,8 @@ class sale_order(osv.osv):
         return True
     def _pjb_check_order_policy_manual(self, cr, uid, ids, context=None):
         ok=True
+        #return True
+        #print ['!!!!!', context]
         if context is None:
             context = {}
         if 'script' in context:
@@ -466,10 +468,11 @@ class sale_order(osv.osv):
         }
 
     def _prepare_order_line_move(self, cr, uid, order, line, picking_id, date_planned, context=None):
-        if line.product_id.default_source_location:
-            location_id = line.product_id.default_source_location.id
-        else:
-            location_id = order.shop_id.warehouse_id.lot_stock_id.id
+        #if line.product_id.default_source_location:
+        #    location_id = line.product_id.default_source_location.id
+        #else:
+        #    location_id = order.shop_id.warehouse_id.lot_stock_id.id
+        location_id = order.shop_id.warehouse_id.lot_stock_id.id    
         output_id = order.shop_id.warehouse_id.lot_output_id.id
         return {
             'name': line.name,
