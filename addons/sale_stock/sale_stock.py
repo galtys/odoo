@@ -231,6 +231,13 @@ class sale_order(osv.osv):
         return True
     def _pjb_check_order_policy_manual(self, cr, uid, ids, context=None):
         ok=True
+        #return True
+        #print ['!!!!!', context]
+        if context is None:
+            context = {}
+        if 'script' in context:
+            if context['script']:
+                return True
         for so in self.browse(cr, uid, ids):
             if self._is_older5july23(so.date_order):
                 return True
@@ -241,9 +248,10 @@ class sale_order(osv.osv):
             #if so.name=='SO8762':
             #    ok=True
             #if so.payment_term and (so.order_policy == 'picking'):
-            print [so.name,so.partner_id.property_payment_term,so.order_policy]
+            #print [so.name,so.partner_id.property_payment_term,so.order_policy]
+            
             if not so.partner_id.property_payment_term:
-                print ['  no pay term set']
+                #print ['  no pay term set']
                 if not (so.order_policy == 'manual'):
                    ok=False
             
@@ -460,10 +468,11 @@ class sale_order(osv.osv):
         }
 
     def _prepare_order_line_move(self, cr, uid, order, line, picking_id, date_planned, context=None):
-        if line.product_id.default_source_location:
-            location_id = line.product_id.default_source_location.id
-        else:
-            location_id = order.shop_id.warehouse_id.lot_stock_id.id
+        #if line.product_id.default_source_location:
+        #    location_id = line.product_id.default_source_location.id
+        #else:
+        #    location_id = order.shop_id.warehouse_id.lot_stock_id.id
+        location_id = order.shop_id.warehouse_id.lot_stock_id.id    
         output_id = order.shop_id.warehouse_id.lot_output_id.id
         return {
             'name': line.name,

@@ -81,11 +81,12 @@ class StockMove(osv.osv):
                     processed_ids.append(mid)
                     
                     prodobj = product_obj.browse(cr, uid, line['product_id'], context=context)                    
-                    if prodobj.default_source_location:
-                      location_id = prodobj.default_source_location.id
-                    else:
-                      location_id = move.location_id.id
-                    print '  location_id', loc_id_to_name(move.location_id.id), loc_id_to_name(location_id)
+                    #if prodobj.default_source_location:
+                    #  location_id = prodobj.default_source_location.id
+                    #else:
+                    #  location_id = move.location_id.id
+                    location_id = move.location_id.id
+                    #print '  location_id', loc_id_to_name(move.location_id.id), loc_id_to_name(location_id)
                     move_obj.write(cr, uid, mid, {'location_id':location_id})
                     
                     proc_id = procurement_obj.create(cr, uid, {
