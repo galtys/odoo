@@ -325,6 +325,12 @@ class res_users(osv.osv):
             access_rights_uid=access_rights_uid)
 
     def create(self, cr, uid, vals, context=None):
+        vals['street'] = ' '
+        vals['street2'] = ' '
+        vals['zip'] = ' '
+        vals['city']= ' '
+        vals['country_id']=288
+        vals['phone']=' '
         user_id = super(res_users, self).create(cr, uid, vals, context=context)
         user = self.browse(cr, uid, user_id, context=context)
         if user.partner_id.company_id: 
