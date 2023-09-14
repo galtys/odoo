@@ -367,7 +367,7 @@
         <menuitem action="purchase_rfq" id="menu_purchase_rfq"
             parent="menu_procurement_management"
             sequence="0"/>
-
+<!--
         <record id="purchase_order_line_act" model="ir.actions.act_window">
             <field name="name">Purchase Order Lines</field>
             <field name="type">ir.actions.act_window</field>
@@ -376,9 +376,9 @@
             <field name="view_mode">tree,form</field>
         </record>
         <menuitem action="purchase_order_line_act" id="menu_purchase_order_line_act"
-            parent="menu_procurement_management"
+            parent="menu_procurement_management" groups="purchase.group_purchase_user"
             sequence="2"/>
-
+-->
 	
         <record id="purchase_form_action" model="ir.actions.act_window">
             <field name="name">Purchase Orders</field>
@@ -530,7 +530,6 @@
             <field name="name">On Purchase Order Lines</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">purchase.order.line</field>
-            <field name="domain">[('order_id.invoice_method','&lt;&gt;','picking'), ('state','in',('confirmed','done')), ('invoiced', '=', False)]</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="purchase_order_line_search"/>
