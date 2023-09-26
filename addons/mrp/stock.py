@@ -52,7 +52,6 @@ class StockMove(osv.osv):
         
         processed_ids = [move.id]
         if move.product_id.supply_method == 'produce':
-            print 'expanding: ', move.id
             bis = bom_obj.search(cr, uid, [
                 ('product_id','=',move.product_id.id),
                 ('bom_id','=',False),
@@ -61,7 +60,6 @@ class StockMove(osv.osv):
                 factor = move.product_qty
                 bom_point = bom_obj.browse(cr, uid, bis[0], context=context)
                 res = bom_obj._bom_explode(cr, uid, bom_point, factor, [])
-                #pprint.pprint( res[0] )
                 for line in res[0]: 
                     valdef = {
                         'picking_id': move.picking_id.id,
@@ -86,7 +84,6 @@ class StockMove(osv.osv):
                     #else:
                     #  location_id = move.location_id.id
                     location_id = move.location_id.id
-                    #print '  location_id', loc_id_to_name(move.location_id.id), loc_id_to_name(location_id)
                     move_obj.write(cr, uid, mid, {'location_id':location_id})
                     
                     proc_id = procurement_obj.create(cr, uid, {

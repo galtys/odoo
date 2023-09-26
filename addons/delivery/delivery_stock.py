@@ -56,7 +56,6 @@ class picking_operations(osv.osv):
         return taxes
 
     def _get_sale_order_shipping_line(self, cr, uid, picking, context=None):
-        print picking
         if picking.sale_id:
             lines = [l for l in picking.sale_id.order_line if l.delivery_line]
             if len(lines)!=1:
@@ -92,7 +91,6 @@ class picking_operations(osv.osv):
             taxes_ids = [x.id for x in taxes]
         taxes_ids = self._get_sale_order_taxes(cr, uid, picking.sale_id)
         #lines = [l for l in picking.sale_id.order_line if l.delivery_line]
-        print picking
         lines = self._get_sale_order_shipping_line(cr, uid, picking)
 
         one_delivery_line = len(lines)==1
@@ -137,7 +135,7 @@ class picking_operations(osv.osv):
             return move_line.product_id.list_price
         
     def _product_pricelist_price(self, cursor, user, move_line, product_id=None, uom_id=None):
-        #print ['id id', move_line, 'sssd']
+
         pricelist_id = move_line.picking_id.sale_id.pricelist_id.id
         if product_id is None:            
             product_id = move_line.product_id.id
@@ -187,7 +185,7 @@ class picking_operations(osv.osv):
             sale_line_id=False
             line_udrate=0.0
         _logger.debug("  calculated price_unit=%0.2f for picking: %s, stock_move:%s, sale_line_id: %s, line_udrate:%0.6f ",ret, move_line.picking_id.name, move_line.name,sale_line_id,line_udrate)
-        #print 'price_unit_galt', move_line.price_unit, ret, move_line.sale_line_id.udrate
+
         return ret
     def action_invoice_create(self, cr, uid, ids, journal_id=False,
                               group=False, type='out_invoice', context=None):
@@ -202,7 +200,7 @@ class picking_operations(osv.osv):
         result = super(picking_operations, self).action_invoice_create(cr, uid,
                                                                        ids, journal_id=journal_id, group=group, type=type,
                                                                        context=context)
-        #print 'after super action invoice create', 444*'_.', result
+
         for picking in picking_obj.browse(cr, uid, result.keys(), context=context):
             invoice_id = result[picking.id]
             invoice = invoice_obj.browse(cr, uid, invoice_id, context=context)
@@ -213,7 +211,7 @@ class picking_operations(osv.osv):
                 for t in inv_line.invoice_line_tax_id:
                     if t.id not in taxes:
                         taxes.append(t.id)
-            #print 'taxes', taxes
+
             assert len(taxes)==1
             #assert False
 

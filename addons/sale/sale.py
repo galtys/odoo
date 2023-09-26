@@ -61,7 +61,6 @@ class sale_order(osv.osv):
 
     def onchange_shop_id(self, cr, uid, ids, shop_id, partner_id, context=None):
         v = {}
-        print 'onchange_shop_id', ids,shop_id,context
         if ids:
             so=self.browse(cr, uid, ids[0])
         else:
@@ -78,12 +77,10 @@ class sale_order(osv.osv):
                     
                     v['pricelist_id']=partner.property_product_pricelist.id
             if not v['pricelist_id']:
-                print 'USING shop pricelist'
                 if shop.pricelist_id.id:
                     v['pricelist_id'] = shop.pricelist_id.id
         if so and (so.state not in ['draft','sent']):
             v.pop('pricelist_id')
-        print v
         return {'value': v}
 
     def copy(self, cr, uid, id, default=None, context=None):
@@ -242,8 +239,6 @@ class sale_order(osv.osv):
         shop_ids = self.pool.get('sale.shop').search(cr, uid, [('company_id','=',company_id)], context=context)
         if not shop_ids:
             raise osv.except_osv(_('Error!'), _('There is no default shop for the current user\'s company!'))
-        print 44*"_"
-        print 'default shop', shop_ids
         return  shop_ids[4]
 
     _columns = {
@@ -414,7 +409,6 @@ class sale_order(osv.osv):
         pricelist=self.pool.get('product.pricelist').browse(cr, uid, vals['pricelist_id'])
         if shop.pricelist_id.type != pricelist.type:
             raise osv.except_osv(_('Error!'), _('Pricelist type on partner must equal to pricelist type on order (i.e. Retail - Retail)'))
-        print vals['shop_id'], vals['fiscal_position'], vals['pricelist_id'], vals['partner_id']
 
     def write(self, cr, uid, ids, vals, context=None):
         #for so in self.browse(cr, uid, ids):
@@ -670,7 +664,6 @@ class sale_order(osv.osv):
         return True
     def _pjb_check_pricelist(self, cr, uid, ids, context=None):
         ok=True
-        print 'CHECKING PRICELIST'
         for so in self.browse(cr, uid, ids):
             for l in so.order_line:
                 pricelist_id=so.pricelist_id.id
@@ -679,7 +672,6 @@ class sale_order(osv.osv):
                                                                      {'uom': l.product_uom.id,
                                                                       'date': so.date_order,
                                                                       })[pricelist_id]
-                print so.name,l.name,price
                 #l.write({'price_unit':price})
                 if (abs(l.price_unit-price) > 0.0) and not l.delivery_line:
                     ok=False
@@ -1118,9 +1110,6 @@ class mail_compose_message(osv.Model):
         #if context.get('default_model') == 'sale.order':
         #   raise osv.except_osv(_('Alert!'), _('Please download the quotation and send it via outlook.'))
         if 1:
-          print 44*'_'
-          print context
-          
           if context.get('default_model') == 'sale.order':
               # and context.get('default_res_id') and context.get('mark_so_as_sent'):
             if 'default_res_id' in context:

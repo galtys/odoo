@@ -1033,7 +1033,6 @@ class account_voucher(osv.osv):
             #assert len(filter_id)==1
             f=self.pool.get('ir.filters').browse(cr, uid, filter_id[0])
             existing_ids = self.pool.get('account.invoice').search(cr, uid, eval(f.domain) )
-            print existing_ids
             line_ids=[]
             for inv in self.pool.get('account.invoice').browse(cr,uid,existing_ids):
                 for l in inv.move_id.line_id:
@@ -1043,9 +1042,6 @@ class account_voucher(osv.osv):
             ret=self.recompute_voucher_lines(cr, uid, ids, voucher.partner_id.id, voucher.journal_id.id, voucher.amount, voucher.payment_rate_currency_id.id, voucher.type, voucher.date, context=context)
             line_cr_ids = ret['value']['line_cr_ids']
             line_dr_ids=ret['value']['line_dr_ids']
-            #print line_cr_ids
-            print ret['value'].keys()
-            print ret['value']['writeoff_amount']
             for l in voucher.line_ids:
                 l.unlink()
             for vl in line_cr_ids:
@@ -1059,8 +1055,6 @@ class account_voucher(osv.osv):
                     new_id=self.pool.get('account.voucher.line').create(cr,uid,vl)
             #voucher.write({'line_cr_ids':line_cr_ids})
             #voucher.write({'line_dr_ids':line_dr_ids})
-
-            #print line_dr_ids
         if 1:
             voucher.refresh()
             recs = []
@@ -1256,7 +1250,6 @@ class account_voucher(osv.osv):
             if ml_writeoff:
                 move_line_pool.create(cr, uid, ml_writeoff, context)
             # We post the voucher.
-            #print 'line_total, rec_list_ids', line_total, rec_list_ids
 
             self.write(cr, uid, [voucher.id], {
                 'move_id': move_id,
@@ -1289,7 +1282,6 @@ class account_voucher(osv.osv):
         :return: the account move line and its counterpart to create, depicted as mapping between fieldname and value
         :rtype: tuple of dict
         '''
-        print 'baba', [amount_residual]
         if amount_residual > 0:
             account_id = line.voucher_id.company_id.expense_currency_exchange_account_id
             if not account_id:
@@ -1393,7 +1385,6 @@ class account_voucher(osv.osv):
             amount = self._convert_amount(cr, uid, line.untax_amount or line.amount, voucher.id, context=ctx)
             # if the amount encoded in voucher is equal to the amount unreconciled, we need to compute the
             # currency rate difference
-            print [line.id, line.name, line.move_line_id.debit, line.move_line_id.credit]
             if line.amount == line.amount_unreconciled:
                 if not line.move_line_id:
                     raise osv.except_osv(_('Wrong voucher line'),_("The invoice you are willing to pay is not valid anymore."))
@@ -1489,8 +1480,6 @@ class account_voucher(osv.osv):
                 rec_ids.append(new_id)
             if line.move_line_id.id:
                 rec_lst_ids.append(rec_ids)
-        print 'tot_line',tot_line
-        print 'rec_lst_ids',rec_lst_ids
         return (tot_line, rec_lst_ids)
 
     def writeoff_move_line_get(self, cr, uid, voucher_id, line_total, move_id, name, company_currency, current_currency, context=None):

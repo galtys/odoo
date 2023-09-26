@@ -801,7 +801,6 @@ class product_product(osv.osv):
                 term = args[0][2]
                 terms = term.split(' ')
                 args = [ ['name', 'ilike', x] for x in terms ]
-                print args        
                 ids_name= super(product_product, self).search(cr, uid, args, offset=offset, limit=limit, order=order, context=context, count=count)
                 
                 args = [ ['default_code', 'ilike', term] ]

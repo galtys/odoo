@@ -207,9 +207,6 @@ class mrp_bom(osv.osv):
         res = {}
         ([{'product_uos_qty': False, 'name': u'Brighton Lounge Armchair (no cushions)', 'product_uom': 1, 'product_qty': 1.0, 'product_uos': False, 'product_id': 189}, {'product_uos_qty': False, 'name': u'Grey Standard Cushions for Brighton Lounge Armchair', 'product_uom': 1, 'product_qty': 1.0, 'product_uos': False, 'product_id': 72}], [])
 
-        #for bom in self.browse(cr, uid, ids, context=context):
-        #    res[bom.id]=0
-        #print 44*'_' n_bundles
         if 1:
             for bom in self.browse(cr, uid, ids, context=context):
                 prod,ret =  self._bom_explode(cr, uid, bom, 1)
@@ -228,7 +225,6 @@ class mrp_bom(osv.osv):
                     else:
                         q=0
                     qtys.append(q)
-                print [bom.product_id.default_code, qtys]
                 if qtys:
                     res[bom.id] = min(qtys)/bom.product_qty
                 else:
