@@ -231,8 +231,6 @@ class sale_order(osv.osv):
         return True
     def _pjb_check_order_policy_manual(self, cr, uid, ids, context=None):
         ok=True
-        #return True
-        #print ['!!!!!', context]
         if context is None:
             context = {}
         if 'script' in context:
@@ -241,20 +239,9 @@ class sale_order(osv.osv):
         for so in self.browse(cr, uid, ids):
             if self._is_older5july23(so.date_order):
                 return True
-            #if so.pricelist_id.type == 'retail' and so.order_policy != 'manual':
-            #    ok=False
-            #if so.pricelist_id.type in ['trade','contract'] and so.order_policy != 'picking':
-            #    ok=False                
-            #if so.name=='SO8762':
-            #    ok=True
-            #if so.payment_term and (so.order_policy == 'picking'):
-            #print [so.name,so.partner_id.property_payment_term,so.order_policy]
-            
             if not so.partner_id.property_payment_term:
-                #print ['  no pay term set']
                 if not (so.order_policy == 'manual'):
-                   ok=False
-            
+                   ok=False            
         return ok
     def _pjb_check_partner_pricelist(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
@@ -277,14 +264,11 @@ class sale_order(osv.osv):
                 return False
             return True
         for so in self.browse(cr, uid, ids):
-            #cust_inv = inv.type in ['in_invoice','in_refund']
-            #print '_pjb_check_same_tax_codes', so.name
             if not same_tax(cr, uid, [so.id]):
                 return False or tax_reviewed(so)
         return True
     def _pjb_check_tax_and_pricelist(self, cr, uid, ids, context=None):
         for so in self.browse(cr, uid, ids):
-            #print '_pjb_check_tax_and_pricelist', so.name
             codes=self._get_tax_codes(cr, uid, [so.id])
             pt_ids=[x.id for x in so.pricelist_id.tax_ids]
             if not set(codes).issubset( set(pt_ids) ):
@@ -346,7 +330,6 @@ class sale_order(osv.osv):
         return result
 
     def action_invoice_create(self, cr, uid, ids, grouped=False, states=['confirmed', 'done', 'exception'], date_invoice = False, context=None):
-        print self._module, 'action inv cre'
         picking_obj = self.pool.get('stock.picking')
         res = super(sale_order,self).action_invoice_create( cr, uid, ids, grouped=grouped, states=states, date_invoice = date_invoice, context=context)
         for order in self.browse(cr, uid, ids, context=context):
