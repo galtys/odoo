@@ -167,6 +167,14 @@ class module(osv.osv):
         for m in self.browse(cr, uid, ids):
             res[m.id] = self.get_module_info(m.name).get('version', default_version)
         return res
+    def _depends_on(self, cr, uid, ids, field_name=None, arg=None, context=None):
+        res = {}
+        for m in self.browse(cr, uid, ids):
+            deps=[]
+            for md in m.dependencies_id:
+                deps.append(md.name)
+            res[m.id] = ','.join(deps)
+        return res
 
     def _get_views(self, cr, uid, ids, field_name=None, arg=None, context=None):
         res = {}
@@ -262,6 +270,7 @@ class module(osv.osv):
         #   latest_version refers the installed version (the one in database)
         #   published_version refers the version available on the repository
         'installed_version': fields.function(_get_latest_version, string='Latest Version', type='char'),
+        'depends_on': fields.function(_depends_on, string='DependsOn', type='char'),        
         'latest_version': fields.char('Installed Version', size=64, readonly=True),
         'published_version': fields.char('Published Version', size=64, readonly=True),
 
