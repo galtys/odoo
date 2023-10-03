@@ -136,8 +136,8 @@
 			                    <field name="category_id" invisible="1"/>
 			-->
                     <field name="name"/>
+		    <field name="depends_on"/>		    
 		    <field name="category_id"/>
-		    <field name="depends_on"/>
                     <field name="author"/>
                     <field name="installed_version"/>
                     <field name="state"/>

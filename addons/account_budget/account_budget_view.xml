@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-        <menuitem name="Budgets" id="menu_action_account_budget_post_tree" parent="account.menu_finance_generic_reporting" sequence="6"/>
+        <menuitem name="Budgets" id="menu_action_account_budget_post_tree" parent="account.menu_finance_generic_reporting" sequence="61"/>
 
         <!--
     Budgets
@@ -37,7 +37,7 @@
             <field name="view_id" ref="view_budget_post_tree"/>
             <field name="search_view_id" ref="view_budget_post_search"/>
         </record>
-        <menuitem id="next_id_31" name="Budgets" parent="account.menu_finance" sequence="6"/>
+        <menuitem id="next_id_31" name="Budgets" parent="account.menu_finance" sequence="61"/>
         <menuitem id="next_id_pos" name="Budgets" parent="account.menu_finance_configuration" sequence="50"/>
         <menuitem action="open_budget_post_form" id="menu_budget_post_form" parent="next_id_pos" sequence="20"/>
 
