@@ -635,7 +635,6 @@ class res_partner(osv.osv, format_address):
             context = dict(context or {}, active_test=False)
         ret = super(res_partner, self)._search(cr, user, args, offset=offset, limit=limit, order=order, context=context,
                                                 count=count, access_rights_uid=access_rights_uid)
-        print args
         return ret
 
     def _get_display_name(self, unaccent):
