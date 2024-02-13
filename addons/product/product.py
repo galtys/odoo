@@ -600,6 +600,7 @@ class product_product(osv.osv):
         
         
         'stock_alert':fields.integer('Stock Alert'),
+        'average_cost':fields.integer('AverageCost'),
         'report_stock_alert':fields.boolean('Report Stock Alert'),
         #'contract': fields.float('Contract', digits_compute=dp.get_precision('Product Price')),
         'contract': fields.float('Contract', digits_compute=dp.get_precision('Product Price')),
