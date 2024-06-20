@@ -109,6 +109,7 @@
 					
 					
                                         <field name="list_price"/>
+					<field name="average_cost"/>
 					<field name="shopify" readonly="1"/>
 					<field name="user_price_unit"/>
 					
