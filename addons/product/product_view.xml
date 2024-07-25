@@ -53,6 +53,7 @@
                     <field name="standard_price" invisible="1"/>
                      -->
 		     <field name="standard_price"/>
+		     <field name="average_cost"/>
 		     <field name="trade"/>
 		     <field name="contract" groups="base.group_user"/>
 		     <field name="retail"/>
