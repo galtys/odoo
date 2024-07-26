@@ -224,7 +224,7 @@ class sale_order(osv.osv):
         return  shop_ids[4]
 
     _columns = {
-        'out_of_stock':fields.char("out_of_stock",size=20),        
+        
         'name': fields.char('Order Reference', size=64, required=True,
             readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]}, select=True),
         #'shop_id': fields.many2one('sale.shop', 'Shop', required=True, readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]}),
