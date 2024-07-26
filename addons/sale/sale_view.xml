@@ -115,7 +115,7 @@
             <field name="model">sale.order</field>
             <field name="priority">4</field>
             <field name="arch" type="xml">
-                <tree string="Quotation" fonts="bold:message_unread==True" colors="grey:state=='cancel';blue:state in ('waiting_date','manual');red:(out_of_stock=='true')">
+                <tree string="Quotation" fonts="bold:message_unread==True" colors="grey:state=='cancel';blue:state in ('waiting_date','manual');red:state in ('invoice_except','shipping_except')">
                     <field name="message_unread" invisible="1"/>
                     <field name="name" string="Quotation Number"/>
                     <field name="date_order"/>
@@ -123,7 +123,6 @@
                     <field name="user_id"/>
                     <field name="amount_total" sum="Total Tax Included"/>
                     <field name="state"/>
-		    <field name="out_of_stock" invisible="1"/>
                 </tree>
             </field>
         </record>
