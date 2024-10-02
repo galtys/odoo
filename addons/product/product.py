@@ -294,7 +294,7 @@ class product_template(osv.osv):
     _description = "Product Template"
 
     _columns = {
-        'name': fields.char('Name', size=128, required=True,  select=True),
+        'name': fields.char('Name', size=256, required=True,  select=True),
         'product_manager': fields.many2one('res.users','Product Manager'),
         'description': fields.text('Description'),
         'description_purchase': fields.text('Purchase Description'),
@@ -553,7 +553,7 @@ class product_product(osv.osv):
         'lst_price' : fields.function(_product_lst_price, type='float', string='Public Price', digits_compute=dp.get_precision('Product Price')),
         'code': fields.function(_product_code, type='char', string='Internal Reference'),
         'partner_ref' : fields.function(_product_partner_ref, type='char', string='Customer ref'),
-        'default_code' : fields.char('Internal Reference', size=64, select=True),
+        'default_code' : fields.char('Internal Reference', size=128, select=True),
         'active': fields.boolean('Active', help="If unchecked, it will allow you to hide the product without removing it."),
         'variants': fields.char('Variants', size=64),
         'product_tmpl_id': fields.many2one('product.template', 'Product Template', required=True, ondelete="cascade", select=True),
