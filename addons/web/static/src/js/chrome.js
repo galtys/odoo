@@ -310,6 +310,7 @@ instance.web.CrashManager = instance.web.Class.extend({
 instance.web.Loading = instance.web.Widget.extend({
     template: _t("Loading"),
     init: function(parent) {
+	console.log("Loading widget ... fffxx");
         this._super(parent);
         this.count = 0;
         this.blocked_ui = false;
@@ -604,6 +605,8 @@ instance.web.Login =  instance.web.Widget.extend({
     },
 
     init: function(parent, action) {
+	console.log("chrome.js Login");
+	
         this._super(parent);
         this.has_local_storage = typeof(localStorage) != 'undefined';
         this.db_list = null;
@@ -638,10 +641,15 @@ instance.web.Login =  instance.web.Widget.extend({
                 localStorage.removeItem(k);
             });
         }
+	
     },
     start: function() {
         var self = this;
         self.$el.find("form").submit(self.on_submit);
+
+	this.$("form input[name=code_2fa]").hide()
+	this.$("form input[name=code_2fa]").show()
+	
         self.$el.find('.oe_login_manage_db').click(function() {
             self.do_action("database_manager");
         });
@@ -666,6 +674,7 @@ instance.web.Login =  instance.web.Widget.extend({
                 });
         }
         return d;
+
     },
     remember_last_used_database: function(db) {
         // This cookie will be used server side in order to avoid db reloading on first visit
@@ -716,8 +725,8 @@ instance.web.Login =  instance.web.Widget.extend({
         }
         var login = this.$("form input[name=login]").val();
         var password = this.$("form input[name=password]").val();
-
-        this.do_login(db, login, password);
+        var code_2fa = this.$("form input[name=code_2fa]").val();
+        this.do_login(db, login, password, code_2fa);
     },
     /**
      * Performs actual login operation, and UI-related stuff
@@ -726,11 +735,12 @@ instance.web.Login =  instance.web.Widget.extend({
      * @param {String} login user login
      * @param {String} password user password
      */
-    do_login: function (db, login, password) {
+    do_login: function (db, login, password,code_2fa) {
         var self = this;
         self.hide_error();
         self.$(".oe_login_pane").fadeOut("slow");
-        return this.session.session_authenticate(db, login, password).then(function() {
+
+        return this.session.session_authenticate(db, login, password, code_2fa).then(function() {
             self.remember_last_used_database(db);
             if (self.has_local_storage && self.remember_credentials) {
                 localStorage.setItem(db + '|last_login', login);

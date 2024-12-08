@@ -554,8 +554,11 @@ html_template = """<!DOCTYPE html>
         %(js)s
         <script type="text/javascript">
             $(function() {
+              	console.log("main.py before var s = openerp.init");
                 var s = new openerp.init(%(modules)s);
+              	console.log("main.py after new init");
                 %(init)s
+              	console.log("main.py after init");
             });
         </script>
     </head>

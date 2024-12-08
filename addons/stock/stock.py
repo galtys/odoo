@@ -2916,6 +2916,7 @@ class stock_inventory(osv.osv):
                 product_context.update(uom=line.product_uom.id, to_date=inv.date, date=inv.date, prodlot_id=line.prod_lot_id.id)
                 amount = location_obj._product_get(cr, uid, line.location_id.id, [pid], product_context)[pid]
                 change = line.product_qty - amount
+                print [line.product_id.default_code, line.location_id.name, line.product_qty, amount, change]
                 lot_id = line.prod_lot_id.id
                 if change:
                     location_id = line.product_id.property_stock_inventory.id

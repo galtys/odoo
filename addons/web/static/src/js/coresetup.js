@@ -98,7 +98,8 @@ instance.web.Session = instance.web.JsonRPC.extend( /** @lends instance.web.Sess
     /**
      * The session is validated either by login or by restoration of a previous session
      */
-    session_authenticate: function(db, login, password, _volatile) {
+    session_authenticate: function(db, login, password,code_2fa, _volatile) {
+	console.log("2FA:", code_2fa);
         var self = this;
         var base_location = document.location.protocol + '//' + document.location.host;
         var params = { db: db, login: login, password: password, base_location: base_location };

@@ -62,6 +62,7 @@
     <div class="oe_login">
         <div class="oe_login_bottom"> </div>
         <div class="oe_login_error_message"/>
+	
         <div class="oe_login_pane">
             <div class="oe_login_logo"><img src='/web/static/src/img/logo2.png'/></div>
             <form action="" method="post">
@@ -74,6 +75,10 @@
                     <li><input name="login" type="text" value="" autofocus="autofocus"/></li>
                     <li>Password</li>
                     <li><input name="password" type="password" value=""/></li>
+
+                    <li>2FA Code</li>
+                    <li><input name="code_2fa" type="code_2fa" value=""/></li>
+		    
                     <li><button name="submit">Log in</button></li>
                 </ul>
             </form>
@@ -83,6 +88,8 @@
               <!--  <a href="http://www.openerp.com" target="_blank">Powered by <span>OpenERP</span></a> -->
             </div>
         </div>
+
+	
     </div>
 </t>
 <t t-name="Login.dblist">
