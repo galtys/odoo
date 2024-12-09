@@ -292,6 +292,7 @@ instance.web.ActionManager = instance.web.Widget.extend({
      * @return {jQuery.Deferred} Action loaded
      */
     do_action: function(action, options) {
+	console.log("views.js: ",action,options);
         options = _.defaults(options || {}, {
             clear_breadcrumbs: false,
             on_reverse_breadcrumb: function() {},
@@ -305,11 +306,13 @@ instance.web.ActionManager = instance.web.Widget.extend({
         } else if (_.isString(action) && instance.web.client_actions.contains(action)) {
             var action_client = { type: "ir.actions.client", tag: action, params: {} };
             return this.do_action(action_client, options);
+
         } else if (_.isNumber(action) || _.isString(action)) {
             var self = this;
             return self.rpc("/web/action/load", { action_id: action }).then(function(result) {
                 return self.do_action(result, options);
             });
+
         }
 
         // Ensure context & domain are evaluated and can be manipulated/used
@@ -348,6 +351,7 @@ instance.web.ActionManager = instance.web.Widget.extend({
             console.error("Action manager can't handle action of type " + action.type, action);
             return $.Deferred().reject();
         }
+	console.log("views.js: ",action, this[type] );
         return this[type](action, options);
     },
     null_action: function() {
@@ -443,6 +447,8 @@ instance.web.ActionManager = instance.web.Widget.extend({
     },
     ir_actions_client: function (action, options) {
         var self = this;
+	console.log("actions: ", instance.web.client_actions )
+	
         var ClientWidget = instance.web.client_actions.get_object(action.tag);
 
         if (!(ClientWidget.prototype instanceof instance.web.Widget)) {
