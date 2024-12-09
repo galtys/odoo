@@ -763,6 +763,8 @@ instance.web.Login_2FA =  instance.web.Widget.extend({
 
     init: function(parent, action) {
         this._super(parent);
+	this.$('[name=login]').prop('readonly', true);
+	
         this.has_local_storage = typeof(localStorage) != 'undefined';
         this.db_list = null;
         this.selected_db = null;
@@ -874,8 +876,9 @@ instance.web.Login_2FA =  instance.web.Widget.extend({
         }
         var login = this.$("form input[name=login]").val();
         var password = this.$("form input[name=password]").val();
+	var code_2fa = this.$("form input[name=code_2fa]").val();
 
-        this.do_login(db, login, password);
+        this.do_login(db, login,code_2fa);
     },
     /**
      * Performs actual login operation, and UI-related stuff
@@ -884,19 +887,20 @@ instance.web.Login_2FA =  instance.web.Widget.extend({
      * @param {String} login user login
      * @param {String} password user password
      */
-    do_login: function (db, login, password) {
+    do_login: function (db, login, code_2fa) {
         var self = this;
         self.hide_error();
         self.$(".oe_login_pane").fadeOut("slow");
-        return this.session.session_authenticate(db, login, password).then(function() {
-            self.remember_last_used_database(db);
-            if (self.has_local_storage && self.remember_credentials) {
-                localStorage.setItem(db + '|last_login', login);
-            }
+        var code='code';
+	return this.session.session_2fa(db, login,code_2fa).then(function() {
+            //self.remember_last_used_database(db);
+            //if (self.has_local_storage && self.remember_credentials) {
+            //    localStorage.setItem(db + '|last_login', login);
+            //}
             self.trigger('login_successful');
         }, function () {
             self.$(".oe_login_pane").fadeIn("fast", function() {
-                self.show_error(_t("Invalid username or password"));
+                self.show_error(_t("Invalid 2FA code"));
             });
         });
     },

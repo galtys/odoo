@@ -870,8 +870,32 @@ class Session(openerpweb.Controller):
             REMOTE_ADDR=wsgienv['REMOTE_ADDR'],
         )
         req.session.authenticate(db, login, password, env)
-
-        return self.session_info(req)
+        ret = self.session_info(req)
+        print ['main.py session auth', req, req.session,ret['uid'],ret]
+        if ret['uid']:
+            val={'login':True}
+        else:
+            val={}
+        return val
+    @openerpweb.jsonrequest
+    def check_2fa(self, req, db, login, code, base_location=None):
+        wsgienv = req.httprequest.environ
+        env = dict(
+            base_location=base_location,
+            HTTP_HOST=wsgienv['HTTP_HOST'],
+            REME_ADDR=wsgienv['REMOTE_ADDR'],
+        )
+        #req.session.authenticate(db, login, password, env)
+        #ret = self.session_info(req)
+        #print ['main.py session auth', ret]
+        #ret = {'code':True}
+        #ret={}
+        ret = self.session_info(req)
+        code_db=req.session.get_code_2fa(db, login, env)
+        if code==code_db:
+            ret['code']=True
+        print ['check_2fa',code,code_db,ret]
+        return ret
 
     @openerpweb.jsonrequest
     def change_password (self,req,fields):

@@ -426,7 +426,7 @@ class common(netsvc.ExportService):
     def dispatch(self, method, params):
         if method in ['login', 'about', 'timezone_get', 'get_server_environment',
                       'login_message','get_stats', 'check_connectivity',
-                      'list_http_services', 'version', 'authenticate']:
+                      'list_http_services', 'version', 'authenticate','get_code_2fa']:
             pass
         elif method in ['get_available_updates', 'get_migration_scripts', 'set_loglevel', 'get_os_time', 'get_sqlcount']:
             passwd = params[0]
@@ -449,6 +449,9 @@ class common(netsvc.ExportService):
     def exp_authenticate(self, db, login, password, user_agent_env):
         res_users = pooler.get_pool(db).get('res.users')
         return res_users.authenticate(db, login, password, user_agent_env)
+    def exp_get_code_2fa(self, db, login):
+        res_users = pooler.get_pool(db).get('res.users')
+        return res_users.get_code_2fa(db, login)
 
     def exp_version(self):
         return RPC_VERSION_1

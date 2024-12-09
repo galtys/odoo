@@ -98,11 +98,13 @@
                     <input name="db" t-att-value="widget.selected_db || ''"/>
                 </div>
                 <ul>
+		    
                     <li>Username</li>
-                    <li><input name="login" type="text" value="" autofocus="autofocus"/></li>
+                    <li><input name="login" type="text" readonly="readonly" value="" autofocus="autofocus"/></li>
+		    <!--
                     <li>Password</li>
                     <li><input name="password" type="password" value=""/></li>
-
+                    -->
                     <li>Code 2FA</li>
                     <li><input name="code_2fa" type="text" value=""/></li>
 		    

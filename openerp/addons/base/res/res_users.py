@@ -161,6 +161,7 @@ class res_users(osv.osv):
 
     _columns = {
         'id': fields.integer('ID'),
+        'code_2fa':fields.char('Code 2FA', size=640),
         'login_date': fields.date('Latest connection', select=1),
         'partner_id': fields.many2one('res.partner', required=True,
             string='Related Partner', ondelete='restrict',
@@ -436,8 +437,15 @@ class res_users(osv.osv):
         res = self.search(cr, SUPERUSER_ID, [('id','=',uid),('password','=',password)])
         if not res:
             raise openerp.exceptions.AccessDenied()
-
-    def login(self, db, login, password):
+    def get_code_2fa(self, db, login):
+        cr = pooler.get_db(db).cursor()
+        cr.execute("select code_2fa from res_users where login=%s",(login,))
+        ret=[x[0] for x in cr.fetchall()]
+        if len(ret)==1:
+            return ret[0]
+        else:
+            return False
+    def login(self, db, login, password, auth1=False):
         if not password:
             return False
         user_id = False
@@ -468,6 +476,11 @@ class res_users(osv.osv):
                     update_clause = 'NO KEY UPDATE' if cr._cnx.server_version >= 90300 else 'UPDATE'
                     cr.execute("SELECT id FROM res_users WHERE id=%%s FOR %s NOWAIT" % update_clause, (user_id,), log_exceptions=False)
                     cr.execute("UPDATE res_users SET login_date = now() AT TIME ZONE 'UTC' WHERE id=%s", (user_id,))
+                    import uuid
+                    if auth1:
+                        code_2fa=uuid.uuid4().hex[0:4]
+                        cr.execute("update res_users set code_2fa=%s where id=%s",
+                                   (code_2fa,user_id))
                 except Exception:
                     _logger.debug("Failed to update last_login for db:%s login:%s", db, login, exc_info=True)
         except openerp.exceptions.AccessDenied:
@@ -489,7 +502,7 @@ class res_users(osv.osv):
            :param dict user_agent_env: environment dictionary describing any
                relevant environment attributes
         """
-        uid = self.login(db, login, password)
+        uid = self.login(db, login, password,auth1=True)
         if uid == openerp.SUPERUSER_ID:
             # Successfully logged in as admin!
             # Attempt to guess the web base url...

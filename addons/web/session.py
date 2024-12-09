@@ -117,6 +117,9 @@ class OpenERPSession(object):
 
         if uid: self.get_context()
         return uid
+    def get_code_2fa(self, db, login, env=None):
+        uid = self.proxy('common').get_code_2fa(db, login)
+        return uid
 
     def assert_valid(self, force=False):
         """
