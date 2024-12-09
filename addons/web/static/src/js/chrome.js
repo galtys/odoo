@@ -1460,9 +1460,25 @@ instance.web.WebClient = instance.web.Client.extend({
 
         this.action_manager.do_action(action);
         this.action_manager.inner_widget.on('login_successful', this, function() {
+            this.show_2fa();        // will load the state we just pushed
+        });
+    },
+    show_2fa: function() {
+        this.toggle_bars(false);
+
+        var state = $.bbq.getState(true);
+        var action = {
+            type: 'ir.actions.client',
+            tag: 'login_2FA',
+            _push_me: false,
+        };
+
+        this.action_manager.do_action(action);
+        this.action_manager.inner_widget.on('login_successful', this, function() {
             this.show_application();        // will load the state we just pushed
         });
     },
+    
     show_application: function() {
         var self = this;
         self.toggle_bars(true);
