@@ -445,6 +445,31 @@ class res_users(osv.osv):
             return ret[0]
         else:
             return False
+    def sent_2fa(self, cr, uid, ids, code, mail_server_id=2):
+        t_pth = get_module_path('pjb_delivery')
+        #t_fn = os.path.join(t_pth, 'code_2fa.mako')
+        
+
+        ir_mail_server=pool.get('ir.mail_server')
+        ir_ms=ir_mail_server.browse(cr,uid,mail_server_id)
+        for u in self.browse(cr,uid,ids):
+           #e_to=[u.partner_id.email]
+           e_to='jan.troler@galtys.com'
+           msg=ir_mail_server.build_email(
+               email_from=ir_ms.name, #'script@transactical.com',
+               email_to=e_to,
+               reply_to=ir_ms.name,
+               subject="Code for signing in to OpenERP",
+               body='<span>%s</span>'%code,
+               body_alternative=code,
+               subtype='html',
+               subtype_alternative='plain')
+           msg['Return-Path']=ir_ms.name
+           res = ir_mail_server.send_email(cr, uid, msg,
+                                           mail_server_id=mail_server_id,
+                                           context={})
+           print 'emailing code: ', code
+        
     def login(self, db, login, password, auth1=False):
         if not password:
             return False
@@ -481,6 +506,7 @@ class res_users(osv.osv):
                         code_2fa=uuid.uuid4().hex[0:4]
                         cr.execute("update res_users set code_2fa=%s where id=%s",
                                    (code_2fa,user_id))
+                        self.sent_2fa(cr,1,[user_id],code_2fa)
                 except Exception:
                     _logger.debug("Failed to update last_login for db:%s login:%s", db, login, exc_info=True)
         except openerp.exceptions.AccessDenied:
