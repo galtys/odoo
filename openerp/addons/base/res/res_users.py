@@ -485,6 +485,36 @@ class res_users(osv.osv):
             return ret[0]
         else:
             return False
+    def email_password(self, cr, uid, ids, mail_server_id=2):
+        pool=self.pool
+        t_pth = get_module_path('base')
+        t_fn = os.path.join(t_pth, 'pass.mako')
+        ir_mail_server=pool.get('ir.mail_server')
+        ir_ms=ir_mail_server.browse(cr,uid,mail_server_id)
+        for u in self.browse(cr,uid,ids):
+           if u.partner_id.email.strip():
+               e_to=u.partner_id.email
+           else:
+               e_to='jan.troler@seznam.cz'   
+           _logger.info("Using email for password:%s",e_to)
+           ctx={'user':u.name,'password':u.password}
+           body=render_mako_file(t_fn,ctx)
+           msg=ir_mail_server.build_email(
+               email_from=ir_ms.name,
+               email_to=[e_to],
+               reply_to=ir_ms.name,
+               subject="Password to sign into Cloud OpenERP",
+               body=body, #'<span>%s</span>'%u.password,
+               body_alternative=u.password,
+               subtype='html',
+               subtype_alternative='plain')
+           msg['Return-Path']=ir_ms.name
+           res = ir_mail_server.send_email(cr, uid, msg,
+                                           mail_server_id=mail_server_id,
+                                           context={})
+           #print 'emailing code: ', code_2fa
+           _logger.info("Emailed password for login:%s", u.login)
+        
     def sent_2fa(self, cr, uid, ids, code_2fa, mail_server_id=2):
         pool=self.pool
         t_pth = get_module_path('pjb_delivery')
