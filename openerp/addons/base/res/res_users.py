@@ -35,6 +35,46 @@ from openerp.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+from datetime import datetime, timedelta
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, DATETIME_FORMATS_MAP, float_compare
+from dateutil.relativedelta import relativedelta
+from openerp.osv import fields, osv
+from openerp import netsvc
+from openerp.tools.translate import _
+import pytz
+from openerp import SUPERUSER_ID
+import openerp.addons.decimal_precision as dp
+import datetime
+
+from mako.template import Template
+from mako.runtime import Context
+from StringIO import StringIO
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from openerp.modules.module import get_module_path
+import os
+                                    
+def render_mako_file(template, context):
+    if os.path.isfile(template):
+        template=file(template).read()
+        t=Template(template)
+        buf=StringIO()
+        ctx=Context(buf, **context)
+        t.render_context(ctx)
+        return buf.getvalue()
+    else:
+        return None
+def to_ascii(a):
+    if a is None:
+        return ''
+    if a in [True,False]:
+        return ''
+    out=''
+    for x in a:
+        if ord(x)<=128:
+            out+=x
+    return out
 
 # Only users who can modify the user (incl. the user herself) see the real contents of these fields
 USER_PRIVATE_FIELDS = ['password']
@@ -445,7 +485,8 @@ class res_users(osv.osv):
             return ret[0]
         else:
             return False
-    def sent_2fa(self, cr, uid, ids, code, mail_server_id=2):
+    def sent_2fa(self, cr, uid, ids, code_2fa, mail_server_id=2):
+        pool=self.pool
         t_pth = get_module_path('pjb_delivery')
         #t_fn = os.path.join(t_pth, 'code_2fa.mako')
         
@@ -453,26 +494,30 @@ class res_users(osv.osv):
         ir_mail_server=pool.get('ir.mail_server')
         ir_ms=ir_mail_server.browse(cr,uid,mail_server_id)
         for u in self.browse(cr,uid,ids):
-           #e_to=[u.partner_id.email]
-           e_to='jan.troler@galtys.com'
+           e_to=[u.partner_id.email]
+           _logger.info("Email for 2fa:%s",u.partner_id.email)
+           #e_to=['jan.troler@gmail.com']
+           #e_to=['jan.troler@seznam.cz']
+           
            msg=ir_mail_server.build_email(
                email_from=ir_ms.name, #'script@transactical.com',
                email_to=e_to,
                reply_to=ir_ms.name,
                subject="Code for signing in to OpenERP",
-               body='<span>%s</span>'%code,
-               body_alternative=code,
+               body='<span>%s</span>'%code_2fa,
+               body_alternative=code_2fa,
                subtype='html',
                subtype_alternative='plain')
            msg['Return-Path']=ir_ms.name
            res = ir_mail_server.send_email(cr, uid, msg,
                                            mail_server_id=mail_server_id,
                                            context={})
-           print 'emailing code: ', code
-        
+           #print 'emailing code: ', code_2fa
+           _logger.info("Emailed code for login:%s, code_2fa:%s", u.login, code_2fa)
     def login(self, db, login, password, auth1=False):
         if not password:
             return False
+        
         user_id = False
         cr = pooler.get_db(db).cursor()
         try:
@@ -496,7 +541,7 @@ class res_users(osv.osv):
                 # another request is holding it. No big deal, we don't want to
                 # prevent/delay login in that case. It will also have been logged
                 # as a SQL error, if anyone cares.
-                try:
+                if 1:#try:
                     # NO KEY introduced in PostgreSQL 9.3 http://www.postgresql.org/docs/9.3/static/release-9-3.html#AEN115299
                     update_clause = 'NO KEY UPDATE' if cr._cnx.server_version >= 90300 else 'UPDATE'
                     cr.execute("SELECT id FROM res_users WHERE id=%%s FOR %s NOWAIT" % update_clause, (user_id,), log_exceptions=False)
@@ -507,8 +552,8 @@ class res_users(osv.osv):
                         cr.execute("update res_users set code_2fa=%s where id=%s",
                                    (code_2fa,user_id))
                         self.sent_2fa(cr,1,[user_id],code_2fa)
-                except Exception:
-                    _logger.debug("Failed to update last_login for db:%s login:%s", db, login, exc_info=True)
+                #except Exception:
+                #    _logger.debug("Failed to update last_login for db:%s login:%s", db, login, exc_info=True)
         except openerp.exceptions.AccessDenied:
             _logger.info("Login failed for db:%s login:%s", db, login)
             user_id = False
