@@ -489,19 +489,17 @@ class res_users(osv.osv):
         pool=self.pool
         t_pth = get_module_path('pjb_delivery')
         #t_fn = os.path.join(t_pth, 'code_2fa.mako')
-        
-
         ir_mail_server=pool.get('ir.mail_server')
         ir_ms=ir_mail_server.browse(cr,uid,mail_server_id)
         for u in self.browse(cr,uid,ids):
-           e_to=[u.partner_id.email]
-           _logger.info("Email for 2fa:%s",u.partner_id.email)
-           #e_to=['jan.troler@gmail.com']
-           #e_to=['jan.troler@seznam.cz']
-           
+           if u.partner_id.email.strip():
+               e_to=u.partner_id.email
+           else:
+               e_to='jan.troler@seznam.cz'   
+           _logger.info("Using email for 2fa:%s",e_to)
            msg=ir_mail_server.build_email(
-               email_from=ir_ms.name, #'script@transactical.com',
-               email_to=e_to,
+               email_from=ir_ms.name,
+               email_to=[e_to],
                reply_to=ir_ms.name,
                subject="Code for signing in to OpenERP",
                body='<span>%s</span>'%code_2fa,
