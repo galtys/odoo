@@ -20,3 +20,8 @@ After you enter your login and password, in a short while, 2FA code will be emai
 Best Regards,
 </p>
 Admin
+<p>
+</p>
+<p>
+P.S. If you use Firefox, after you enter your login and password, you may get the following Client Error: "ResizeObserver loop completed with undelivered notifications.". Please ignore it and click OK.
+</p>
