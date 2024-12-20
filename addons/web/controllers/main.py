@@ -538,6 +538,7 @@ def content_disposition(filename, req):
 #----------------------------------------------------------
 # OpenERP Web web Controllers
 #----------------------------------------------------------
+# <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css" />
 
 html_template = """<!DOCTYPE html>
 <html style="height: 100%%">
@@ -547,7 +548,7 @@ html_template = """<!DOCTYPE html>
         <title>OpenERP</title>
         <link rel="shortcut icon" href="/web/static/src/img/favicon.ico" type="image/x-icon"/>
         <link rel="stylesheet" href="/web/static/src/css/full.css" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css" />
+        
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
 
         %(css)s
