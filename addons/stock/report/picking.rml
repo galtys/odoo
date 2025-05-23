@@ -359,7 +359,7 @@
     <para style="terp_5f_default_5f_2"/>
     <section>
       <para style="terp_5f_default_5f_2">[[ repeatIn([line for line in picking.move_lines if (line.state == 'draft' or line.state=='waiting')],'move_lines') ]]</para>
-      <para style="terp_5f_default_5f_2">[[ (picking.move_lines!=[] and removeParentNode('para')) or removeParentNode('sec</para>
+      <para style="terp_5f_default_5f_2">[[ (picking.move_lines!=[] and removeParentNode('para')) or removeParentNode('section')]]</para>
       <blockTable colWidths="264.0,76.0,69.0,52.0,74.0" style="Table1">
         <tr>
           <td>
