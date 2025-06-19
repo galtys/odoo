@@ -492,9 +492,9 @@ class res_users(osv.osv):
         cr.execute("select ip_whitelist from res_company where id=1")
         ret=[x[0] for x in cr.fetchall()]
         if len(ret)==1:
-            return ret[0].split(',')
+            return ret[0]
         else:
-            return []
+            return ''
         
     def email_password(self, cr, uid, ids, mail_server_id=2):
         pool=self.pool
