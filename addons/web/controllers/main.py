@@ -885,6 +885,7 @@ class Session(openerpweb.Controller):
             base_location=base_location,
             HTTP_HOST=wsgienv['HTTP_HOST'],
             REME_ADDR=wsgienv['REMOTE_ADDR'],
+            HTTP_X_FORWARDED_FOR=wsgienv.get('HTTP_X_FORWARDED_FOR',wsgienv['REMOTE_ADDR'])
         )
         #req.session.authenticate(db, login, password, env)
         #ret = self.session_info(req)
@@ -893,8 +894,8 @@ class Session(openerpweb.Controller):
         #ret={}
         ret = self.session_info(req)
         print 'check_2fa', 44*'_'
-        print [ env ]
-        if env['REME_ADDR'] in ['127.0.0.1']:
+        print [ env]
+        if env['HTTP_X_FORWARDED_FOR'] in ['127.0.0.1']:
             ret['code']=True
         else:
             code_db=req.session.get_code_2fa(db, login, env)
