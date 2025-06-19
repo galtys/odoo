@@ -30,11 +30,16 @@ class picking(report_sxw.rml_parse):
             'get_product_desc': self.get_product_desc,
         })
     def get_product_desc(self, move_line):
-        desc = move_line.product_id.name
-        if move_line.product_id.default_code:
-            desc = '[' + move_line.product_id.default_code + ']' + ' ' + desc
-        if ('-PART' in move_line.product_id.default_code) or ('INT-ACC' in move_line.product_id.default_code):
-            return move_line.name
+
+        if move_line.product_id:
+           if move_line.product_id.name:
+              desc = move_line.product_id.name
+           if move_line.product_id.default_code:
+              desc = '[' + move_line.product_id.default_code + ']' + ' ' + desc
+              if ('-PART' in move_line.product_id.default_code) or ('INT-ACC' in move_line.product_id.default_code):
+                  desc = move_line.name
+        else:
+           desc=move_line.name    
         return desc
 
 for suffix in ['', '.in', '.out']:
