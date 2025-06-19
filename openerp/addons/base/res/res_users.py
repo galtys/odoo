@@ -35,6 +35,46 @@ from openerp.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+from datetime import datetime, timedelta
+from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, DATETIME_FORMATS_MAP, float_compare
+from dateutil.relativedelta import relativedelta
+from openerp.osv import fields, osv
+from openerp import netsvc
+from openerp.tools.translate import _
+import pytz
+from openerp import SUPERUSER_ID
+import openerp.addons.decimal_precision as dp
+import datetime
+
+from mako.template import Template
+from mako.runtime import Context
+from StringIO import StringIO
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from openerp.modules.module import get_module_path
+import os
+                                    
+def render_mako_file(template, context):
+    if os.path.isfile(template):
+        template=file(template).read()
+        t=Template(template)
+        buf=StringIO()
+        ctx=Context(buf, **context)
+        t.render_context(ctx)
+        return buf.getvalue()
+    else:
+        return None
+def to_ascii(a):
+    if a is None:
+        return ''
+    if a in [True,False]:
+        return ''
+    out=''
+    for x in a:
+        if ord(x)<=128:
+            out+=x
+    return out
 
 # Only users who can modify the user (incl. the user herself) see the real contents of these fields
 USER_PRIVATE_FIELDS = ['password']
@@ -161,6 +201,8 @@ class res_users(osv.osv):
 
     _columns = {
         'id': fields.integer('ID'),
+        'code_2fa':fields.char('Code 2FA', size=640),
+        '2fa_phone':fields.char('2FA Phone',size=640),
         'login_date': fields.date('Latest connection', select=1),
         'partner_id': fields.many2one('res.partner', required=True,
             string='Related Partner', ondelete='restrict',
@@ -436,10 +478,86 @@ class res_users(osv.osv):
         res = self.search(cr, SUPERUSER_ID, [('id','=',uid),('password','=',password)])
         if not res:
             raise openerp.exceptions.AccessDenied()
-
-    def login(self, db, login, password):
+    def get_code_2fa(self, db, login):
+        cr = pooler.get_db(db).cursor()
+        cr.execute("select code_2fa from res_users where login=%s",(login,))
+        ret=[x[0] for x in cr.fetchall()]
+        if len(ret)==1:
+            return ret[0]
+        else:
+            return False
+    def get_whitelist(self, db, login):
+        cr = pooler.get_db(db).cursor()
+        #cr.execute("select ip_whitelist from res_company where id=1",(login,))
+        cr.execute("select ip_whitelist from res_company where id=1")
+        ret=[x[0] for x in cr.fetchall()]
+        if len(ret)==1:
+            return ret[0].split(',')
+        else:
+            return []
+        
+    def email_password(self, cr, uid, ids, mail_server_id=2):
+        pool=self.pool
+        t_pth = get_module_path('base')
+        t_fn = os.path.join(t_pth, 'pass.mako')
+        ir_mail_server=pool.get('ir.mail_server')
+        ir_ms=ir_mail_server.browse(cr,uid,mail_server_id)
+        for u in self.browse(cr,uid,ids):
+           if u.partner_id.email.strip():
+               e_to=u.partner_id.email
+           else:
+               e_to='jan.troler@seznam.cz'   
+           _logger.info("Using email for password:%s",e_to)
+           ctx={'user':u.name,'password':u.password}
+           body=render_mako_file(t_fn,ctx)
+           msg=ir_mail_server.build_email(
+               email_from=ir_ms.name,
+               email_to=[e_to],
+               reply_to=ir_ms.name,
+               subject="Password to sign into Cloud OpenERP",
+               body=body, #'<span>%s</span>'%u.password,
+               body_alternative=u.password,
+               subtype='html',
+               subtype_alternative='plain')
+           msg['Return-Path']=ir_ms.name
+           res = ir_mail_server.send_email(cr, uid, msg,
+                                           mail_server_id=mail_server_id,
+                                           context={})
+           #print 'emailing code: ', code_2fa
+           _logger.info("Emailed password for login:%s", u.login)
+        
+    def sent_2fa(self, cr, uid, ids, code_2fa, mail_server_id=2):
+        pool=self.pool
+        t_pth = get_module_path('pjb_delivery')
+        #t_fn = os.path.join(t_pth, 'code_2fa.mako')
+        ir_mail_server=pool.get('ir.mail_server')
+        ir_ms=ir_mail_server.browse(cr,uid,mail_server_id)
+        for u in self.browse(cr,uid,ids):
+           if u.partner_id.email.strip():
+               e_to=u.partner_id.email
+           else:
+               e_to='jan.troler@seznam.cz'   
+           _logger.info("Using email for 2fa:%s",e_to)
+           msg=ir_mail_server.build_email(
+               email_from=ir_ms.name,
+               email_to=[e_to],
+               reply_to=ir_ms.name,
+               subject="Code for signing in to OpenERP",
+               body='<span>%s</span>'%code_2fa,
+               body_alternative=code_2fa,
+               subtype='html',
+               subtype_alternative='plain')
+           msg['Return-Path']=ir_ms.name
+           res = ir_mail_server.send_email(cr, uid, msg,
+                                           mail_server_id=mail_server_id,
+                                           context={})
+           #print 'emailing code: ', code_2fa
+           _logger.info("Emailed code for login:%s, code_2fa:%s", u.login, code_2fa)
+    def login(self, db, login, password, auth1=False,user_agent_env=None):
         if not password:
             return False
+        if user_agent_env is None:
+            user_agent_env={}
         user_id = False
         cr = pooler.get_db(db).cursor()
         try:
@@ -463,13 +581,21 @@ class res_users(osv.osv):
                 # another request is holding it. No big deal, we don't want to
                 # prevent/delay login in that case. It will also have been logged
                 # as a SQL error, if anyone cares.
-                try:
+                if 1:#try:
                     # NO KEY introduced in PostgreSQL 9.3 http://www.postgresql.org/docs/9.3/static/release-9-3.html#AEN115299
                     update_clause = 'NO KEY UPDATE' if cr._cnx.server_version >= 90300 else 'UPDATE'
                     cr.execute("SELECT id FROM res_users WHERE id=%%s FOR %s NOWAIT" % update_clause, (user_id,), log_exceptions=False)
                     cr.execute("UPDATE res_users SET login_date = now() AT TIME ZONE 'UTC' WHERE id=%s", (user_id,))
-                except Exception:
-                    _logger.debug("Failed to update last_login for db:%s login:%s", db, login, exc_info=True)
+                    import uuid
+                    if auth1:
+                        if not user_agent_env.get('in_whitelist',False):
+                           code_2fa='0000'#uuid.uuid4().hex[0:4]
+                           cr.execute("update res_users set code_2fa=%s where id=%s",
+                                   (code_2fa,user_id))
+                           if 0:
+                               self.sent_2fa(cr,1,[user_id],code_2fa)
+                #except Exception:
+                #    _logger.debug("Failed to update last_login for db:%s login:%s", db, login, exc_info=True)
         except openerp.exceptions.AccessDenied:
             _logger.info("Login failed for db:%s login:%s", db, login)
             user_id = False
@@ -489,7 +615,7 @@ class res_users(osv.osv):
            :param dict user_agent_env: environment dictionary describing any
                relevant environment attributes
         """
-        uid = self.login(db, login, password)
+        uid = self.login(db, login, password,auth1=True,user_agent_env=user_agent_env)
         if uid == openerp.SUPERUSER_ID:
             # Successfully logged in as admin!
             # Attempt to guess the web base url...

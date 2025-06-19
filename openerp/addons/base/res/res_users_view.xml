@@ -101,6 +101,7 @@
                         <h1>
                             <field name="name" default_focus="1" placeholder="Name" />
                         </h1>
+			
                         <field name="category_id" widget="many2many_tags" placeholder="Tags..."/>
                     </div>
                     <group>
@@ -146,6 +147,7 @@
                             <h1><field name="name"/></h1>
                             <label for="login" class="oe_edit_only"/>
                             <h2><field name="login"/></h2>
+     			    
                         </div>
                         <group>
                             <group>
@@ -159,7 +161,8 @@
                         <notebook colspan="4">
                             <page string="Preferences">
                                 <group>
-                                    <group name="preferences">
+                                  <group name="preferences">
+				    <field name="2fa_phone"/>
                                         <field name="lang"/>
                                         <field name="tz"/>
                                     </group>

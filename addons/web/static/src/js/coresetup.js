@@ -103,7 +103,23 @@ instance.web.Session = instance.web.JsonRPC.extend( /** @lends instance.web.Sess
         var base_location = document.location.protocol + '//' + document.location.host;
         var params = { db: db, login: login, password: password, base_location: base_location };
         return this.rpc("/web/session/authenticate", params).then(function(result) {
-            if (!result.uid) {
+            if (!result.login) {
+                return $.Deferred().reject();
+            }
+	    console.log("Result: ", result, self.session_id);
+            _.extend(self, result);
+            //if (!_volatile) {
+            //    self.set_cookie('session_id', self.session_id);
+            //}
+            //return self.load_modules();
+        });
+    },
+    session_2fa: function(db, login, code, _volatile) {
+        var self = this;
+        var base_location = document.location.protocol + '//' + document.location.host;
+        var params = { db: db, login:login, code:code, base_location: base_location };
+        return this.rpc("/web/session/check_2fa", params).then(function(result) {
+            if (!result.code) {
                 return $.Deferred().reject();
             }
             _.extend(self, result);
@@ -113,6 +129,8 @@ instance.web.Session = instance.web.JsonRPC.extend( /** @lends instance.web.Sess
             return self.load_modules();
         });
     },
+
+    
     session_logout: function() {
         this.set_cookie('session_id', '');
         $.bbq.removeState();

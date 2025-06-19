@@ -117,7 +117,12 @@ class OpenERPSession(object):
 
         if uid: self.get_context()
         return uid
-
+    def get_code_2fa(self, db, login, env=None):
+        uid = self.proxy('common').get_code_2fa(db, login)
+        return uid
+    def get_whitelist(self, db, login, env=None):
+        wl = self.proxy('common').get_whitelist(db,login)
+        return wl
     def assert_valid(self, force=False):
         """
         Ensures this session is valid (logged into the openerp server)

@@ -97,6 +97,9 @@
                                 </group>
                             </group>
                         </page>
+			<page string="Whitelist">
+			  <field name="ip_whitelist"/>
+			</page>
                     </notebook>
                     </sheet>
                 </form>

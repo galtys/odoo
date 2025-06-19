@@ -538,6 +538,7 @@ def content_disposition(filename, req):
 #----------------------------------------------------------
 # OpenERP Web web Controllers
 #----------------------------------------------------------
+# <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css" />
 
 html_template = """<!DOCTYPE html>
 <html style="height: 100%%">
@@ -547,7 +548,7 @@ html_template = """<!DOCTYPE html>
         <title>OpenERP</title>
         <link rel="shortcut icon" href="/web/static/src/img/favicon.ico" type="image/x-icon"/>
         <link rel="stylesheet" href="/web/static/src/css/full.css" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css" />
+        
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
 
         %(css)s
@@ -868,10 +869,37 @@ class Session(openerpweb.Controller):
             base_location=base_location,
             HTTP_HOST=wsgienv['HTTP_HOST'],
             REMOTE_ADDR=wsgienv['REMOTE_ADDR'],
+            HTTP_X_FORWARDED_FOR=wsgienv.get('HTTP_X_FORWARDED_FOR',wsgienv['REMOTE_ADDR'])
         )
+        whitelist = req.session.get_whitelist(db,login,env)
+        in_whitelist= env['HTTP_X_FORWARDED_FOR'] in whitelist
+        env['in_whitelist']=in_whitelist
         req.session.authenticate(db, login, password, env)
-
-        return self.session_info(req)
+        ret = self.session_info(req)
+        if ret['uid']:
+            val={'login':True}
+        else:
+            val={}
+        return val
+    @openerpweb.jsonrequest
+    def check_2fa(self, req, db, login, code, base_location=None):
+        wsgienv = req.httprequest.environ
+        env = dict(
+            base_location=base_location,
+            HTTP_HOST=wsgienv['HTTP_HOST'],
+            REME_ADDR=wsgienv['REMOTE_ADDR'],
+            HTTP_X_FORWARDED_FOR=wsgienv.get('HTTP_X_FORWARDED_FOR',wsgienv['REMOTE_ADDR'])
+        )
+        ret = self.session_info(req)
+        whitelist = req.session.get_whitelist(db,login,env)
+        if env['HTTP_X_FORWARDED_FOR'] in whitelist:
+            ret['code']=True
+        else:
+            code_db=req.session.get_code_2fa(db, login, env)
+            if code==code_db:
+                ret['code']=True
+            print ['check_2fa',code,code_db,ret]
+        return ret
 
     @openerpweb.jsonrequest
     def change_password (self,req,fields):

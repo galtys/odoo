@@ -752,6 +752,167 @@ instance.web.Login =  instance.web.Widget.extend({
 });
 instance.web.client_actions.add("login", "instance.web.Login");
 
+instance.web.Login_2FA =  instance.web.Widget.extend({
+    template: "Login_2FA",
+    remember_credentials: true,
+    events: {
+        'change input[name=db],select[name=db]': function(ev) {
+            this.set('database_selector', $(ev.currentTarget).val());
+        },
+    },
+
+    init: function(parent, action) {
+        this._super(parent);
+	this.$('[name=login]').prop('readonly', true);
+	
+        this.has_local_storage = typeof(localStorage) != 'undefined';
+        this.db_list = null;
+        this.selected_db = null;
+        this.selected_login = null;
+        this.params = action.params || {};
+        if (_.isEmpty(this.params)) {
+            this.params = $.bbq.getState(true);
+        }
+        if (action && action.params && action.params.db) {
+            this.params.db = action.params.db;
+        } else if ($.deparam.querystring().db) {
+            this.params.db = $.deparam.querystring().db;
+        }
+        if (this.params.db) {
+            this.selected_db = this.params.db;
+        }
+
+        if (this.params.login_successful) {
+            this.on('login_successful', this, this.params.login_successful);
+        }
+        // some cleanup to remove any trace of that last login feature
+        if (typeof(localStorage) != 'undefined') {
+            var toRemove = [];
+            _.each(_.range(localStorage.length), function(i) {
+                var key = localStorage.key(i);
+                if (key.match(/^.*?\|last_password$/)) {
+                    toRemove.push(key);
+                }
+            });
+            _.each(toRemove, function(k) {
+                localStorage.removeItem(k);
+            });
+        }
+    },
+    start: function() {
+        var self = this;
+        self.$el.find("form").submit(self.on_submit);
+        self.$el.find('.oe_login_manage_db').click(function() {
+            self.do_action("database_manager");
+        });
+        self.on('change:database_selector', this, function() {
+            this.database_selected(this.get('database_selector'));
+        });
+        var d = $.when();
+        if ($.param.fragment().token) {
+            self.params.token = $.param.fragment().token;
+        }
+        // used by dbmanager.do_create via internal client action
+        if (self.params.db && self.params.login && self.params.password) {
+            d = self.do_login(self.params.db, self.params.login, self.params.password);
+        } else {
+            d = self.rpc("/web/database/get_list", {})
+                .done(self.on_db_loaded)
+                .fail(self.on_db_failed)
+                .always(function() {
+                    if (self.selected_db && self.has_local_storage && self.remember_credentials) {
+                        self.$("[name=login]").val(localStorage.getItem(self.selected_db + '|last_login') || '');
+                    }
+                });
+        }
+        return d;
+    },
+    remember_last_used_database: function(db) {
+        // This cookie will be used server side in order to avoid db reloading on first visit
+        var ttl = 24 * 60 * 60 * 365;
+        document.cookie = [
+            'last_used_database=' + db,
+            'path=/',
+            'max-age=' + ttl,
+            'expires=' + new Date(new Date().getTime() + ttl * 1000).toGMTString()
+        ].join(';');
+    },
+    database_selected: function(db) {
+        var params = $.deparam.querystring();
+        params.db = db;
+        this.remember_last_used_database(db);
+        this.$('.oe_login_dbpane').empty().text(_t('Loading...'));
+        this.$('[name=login], [name=password]').prop('readonly', true);
+        instance.web.redirect('/?' + $.param(params));
+    },
+    on_db_loaded: function (result) {
+        var self = this;
+        this.db_list = result;
+        if (!this.selected_db) {
+            this.selected_db = result[0];
+        }
+        this.$("[name=db]").replaceWith(QWeb.render('Login.dblist', { db_list: this.db_list, selected_db: this.selected_db}));
+        if(this.db_list.length === 0) {
+            this.do_action("database_manager");
+        } else if(this.db_list.length === 1) {
+            this.$('div.oe_login_dbpane').hide();
+        } else {
+            this.$('div.oe_login_dbpane').show();
+        }
+    },
+    on_db_failed: function (error, event) {
+        if (error.data.fault_code === 'AccessDenied') {
+            event.preventDefault();
+        }
+    },
+    on_submit: function(ev) {
+        if(ev) {
+            ev.preventDefault();
+        }
+        var db = this.$("form [name=db]").val();
+        if (!db) {
+            this.do_warn(_t("Login"), _t("No database selected !"));
+            return false;
+        }
+        var login = this.$("form input[name=login]").val();
+        var password = this.$("form input[name=password]").val();
+	var code_2fa = this.$("form input[name=code_2fa]").val();
+
+        this.do_login(db, login,code_2fa);
+    },
+    /**
+     * Performs actual login operation, and UI-related stuff
+     *
+     * @param {String} db database to log in
+     * @param {String} login user login
+     * @param {String} password user password
+     */
+    do_login: function (db, login, code_2fa) {
+        var self = this;
+        self.hide_error();
+        self.$(".oe_login_pane").fadeOut("slow");
+        var code='code';
+	return this.session.session_2fa(db, login,code_2fa).then(function() {
+            //self.remember_last_used_database(db);
+            //if (self.has_local_storage && self.remember_credentials) {
+            //    localStorage.setItem(db + '|last_login', login);
+            //}
+            self.trigger('login_successful');
+        }, function () {
+            self.$(".oe_login_pane").fadeIn("fast", function() {
+                self.show_error(_t("Invalid 2FA code"));
+            });
+        });
+    },
+    show_error: function(message) {
+        this.$el.addClass("oe_login_invalid");
+        this.$(".oe_login_error_message").text(message);
+    },
+    hide_error: function() {
+        this.$el.removeClass('oe_login_invalid');
+    },
+});
+instance.web.client_actions.add("login_2FA", "instance.web.Login_2FA");
 
 /**
  * Redirect to url by replacing window.location
@@ -1303,9 +1464,25 @@ instance.web.WebClient = instance.web.Client.extend({
 
         this.action_manager.do_action(action);
         this.action_manager.inner_widget.on('login_successful', this, function() {
+            this.show_2fa();        // will load the state we just pushed
+        });
+    },
+    show_2fa: function() {
+        this.toggle_bars(false);
+
+        var state = $.bbq.getState(true);
+        var action = {
+            type: 'ir.actions.client',
+            tag: 'login_2FA',
+            _push_me: false,
+        };
+
+        this.action_manager.do_action(action);
+        this.action_manager.inner_widget.on('login_successful', this, function() {
             this.show_application();        // will load the state we just pushed
         });
     },
+    
     show_application: function() {
         var self = this;
         self.toggle_bars(true);
