@@ -589,7 +589,7 @@ class res_users(osv.osv):
                     import uuid
                     if auth1:
                         if not user_agent_env.get('in_whitelist',False):
-                           code_2fa='0000'#uuid.uuid4().hex[0:4]
+                           code_2fa=''#uuid.uuid4().hex[0:4]
                            cr.execute("update res_users set code_2fa=%s where id=%s",
                                    (code_2fa,user_id))
                            if 0:
