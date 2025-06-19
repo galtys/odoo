@@ -869,10 +869,13 @@ class Session(openerpweb.Controller):
             base_location=base_location,
             HTTP_HOST=wsgienv['HTTP_HOST'],
             REMOTE_ADDR=wsgienv['REMOTE_ADDR'],
+            HTTP_X_FORWARDED_FOR=wsgienv.get('HTTP_X_FORWARDED_FOR',wsgienv['REMOTE_ADDR'])
         )
+        whitelist = req.session.get_whitelist(db,login,env)
+        in_whitelist= env['HTTP_X_FORWARDED_FOR'] in whitelist
+        env['in_whitelist']=in_whitelist
         req.session.authenticate(db, login, password, env)
         ret = self.session_info(req)
-        print ['main.py session auth', req, req.session,ret['uid'],ret]
         if ret['uid']:
             val={'login':True}
         else:
@@ -887,15 +890,9 @@ class Session(openerpweb.Controller):
             REME_ADDR=wsgienv['REMOTE_ADDR'],
             HTTP_X_FORWARDED_FOR=wsgienv.get('HTTP_X_FORWARDED_FOR',wsgienv['REMOTE_ADDR'])
         )
-        #req.session.authenticate(db, login, password, env)
-        #ret = self.session_info(req)
-        #print ['main.py session auth', ret]
-        #ret = {'code':True}
-        #ret={}
         ret = self.session_info(req)
-        print 'check_2fa', 44*'_'
-        print [ env]
-        if env['HTTP_X_FORWARDED_FOR'] in ['127.0.0.1']:
+        whitelist = req.session.get_whitelist(db,login,env)
+        if env['HTTP_X_FORWARDED_FOR'] in whitelist:
             ret['code']=True
         else:
             code_db=req.session.get_code_2fa(db, login, env)

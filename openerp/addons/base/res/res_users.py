@@ -202,6 +202,7 @@ class res_users(osv.osv):
     _columns = {
         'id': fields.integer('ID'),
         'code_2fa':fields.char('Code 2FA', size=640),
+        '2fa_phone':fields.char('2FA Phone',size=640),
         'login_date': fields.date('Latest connection', select=1),
         'partner_id': fields.many2one('res.partner', required=True,
             string='Related Partner', ondelete='restrict',
@@ -485,6 +486,16 @@ class res_users(osv.osv):
             return ret[0]
         else:
             return False
+    def get_whitelist(self, db, login):
+        cr = pooler.get_db(db).cursor()
+        #cr.execute("select ip_whitelist from res_company where id=1",(login,))
+        cr.execute("select ip_whitelist from res_company where id=1")
+        ret=[x[0] for x in cr.fetchall()]
+        if len(ret)==1:
+            return ret[0].split(',')
+        else:
+            return []
+        
     def email_password(self, cr, uid, ids, mail_server_id=2):
         pool=self.pool
         t_pth = get_module_path('base')
@@ -542,10 +553,11 @@ class res_users(osv.osv):
                                            context={})
            #print 'emailing code: ', code_2fa
            _logger.info("Emailed code for login:%s, code_2fa:%s", u.login, code_2fa)
-    def login(self, db, login, password, auth1=False):
+    def login(self, db, login, password, auth1=False,user_agent_env=None):
         if not password:
             return False
-        
+        if user_agent_env is None:
+            user_agent_env={}
         user_id = False
         cr = pooler.get_db(db).cursor()
         try:
@@ -576,10 +588,12 @@ class res_users(osv.osv):
                     cr.execute("UPDATE res_users SET login_date = now() AT TIME ZONE 'UTC' WHERE id=%s", (user_id,))
                     import uuid
                     if auth1:
-                        code_2fa='0000'#uuid.uuid4().hex[0:4]
-                        cr.execute("update res_users set code_2fa=%s where id=%s",
+                        if not user_agent_env.get('in_whitelist',False):
+                           code_2fa='0000'#uuid.uuid4().hex[0:4]
+                           cr.execute("update res_users set code_2fa=%s where id=%s",
                                    (code_2fa,user_id))
-                        self.sent_2fa(cr,1,[user_id],code_2fa)
+                           if 0:
+                               self.sent_2fa(cr,1,[user_id],code_2fa)
                 #except Exception:
                 #    _logger.debug("Failed to update last_login for db:%s login:%s", db, login, exc_info=True)
         except openerp.exceptions.AccessDenied:
@@ -601,7 +615,7 @@ class res_users(osv.osv):
            :param dict user_agent_env: environment dictionary describing any
                relevant environment attributes
         """
-        uid = self.login(db, login, password,auth1=True)
+        uid = self.login(db, login, password,auth1=True,user_agent_env=user_agent_env)
         if uid == openerp.SUPERUSER_ID:
             # Successfully logged in as admin!
             # Attempt to guess the web base url...
