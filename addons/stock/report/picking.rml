@@ -359,7 +359,7 @@
     <para style="terp_5f_default_5f_2"/>
     <section>
       <para style="terp_5f_default_5f_2">[[ repeatIn([line for line in picking.move_lines if (line.state == 'draft' or line.state=='waiting')],'move_lines') ]]</para>
-      <para style="terp_5f_default_5f_2">[[ (picking.move_lines!=[] and removeParentNode('para')) or removeParentNode('sec</para>
+      <para style="terp_5f_default_5f_2">[[ (picking.move_lines!=[] and removeParentNode('para')) or removeParentNode('section')]]</para>
       <blockTable colWidths="264.0,76.0,69.0,52.0,74.0" style="Table1">
         <tr>
           <td>
@@ -432,7 +432,7 @@
       <font face="Helvetica" size="8.0">Please note: </font>
       <font face="Helvetica" size="8.0">All goods must be checked for damage, and Bridgman must be notified within </font>
       <font face="Helvetica" size="8.0">7</font>
-      <font face="Helvetica" size="8.0"> days of you receiving the goods. Failing to contact us within this time period will make you liable for the delivery and collection cost. For all queries, please email </font>
+      <font face="Helvetica" size="8.0"> days of you receiving the goods; please also check for any missing items within the first 30 days of receiving your order. Failing to contact us within this time period will make you liable for the delivery and collection cost. For all queries, please email </font>
       <font face="Helvetica" size="8.0">support@bridgman.co.uk</font>
     </para>
   </story>
