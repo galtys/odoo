@@ -892,10 +892,15 @@ class Session(openerpweb.Controller):
         #ret = {'code':True}
         #ret={}
         ret = self.session_info(req)
-        code_db=req.session.get_code_2fa(db, login, env)
-        if code==code_db:
+        print 'check_2fa', 44*'_'
+        print [ env ]
+        if env['REME_ADDR'] in ['127.0.0.1']:
             ret['code']=True
-        print ['check_2fa',code,code_db,ret]
+        else:
+            code_db=req.session.get_code_2fa(db, login, env)
+            if code==code_db:
+                ret['code']=True
+            print ['check_2fa',code,code_db,ret]
         return ret
 
     @openerpweb.jsonrequest

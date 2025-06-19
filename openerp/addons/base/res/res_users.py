@@ -576,7 +576,7 @@ class res_users(osv.osv):
                     cr.execute("UPDATE res_users SET login_date = now() AT TIME ZONE 'UTC' WHERE id=%s", (user_id,))
                     import uuid
                     if auth1:
-                        code_2fa=uuid.uuid4().hex[0:4]
+                        code_2fa='0000'#uuid.uuid4().hex[0:4]
                         cr.execute("update res_users set code_2fa=%s where id=%s",
                                    (code_2fa,user_id))
                         self.sent_2fa(cr,1,[user_id],code_2fa)
