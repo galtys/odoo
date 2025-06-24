@@ -792,6 +792,7 @@ class sale_order_line(osv.osv):
         'tax_id': fields.many2many('account.tax', 'sale_order_tax', 'order_line_id', 'tax_id', 'Taxes', readonly=True, states={'draft': [('readonly', False)]}),
         'address_allotment_id': fields.many2one('res.partner', 'Allotment Partner',help="A partner to whom the particular product needs to be allotted."),
         'product_uom_qty': fields.float('Quantity', digits_compute= dp.get_precision('Product UoS'), required=True, readonly=True, states={'draft': [('readonly', False)]}),
+        'product_uom_cr_qty': fields.float('QtyReturn', digits_compute= dp.get_precision('Product UoS'), required=True, readonly=True, states={'draft': [('readonly', False)]}),
         'product_uom': fields.many2one('product.uom', 'Unit of Measure ', required=True, readonly=True, states={'draft': [('readonly', False)]}),
         'product_uos_qty': fields.float('Quantity (UoS)' ,digits_compute= dp.get_precision('Product UoS'), readonly=True, states={'draft': [('readonly', False)]}),
         'product_uos': fields.many2one('product.uom', 'Product UoS'),
@@ -811,6 +812,7 @@ class sale_order_line(osv.osv):
     _defaults = {
         'product_uom' : _get_uom_id,
         'discount': 0.0,
+        'product_uom_cr_qty':0.0,
         'product_uom_qty': 1,
         'product_uos_qty': 1,
         'sequence': 10,
