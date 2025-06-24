@@ -97,7 +97,7 @@ class sale_order(osv.osv):
 
     def _amount_line_tax(self, cr, uid, line, context=None):
         val = 0.0
-        for c in self.pool.get('account.tax').compute_all(cr, uid, line.tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line.product_uom_qty, line.product_id, line.order_id.partner_id)['taxes']:
+        for c in self.pool.get('account.tax').compute_all(cr, uid, line.tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line.product_uom_qty-line.product_uom_cr_qty, line.product_id, line.order_id.partner_id)['taxes']:
             val += c.get('amount', 0.0)
         return val
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
@@ -124,7 +124,7 @@ class sale_order(osv.osv):
                         subtotal = val1+val
                 else:
                     subtotal = val1+val
-                totprice += line.product_uom_qty * line.price_unit
+                totprice += (line.product_uom_qty-line.product_uom_cr_qty )* line.price_unit
                     
             res[order.id]['amount_tax'] = cur_obj.round(cr, uid, cur, val)
             res[order.id]['amount_untaxed'] = cur_obj.round(cr, uid, cur, val1)
@@ -272,19 +272,19 @@ class sale_order(osv.osv):
         'amount_untaxed': fields.function(_amount_all, digits_compute=dp.get_precision('Account'), string='Untaxed Amount',
             store={
                 'sale.order': (lambda self, cr, uid, ids, c={}: ids, ['order_line'], 10),
-                'sale.order.line': (_get_order, ['price_unit', 'tax_id', 'discount', 'product_uom_qty'], 10),
+                'sale.order.line': (_get_order, ['price_unit', 'tax_id', 'discount', 'product_uom_qty','product_uom_cr_qty'], 10),
             },
             multi='sums', help="The amount without tax.", track_visibility='always'),
         'amount_tax': fields.function(_amount_all, digits_compute=dp.get_precision('Account'), string='Taxes',
             store={
                 'sale.order': (lambda self, cr, uid, ids, c={}: ids, ['order_line'], 10),
-                'sale.order.line': (_get_order, ['price_unit', 'tax_id', 'discount', 'product_uom_qty'], 10),
+                'sale.order.line': (_get_order, ['price_unit', 'tax_id', 'discount', 'product_uom_qty','product_uom_cr_qty'], 10),
             },
             multi='sums', help="The tax amount."),
         'amount_total': fields.function(_amount_all, digits_compute=dp.get_precision('Account'), string='Total',
             store={
                 'sale.order': (lambda self, cr, uid, ids, c={}: ids, ['order_line'], 10),
-                'sale.order.line': (_get_order, ['price_unit', 'tax_id', 'discount', 'product_uom_qty'], 10),
+                'sale.order.line': (_get_order, ['price_unit', 'tax_id', 'discount', 'product_uom_qty','product_uom_cr_qty'], 10),
             },
             multi='sums', help="The total amount."),
         'discount': fields.function(_amount_all, digits_compute=dp.get_precision('Account'), string='Discount',
@@ -745,7 +745,7 @@ class sale_order_line(osv.osv):
             context = {}
         for line in self.browse(cr, uid, ids, context=context):
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            taxes = tax_obj.compute_all(cr, uid, line.tax_id, price, line.product_uom_qty, line.product_id, line.order_id.partner_id)
+            taxes = tax_obj.compute_all(cr, uid, line.tax_id, price, line.product_uom_qty-line.product_uom_cr_qty, line.product_id, line.order_id.partner_id)
             cur = line.order_id.pricelist_id.currency_id
             res[line.id] = cur_obj.round(cr, uid, cur, taxes['total'])
         return res
@@ -825,7 +825,7 @@ class sale_order_line(osv.osv):
         if (line.order_id.invoice_quantity=='order'):
             if line.product_uos:
                 return line.product_uos_qty or 0.0
-        return line.product_uom_qty
+        return (line.product_uom_qty-line.product_uom_cr_qty)
 
     def _get_line_uom(self, cr, uid, line, context=None):
         if (line.order_id.invoice_quantity=='order'):
@@ -864,7 +864,7 @@ class sale_order_line(osv.osv):
             uos_id = self._get_line_uom(cr, uid, line, context=context)
             pu = 0.0
             if uosqty:
-                pu = round(line.price_unit * line.product_uom_qty / uosqty,
+                pu = round(line.price_unit * (line.product_uom_qty-line.product_uom_cr_qty) / uosqty,
                         self.pool.get('decimal.precision').precision_get(cr, uid, 'Product Price'))
             fpos = line.order_id.fiscal_position or False
             account_id = self.pool.get('account.fiscal.position').map_account(cr, uid, fpos, account_id)

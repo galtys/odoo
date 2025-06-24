@@ -246,7 +246,7 @@
                                         context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'shop':parent.shop_id, 'uom':product_uom}"
                                         on_change="product_id_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, product_uos_qty, product_uos, name, parent.partner_id, False, False, parent.date_order, False, parent.fiscal_position, True, context)"/>
 
-                                    <field name="product_uom_cr_qty"/>
+                                    <field name="product_uom_cr_qty" readonly="1"/>
 
 				    <!--
                                     <field name="product_uom"
@@ -439,7 +439,7 @@
                     <field name="order_partner_id"/>
                     <field name="name"/>
                     <field name="product_uom_qty" string="Qty"/>
-		    <field name="product_uom_cr_qty" string="RMA"/>
+		 
                     <field name="product_uom" string="Unit of Measure" groups="product.group_uom"/>
                     <field name="salesman_id"/>
                     <field name="price_subtotal" sum="Total"/>
