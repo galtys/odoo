@@ -97,8 +97,11 @@ class sale_order(osv.osv):
 
     def _amount_line_tax(self, cr, uid, line, context=None):
         val = 0.0
-        for c in self.pool.get('account.tax').compute_all(cr, uid, line.tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line.product_uom_qty-line.product_uom_cr_qty, line.product_id, line.order_id.partner_id)['taxes']:
+        for c in self.pool.get('account.tax').compute_all(cr, uid, line.tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line.product_uom_qty, line.product_id, line.order_id.partner_id)['taxes']:
             val += c.get('amount', 0.0)
+        for c in self.pool.get('account.tax').compute_all(cr, uid, line.tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line.product_uom_cr_qty, line.product_id, line.order_id.partner_id)['taxes']:
+            val -= c.get('amount', 0.0)
+        
         return val
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
         cur_obj = self.pool.get('res.currency')
@@ -137,7 +140,7 @@ class sale_order(osv.osv):
                         res[order.id]['discount'] = cur_obj.round(cr, uid, cur, 100-100*subtotal/totprice)
             else:
                 res[order.id]['discount']= 0
-
+        print ('_amount_all', res)
         return res
 
 
@@ -745,9 +748,10 @@ class sale_order_line(osv.osv):
             context = {}
         for line in self.browse(cr, uid, ids, context=context):
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            taxes = tax_obj.compute_all(cr, uid, line.tax_id, price, line.product_uom_qty-line.product_uom_cr_qty, line.product_id, line.order_id.partner_id)
+            taxes = tax_obj.compute_all(cr, uid, line.tax_id, price, line.product_uom_qty, line.product_id, line.order_id.partner_id)
+            taxes_cr = tax_obj.compute_all(cr, uid, line.tax_id, price, line.product_uom_cr_qty, line.product_id, line.order_id.partner_id)
             cur = line.order_id.pricelist_id.currency_id
-            res[line.id] = cur_obj.round(cr, uid, cur, taxes['total'])
+            res[line.id] = cur_obj.round(cr, uid, cur, taxes['total']-taxes_cr['total'])
         return res
 
     def _get_uom_id(self, cr, uid, *args):
@@ -825,7 +829,7 @@ class sale_order_line(osv.osv):
         if (line.order_id.invoice_quantity=='order'):
             if line.product_uos:
                 return line.product_uos_qty or 0.0
-        return line.product_uom_qty
+        return line.product_uom_qty-line.product_uom_cr_qty
 
     def _get_line_uom(self, cr, uid, line, context=None):
         if (line.order_id.invoice_quantity=='order'):
@@ -864,7 +868,7 @@ class sale_order_line(osv.osv):
             uos_id = self._get_line_uom(cr, uid, line, context=context)
             pu = 0.0
             if uosqty:
-                pu = round(line.price_unit * line.product_uom_qty / uosqty,
+                pu = round(line.price_unit * (line.product_uom_qty-line.product_uom_cr_qty) / uosqty,
                         self.pool.get('decimal.precision').precision_get(cr, uid, 'Product Price'))
             fpos = line.order_id.fiscal_position or False
             account_id = self.pool.get('account.fiscal.position').map_account(cr, uid, fpos, account_id)
@@ -948,7 +952,7 @@ class sale_order_line(osv.osv):
         default.update({'state': 'draft',  'invoice_lines': []})
         return super(sale_order_line, self).copy_data(cr, uid, id, default, context=context)
 
-    def product_id_change(self, cr, uid, ids, pricelist, product, qty=0,
+    def product_id_change(self, cr, uid, ids, pricelist, product, qty=0,qty_cr=0,
             uom=False, qty_uos=0, uos=False, name='', partner_id=False,
             lang=False, update_tax=True, date_order=False, packaging=False, fiscal_position=False, flag=False, context=None):
         context = context or {}
@@ -1017,6 +1021,7 @@ class sale_order_line(osv.osv):
         elif uos and not uom: # only happens if uom is False
             result['product_uom'] = product_obj.uom_id and product_obj.uom_id.id
             result['product_uom_qty'] = qty_uos / product_obj.uos_coeff
+            
             result['th_weight'] = result['product_uom_qty'] * product_obj.weight
         elif uom: # whether uos is set or not
             default_uom = product_obj.uom_id and product_obj.uom_id.id
@@ -1058,7 +1063,7 @@ class sale_order_line(osv.osv):
                     }
         return {'value': result, 'domain': domain, 'warning': warning}
 
-    def product_uom_change(self, cursor, user, ids, pricelist, product, qty=0,
+    def product_uom_change(self, cursor, user, ids, pricelist, product, qty=0,qty_cr=0,
             uom=False, qty_uos=0, uos=False, name='', partner_id=False,
             lang=False, update_tax=True, date_order=False, context=None):
         context = context or {}

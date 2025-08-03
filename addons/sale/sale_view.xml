@@ -206,7 +206,7 @@
 
                                                     on_change="product_uom_change(parent.pricelist_id,product_id,product_uom_qty,product_uom_cr_qty,product_uom,product_uos_qty,product_uos,name,parent.partner_id, False, False, parent.date_order, context)"/>
                                             </div>
-					    <field name="product_uom_cr_qty" readonly="1"/>
+					    <field name="product_uom_cr_qty" />
                                             <label for="product_uos_qty" groups="product.group_uos"/>
                                             <div groups="product.group_uos">
                                               <field name="product_uos_qty" class="oe_inline"/>
@@ -247,7 +247,7 @@
                                         context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'shop':parent.shop_id, 'uom':product_uom}"
                                         on_change="product_id_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, product_uos_qty, product_uos, name, parent.partner_id, False, False, parent.date_order, False, parent.fiscal_position, True, context)"/>
 
-                                    <field name="product_uom_cr_qty"/>
+                                    <field name="product_uom_cr_qty" invisible="1"/>
 
 				    <!--
                                     <field name="product_uom"
