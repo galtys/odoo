@@ -896,6 +896,7 @@
                         <group>
                             <field name="name"/>
                             <field name="description"/>
+			    <field name="xero_code"/>
                         </group>
                         <group>
                             <field name="type_tax_use"/>
