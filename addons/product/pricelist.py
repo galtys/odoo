@@ -104,6 +104,7 @@ class product_pricelist(osv.osv):
         'version_id': fields.one2many('product.pricelist.version', 'pricelist_id', 'Pricelist Versions'),
         'currency_id': fields.many2one('res.currency', 'Currency', required=True),
         'company_id': fields.many2one('res.company', 'Company'),
+        'line_amount_type':fields.selection([('inclusive','Inclusive'),('exclusive','Exclusive'),('none','NoVat')],'Line Amount type')
     }
 
     def name_get(self, cr, uid, ids, context=None):

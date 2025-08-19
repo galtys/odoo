@@ -140,7 +140,7 @@ class sale_order(osv.osv):
                         res[order.id]['discount'] = cur_obj.round(cr, uid, cur, 100-100*subtotal/totprice)
             else:
                 res[order.id]['discount']= 0
-        print ('_amount_all', res)
+        
         return res
 
 
