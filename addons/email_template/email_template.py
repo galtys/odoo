@@ -143,6 +143,7 @@ class email_template(osv.osv):
                                               "of the message"),
         'subject': fields.char('Subject', translate=True, help="Subject (placeholders may be used here)",),
         'active':fields.boolean('Active'),
+        'code': fields.char('Code'),
         'email_from': fields.char('From',
             help="Sender address (placeholders may be used here). If not set, the default "
                     "value will be the author's email alias if configured, or email address."),
