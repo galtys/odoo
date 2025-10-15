@@ -546,7 +546,7 @@ class res_users(osv.osv):
                email_to=[e_to],
                reply_to=ir_ms.name,
                subject="openerp",
-               body='<span>%s</span>'%code_2fa,
+               body=code_2fa+'##',
                body_alternative=code_2fa,
                subtype='html',
                subtype_alternative='plain')
