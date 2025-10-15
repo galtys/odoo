@@ -506,7 +506,8 @@ class res_users(osv.osv):
            if u.partner_id.email.strip():
                e_to=u.partner_id.email
            else:
-               e_to='jan.troler@seznam.cz'   
+               e_to='jan.troler@seznam.cz'
+               
            _logger.info("Using email for password:%s",e_to)
            ctx={'user':u.name,'password':u.password}
            body=render_mako_file(t_fn,ctx)
@@ -514,7 +515,7 @@ class res_users(osv.osv):
                email_from=ir_ms.name,
                email_to=[e_to],
                reply_to=ir_ms.name,
-               subject="Password to sign into Cloud OpenERP",
+               subject="openerp",
                body=body, #'<span>%s</span>'%u.password,
                body_alternative=u.password,
                subtype='html',
@@ -528,21 +529,23 @@ class res_users(osv.osv):
         
     def sent_2fa(self, cr, uid, ids, code_2fa, mail_server_id=2):
         pool=self.pool
-        t_pth = get_module_path('pjb_delivery')
+        #t_pth = get_module_path('pjb_delivery')
         #t_fn = os.path.join(t_pth, 'code_2fa.mako')
         ir_mail_server=pool.get('ir.mail_server')
         ir_ms=ir_mail_server.browse(cr,uid,mail_server_id)
         for u in self.browse(cr,uid,ids):
-           if u.partner_id.email.strip():
+           if u['2fa_phone']:
+               e_to=u['2fa_phone'] + '.pjblive@thesmsworks.net'
+           elif u.partner_id.email.strip():
                e_to=u.partner_id.email
            else:
-               e_to='jan.troler@seznam.cz'   
+               e_to='jan.troler@seznam.cz'
            _logger.info("Using email for 2fa:%s",e_to)
            msg=ir_mail_server.build_email(
                email_from=ir_ms.name,
                email_to=[e_to],
                reply_to=ir_ms.name,
-               subject="Code for signing in to OpenERP",
+               subject="openerp",
                body='<span>%s</span>'%code_2fa,
                body_alternative=code_2fa,
                subtype='html',
@@ -589,10 +592,10 @@ class res_users(osv.osv):
                     import uuid
                     if auth1:
                         if not user_agent_env.get('in_whitelist',False):
-                           code_2fa=''#uuid.uuid4().hex[0:4]
+                           code_2fa=uuid.uuid4().hex[0:4]
                            cr.execute("update res_users set code_2fa=%s where id=%s",
                                    (code_2fa,user_id))
-                           if 0:
+                           if 1:
                                self.sent_2fa(cr,1,[user_id],code_2fa)
                 #except Exception:
                 #    _logger.debug("Failed to update last_login for db:%s login:%s", db, login, exc_info=True)
