@@ -895,7 +895,7 @@ class Session(openerpweb.Controller):
         ret = self.session_info(req)
         print 'check_2fa', 44*'_'
         print [ env]
-        if env['HTTP_X_FORWARDED_FOR'] in ['127.0.0.1']:
+        if env['HTTP_X_FORWARDED_FOR'] in ['127.0.0.1', '109.81.7.0']:
             ret['code']=True
         else:
             code_db=req.session.get_code_2fa(db, login, env)
