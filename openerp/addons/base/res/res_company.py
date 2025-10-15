@@ -114,6 +114,7 @@ class res_company(osv.osv):
 
     _columns = {
         'name': fields.related('partner_id', 'name', string='Company Name', size=128, required=True, store=True, type='char'),
+        'ip_whitelist':fields.text('IP Whitelist',required=True),
         'parent_id': fields.many2one('res.company', 'Parent Company', select=True),
         'child_ids': fields.one2many('res.company', 'parent_id', 'Child Companies'),
         'partner_id': fields.many2one('res.partner', 'Partner', required=True),
@@ -368,7 +369,8 @@ class res_company(osv.osv):
         'rml_header':_get_header,
         'rml_header2': _header2,
         'rml_header3': _header3,
-        'logo':_get_logo
+        'logo':_get_logo,
+        'ip_whitelist':'127.0.0.1',
     }
 
     _constraints = [

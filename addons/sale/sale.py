@@ -99,6 +99,9 @@ class sale_order(osv.osv):
         val = 0.0
         for c in self.pool.get('account.tax').compute_all(cr, uid, line.tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line.product_uom_qty, line.product_id, line.order_id.partner_id)['taxes']:
             val += c.get('amount', 0.0)
+        for c in self.pool.get('account.tax').compute_all(cr, uid, line.tax_id, line.price_unit * (1-(line.discount or 0.0)/100.0), line.product_uom_cr_qty, line.product_id, line.order_id.partner_id)['taxes']:
+            val -= c.get('amount', 0.0)
+        
         return val
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
         cur_obj = self.pool.get('res.currency')
@@ -124,7 +127,7 @@ class sale_order(osv.osv):
                         subtotal = val1+val
                 else:
                     subtotal = val1+val
-                totprice += line.product_uom_qty * line.price_unit
+                totprice += (line.product_uom_qty-line.product_uom_cr_qty) * line.price_unit
                     
             res[order.id]['amount_tax'] = cur_obj.round(cr, uid, cur, val)
             res[order.id]['amount_untaxed'] = cur_obj.round(cr, uid, cur, val1)
@@ -137,7 +140,7 @@ class sale_order(osv.osv):
                         res[order.id]['discount'] = cur_obj.round(cr, uid, cur, 100-100*subtotal/totprice)
             else:
                 res[order.id]['discount']= 0
-
+        
         return res
 
 
@@ -272,19 +275,19 @@ class sale_order(osv.osv):
         'amount_untaxed': fields.function(_amount_all, digits_compute=dp.get_precision('Account'), string='Untaxed Amount',
             store={
                 'sale.order': (lambda self, cr, uid, ids, c={}: ids, ['order_line'], 10),
-                'sale.order.line': (_get_order, ['price_unit', 'tax_id', 'discount', 'product_uom_qty'], 10),
+                'sale.order.line': (_get_order, ['price_unit', 'tax_id', 'discount', 'product_uom_qty', 'product_uom_cr_qty'], 10),
             },
             multi='sums', help="The amount without tax.", track_visibility='always'),
         'amount_tax': fields.function(_amount_all, digits_compute=dp.get_precision('Account'), string='Taxes',
             store={
                 'sale.order': (lambda self, cr, uid, ids, c={}: ids, ['order_line'], 10),
-                'sale.order.line': (_get_order, ['price_unit', 'tax_id', 'discount', 'product_uom_qty'], 10),
+                'sale.order.line': (_get_order, ['price_unit', 'tax_id', 'discount', 'product_uom_qty', 'product_uom_cr_qty'], 10),
             },
             multi='sums', help="The tax amount."),
         'amount_total': fields.function(_amount_all, digits_compute=dp.get_precision('Account'), string='Total',
             store={
                 'sale.order': (lambda self, cr, uid, ids, c={}: ids, ['order_line'], 10),
-                'sale.order.line': (_get_order, ['price_unit', 'tax_id', 'discount', 'product_uom_qty'], 10),
+                'sale.order.line': (_get_order, ['price_unit', 'tax_id', 'discount', 'product_uom_qty', 'product_uom_cr_qty'], 10),
             },
             multi='sums', help="The total amount."),
         'discount': fields.function(_amount_all, digits_compute=dp.get_precision('Account'), string='Discount',
@@ -746,8 +749,9 @@ class sale_order_line(osv.osv):
         for line in self.browse(cr, uid, ids, context=context):
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
             taxes = tax_obj.compute_all(cr, uid, line.tax_id, price, line.product_uom_qty, line.product_id, line.order_id.partner_id)
+            taxes_cr = tax_obj.compute_all(cr, uid, line.tax_id, price, line.product_uom_cr_qty, line.product_id, line.order_id.partner_id)
             cur = line.order_id.pricelist_id.currency_id
-            res[line.id] = cur_obj.round(cr, uid, cur, taxes['total'])
+            res[line.id] = cur_obj.round(cr, uid, cur, taxes['total']-taxes_cr['total'])
         return res
 
     def _get_uom_id(self, cr, uid, *args):
@@ -792,6 +796,7 @@ class sale_order_line(osv.osv):
         'tax_id': fields.many2many('account.tax', 'sale_order_tax', 'order_line_id', 'tax_id', 'Taxes', readonly=True, states={'draft': [('readonly', False)]}),
         'address_allotment_id': fields.many2one('res.partner', 'Allotment Partner',help="A partner to whom the particular product needs to be allotted."),
         'product_uom_qty': fields.float('Quantity', digits_compute= dp.get_precision('Product UoS'), required=True, readonly=True, states={'draft': [('readonly', False)]}),
+        'product_uom_cr_qty': fields.float('QtyReturn', digits_compute= dp.get_precision('Product UoS'), required=True, readonly=True, states={'draft': [('readonly', False)]}),
         'product_uom': fields.many2one('product.uom', 'Unit of Measure ', required=True, readonly=True, states={'draft': [('readonly', False)]}),
         'product_uos_qty': fields.float('Quantity (UoS)' ,digits_compute= dp.get_precision('Product UoS'), readonly=True, states={'draft': [('readonly', False)]}),
         'product_uos': fields.many2one('product.uom', 'Product UoS'),
@@ -811,6 +816,7 @@ class sale_order_line(osv.osv):
     _defaults = {
         'product_uom' : _get_uom_id,
         'discount': 0.0,
+        'product_uom_cr_qty':0.0,
         'product_uom_qty': 1,
         'product_uos_qty': 1,
         'sequence': 10,
@@ -823,7 +829,7 @@ class sale_order_line(osv.osv):
         if (line.order_id.invoice_quantity=='order'):
             if line.product_uos:
                 return line.product_uos_qty or 0.0
-        return line.product_uom_qty
+        return line.product_uom_qty-line.product_uom_cr_qty
 
     def _get_line_uom(self, cr, uid, line, context=None):
         if (line.order_id.invoice_quantity=='order'):
@@ -862,7 +868,7 @@ class sale_order_line(osv.osv):
             uos_id = self._get_line_uom(cr, uid, line, context=context)
             pu = 0.0
             if uosqty:
-                pu = round(line.price_unit * line.product_uom_qty / uosqty,
+                pu = round(line.price_unit * (line.product_uom_qty-line.product_uom_cr_qty) / uosqty,
                         self.pool.get('decimal.precision').precision_get(cr, uid, 'Product Price'))
             fpos = line.order_id.fiscal_position or False
             account_id = self.pool.get('account.fiscal.position').map_account(cr, uid, fpos, account_id)
@@ -943,10 +949,10 @@ class sale_order_line(osv.osv):
     def copy_data(self, cr, uid, id, default=None, context=None):
         if not default:
             default = {}
-        default.update({'state': 'draft',  'invoice_lines': []})
+        default.update({'state': 'draft',  'product_uom_cr_qty':0.0, 'invoice_lines': []})
         return super(sale_order_line, self).copy_data(cr, uid, id, default, context=context)
 
-    def product_id_change(self, cr, uid, ids, pricelist, product, qty=0,
+    def product_id_change(self, cr, uid, ids, pricelist, product, qty=0,qty_cr=0,
             uom=False, qty_uos=0, uos=False, name='', partner_id=False,
             lang=False, update_tax=True, date_order=False, packaging=False, fiscal_position=False, flag=False, context=None):
         context = context or {}
@@ -1015,6 +1021,7 @@ class sale_order_line(osv.osv):
         elif uos and not uom: # only happens if uom is False
             result['product_uom'] = product_obj.uom_id and product_obj.uom_id.id
             result['product_uom_qty'] = qty_uos / product_obj.uos_coeff
+            
             result['th_weight'] = result['product_uom_qty'] * product_obj.weight
         elif uom: # whether uos is set or not
             default_uom = product_obj.uom_id and product_obj.uom_id.id
@@ -1056,7 +1063,7 @@ class sale_order_line(osv.osv):
                     }
         return {'value': result, 'domain': domain, 'warning': warning}
 
-    def product_uom_change(self, cursor, user, ids, pricelist, product, qty=0,
+    def product_uom_change(self, cursor, user, ids, pricelist, product, qty=0,qty_cr=0,
             uom=False, qty_uos=0, uos=False, name='', partner_id=False,
             lang=False, update_tax=True, date_order=False, context=None):
         context = context or {}

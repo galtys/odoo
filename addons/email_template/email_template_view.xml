@@ -11,6 +11,7 @@
                             <label for="name" class="oe_edit_only"/><h1><field name="name" required="1"/></h1>
                             <h3><label for="model_id"/><field name="model_id" required="1" on_change="onchange_model_id(model_id)" class="oe_inline"/></h3>
                             <field name="model" invisible="1"/>
+			    <label for="code" class="oe_edit_only"/><field name="code"/>
                         </div>
                         <div class="oe_right oe_button_box" name="buttons">
                             <field name="ref_ir_act_window" invisible="1"/>
@@ -75,6 +76,7 @@
                 <tree string="Templates">
                     <field name="mail_server_id" invisible="1"/>
                     <field name="name"/>
+		    <field name="code"/>
                     <field name="model_id"/>
                     <field name="subject"/>
                     <field name="email_from"/>

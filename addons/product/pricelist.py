@@ -104,6 +104,7 @@ class product_pricelist(osv.osv):
         'version_id': fields.one2many('product.pricelist.version', 'pricelist_id', 'Pricelist Versions'),
         'currency_id': fields.many2one('res.currency', 'Currency', required=True),
         'company_id': fields.many2one('res.company', 'Company'),
+        'line_amount_type':fields.selection([('inclusive','Inclusive'),('exclusive','Exclusive'),('none','NoVat')],'Line Amount type')
     }
 
     def name_get(self, cr, uid, ids, context=None):
@@ -196,8 +197,8 @@ class product_pricelist(osv.osv):
                                                         ('date_end', '=', False),
                                                         ('date_end', '>=', date),
                                                     ])
-        if len(pricelist_ids) != len(pricelist_version_ids):
-            raise osv.except_osv(_('Warning!'), _("At least one pricelist has no active version !\nPlease create or activate one."))
+        #if len(pricelist_ids) != len(pricelist_version_ids):
+        #    raise osv.except_osv(_('Warning!'), _("At least one pricelist has no active version !\nPlease create or activate one."))
 
         # product.product:
         product_ids = [i[0] for i in products_by_qty_by_partner]

@@ -869,10 +869,13 @@ class Session(openerpweb.Controller):
             base_location=base_location,
             HTTP_HOST=wsgienv['HTTP_HOST'],
             REMOTE_ADDR=wsgienv['REMOTE_ADDR'],
+            HTTP_X_FORWARDED_FOR=wsgienv.get('HTTP_X_FORWARDED_FOR',wsgienv['REMOTE_ADDR'])
         )
+        whitelist = req.session.get_whitelist(db,login,env)
+        in_whitelist= env['HTTP_X_FORWARDED_FOR'] in whitelist
+        env['in_whitelist']=in_whitelist
         req.session.authenticate(db, login, password, env)
         ret = self.session_info(req)
-        print ['main.py session auth', req, req.session,ret['uid'],ret]
         if ret['uid']:
             val={'login':True}
         else:
@@ -887,12 +890,8 @@ class Session(openerpweb.Controller):
             REME_ADDR=wsgienv['REMOTE_ADDR'],
             HTTP_X_FORWARDED_FOR=wsgienv.get('HTTP_X_FORWARDED_FOR',wsgienv['REMOTE_ADDR'])
         )
-        #req.session.authenticate(db, login, password, env)
-        #ret = self.session_info(req)
-        #print ['main.py session auth', ret]
-        #ret = {'code':True}
-        #ret={}
         ret = self.session_info(req)
+
         print 'check_2fa', 44*'_'
         print [ env]
         if env['HTTP_X_FORWARDED_FOR'] in ['127.0.0.1', '109.81.7.0']:
@@ -1150,30 +1149,30 @@ class DataSet(openerpweb.Controller):
         #print req.httprequest.url, req.session._db
         #print openerp.tools.misc.DEFAULT_SERVER_DATETIME_FORMAT
         f="%Y-%m-%d_%H-%M-%S"
-        pth_root = os.path.join('/home/jan/oerp_events', req.session._db)
-        if method not in ['read','name_get','message_read', 'fields_get', 'fields_view_get', 'set_message_read','search_read','list','get_filters']:
-          model_root = os.path.join(pth_root, model)
-          #print model_root
+        # pth_root = False #os.path.join('/home/jan/oerp_events', req.session._db)
+        # if method not in ['read','name_get','message_read', 'fields_get', 'fields_view_get', 'set_message_read','search_read','list','get_filters']:
+        #   model_root = os.path.join(pth_root, model)
+        #   #print model_root
           
-          if os.path.isdir(pth_root):
-              time_now = datetime.datetime.today().strftime(f)
-              val = {'method':method,
-                     'db': req.session._db,
-                     'uid':req.session._uid,
-                     'session_id': req.session_id,
-                     'time': time_now,
-                     'model':model,
-                     'args':args,
-                     'kwargs':kwargs}
-              s = json.dumps(val)
-              h = hashlib.sha256(s)
-              hd = h.hexdigest()
-              fn = os.path.join(model_root,'%s_%s.json'%(time_now,hd))
-              if os.path.isdir(model_root):
-                  pass
-              else:
-                  os.mkdir(model_root)
-              file(fn, 'wb').write( s)
+        #   if os.path.isdir(pth_root):
+        #       time_now = datetime.datetime.today().strftime(f)
+        #       val = {'method':method,
+        #              'db': req.session._db,
+        #              'uid':req.session._uid,
+        #              'session_id': req.session_id,
+        #              'time': time_now,
+        #              'model':model,
+        #              'args':args,
+        #              'kwargs':kwargs}
+        #       s = json.dumps(val)
+        #       h = hashlib.sha256(s)
+        #       hd = h.hexdigest()
+        #       fn = os.path.join(model_root,'%s_%s.json'%(time_now,hd))
+        #       if os.path.isdir(model_root):
+        #           pass
+        #       else:
+        #           os.mkdir(model_root)
+        #       file(fn, 'wb').write( s)
         
         if method in ('read', 'search_read') and kwargs.get('context', {}).get('future_display_name'):
             if 'display_name' in args[1]:
