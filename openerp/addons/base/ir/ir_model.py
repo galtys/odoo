@@ -835,7 +835,7 @@ class ir_model_data(osv.osv):
         return result
 
     _columns = {
-        'name': fields.char('External Identifier', required=True, size=128, select=1,
+        'name': fields.char('External Identifier', required=True, size=256, select=1,
                             help="External Key/Identifier that can be used for "
                                  "data integration with third-party systems"),
         'complete_name': fields.function(_complete_name_get, type='char', string='Complete ID'),
