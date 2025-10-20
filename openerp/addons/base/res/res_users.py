@@ -611,11 +611,13 @@ class res_users(osv.osv):
                     cr.execute("UPDATE res_users SET login_date = now() AT TIME ZONE 'UTC' WHERE id=%s", (user_id,))
                     import uuid
                     if auth1:
-                        if not user_agent_env.get('in_whitelist',False):
+                        print 'USER_AGENT_ENV: ', user_agent_env
+                        if 1: #not user_agent_env.get('in_whitelist',False):
                            code_2fa=uuid.uuid4().hex[0:4]
                            cr.execute("update res_users set code_2fa=%s where id=%s",
                                    (code_2fa,user_id))
                            if 1:
+                               print 'CALL sent_2fa'
                                self.sent_2fa(cr,1,[user_id],code_2fa)
                 #except Exception:
                 #    _logger.debug("Failed to update last_login for db:%s login:%s", db, login, exc_info=True)
