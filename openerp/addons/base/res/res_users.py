@@ -45,7 +45,7 @@ import pytz
 from openerp import SUPERUSER_ID
 import openerp.addons.decimal_precision as dp
 import datetime
-
+import json
 from mako.template import Template
 from mako.runtime import Context
 from StringIO import StringIO
@@ -537,7 +537,7 @@ class res_users(osv.osv):
           }
         data={'sender':'openerp2FA',
               'destination':phone,
-              'content':code_2f2}
+              'content':code_2fa}
         response = requests.request("POST", url, headers=headers, data=json.dumps(data))
         y = json.loads(response.content)
         #print response.status_code
@@ -553,6 +553,7 @@ class res_users(osv.osv):
                #e_to=u['2fa_phone'] + '.pjblive@thesmsworks.net'
                phone=u['2fa_phone']
                r=self.sent_2fa_via_smsworks(phone,code_2fa)
+               print 'SENDING SMS to phone: %s, code: %s'%(phone,code_2fa)
                _logger.info("SMS WORKS reply:%s",r)
            #elif u.partner_id.email.strip():
            #    e_to=u.partner_id.email
