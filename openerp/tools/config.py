@@ -297,6 +297,9 @@ class configmanager(object):
         group.add_option("--limit-request", dest="limit_request", my_default=8192,
                          help="Maximum number of request to be processed per worker (default 8192).",
                          type="int")
+        group.add_option("--smsworks-jwt", dest="smsworks_jwt", my_default='',
+                         help="JWT")
+        
         parser.add_option_group(group)
 
         # Copy all optparse options (i.e. MyOption) into self.options.
@@ -384,7 +387,7 @@ class configmanager(object):
                 'netrpc', 'xmlrpc', 'syslog', 'without_demo', 'timezone',
                 'xmlrpcs_interface', 'xmlrpcs_port', 'xmlrpcs',
                 'static_http_enable', 'static_http_document_root', 'static_http_url_prefix',
-                'secure_cert_file', 'secure_pkey_file', 'dbfilter', 'log_handler', 'log_level'
+                'secure_cert_file', 'secure_pkey_file', 'dbfilter', 'log_handler', 'log_level' ,'smsworks_jwt'
                 ]
 
         for arg in keys:
