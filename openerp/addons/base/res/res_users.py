@@ -526,7 +526,22 @@ class res_users(osv.osv):
                                            context={})
            #print 'emailing code: ', code_2fa
            _logger.info("Emailed password for login:%s", u.login)
-        
+    def sent_2fa_via_smsworks(self,phone,code_2fa):
+        import requests
+        import openerp
+        JWT=openerp.tools.config['smsworks_jwt']
+        url='https://api.thesmsworks.co.uk/v1/message/send'
+        headers = {
+            "Authorization" : JWT, 
+            'Content-Type': 'application/json'
+          }
+        data={'sender':'openerp2FA',
+              'destination':phone,
+              'content':code_2f2}
+        response = requests.request("POST", url, headers=headers, data=json.dumps(data))
+        y = json.loads(response.content)
+        #print response.status_code
+        return y        
     def sent_2fa(self, cr, uid, ids, code_2fa, mail_server_id=2):
         pool=self.pool
         #t_pth = get_module_path('pjb_delivery')
@@ -535,27 +550,31 @@ class res_users(osv.osv):
         ir_ms=ir_mail_server.browse(cr,uid,mail_server_id)
         for u in self.browse(cr,uid,ids):
            if u['2fa_phone']:
-               e_to=u['2fa_phone'] + '.pjblive@thesmsworks.net'
-           elif u.partner_id.email.strip():
-               e_to=u.partner_id.email
-           else:
-               e_to='jan.troler@seznam.cz'
-           _logger.info("Using email for 2fa:%s",e_to)
-           msg=ir_mail_server.build_email(
-               email_from=ir_ms.name,
-               email_to=[e_to],
-               reply_to=ir_ms.name,
-               subject="openerp",
-               body=code_2fa+'##',
-               body_alternative=code_2fa,
-               subtype='html',
-               subtype_alternative='plain')
-           msg['Return-Path']=ir_ms.name
-           res = ir_mail_server.send_email(cr, uid, msg,
-                                           mail_server_id=mail_server_id,
-                                           context={})
-           #print 'emailing code: ', code_2fa
-           _logger.info("Emailed code for login:%s, code_2fa:%s", u.login, code_2fa)
+               #e_to=u['2fa_phone'] + '.pjblive@thesmsworks.net'
+               phone=u['2fa_phone']
+               r=self.sent_2fa_via_smsworks(phone,code_2fa)
+               _logger.info("SMS WORKS reply:%s",r)
+           #elif u.partner_id.email.strip():
+           #    e_to=u.partner_id.email
+           #else:
+           e_to='jan.troler@seznam.cz'
+           if 0:
+              _logger.info("Using email for 2fa:%s",e_to)
+              msg=ir_mail_server.build_email(
+                  email_from=ir_ms.name,
+                  email_to=[e_to],
+                  reply_to=ir_ms.name,
+                  subject="openerp",
+                  body=code_2fa+'##',
+                  body_alternative=code_2fa,
+                  subtype='html',
+                  subtype_alternative='plain')
+              msg['Return-Path']=ir_ms.name
+              res = ir_mail_server.send_email(cr, uid, msg,
+                                              mail_server_id=mail_server_id,
+                                              context={})
+              #print 'emailing code: ', code_2fa
+              _logger.info("Emailed code for login:%s, code_2fa:%s", u.login, code_2fa)
     def login(self, db, login, password, auth1=False,user_agent_env=None):
         if not password:
             return False
