@@ -1,0 +1,27 @@
+{
+  "nodes": {
+    "nixpkgs2009": {
+      "locked": {
+        "lastModified": 1734456182,
+        "narHash": "sha256-C4bQ+hXKRN3nT3VKLurmdLqNgXj5eG09wOv5SRYFnY0=",
+        "owner": "galtys",
+        "repo": "nixpkgs",
+        "rev": "d3657b4337427d724856eac1d607ae92cbbeaff0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "galtys",
+        "ref": "nixos-20.03pillow",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nixpkgs2009": "nixpkgs2009"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
