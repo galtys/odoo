@@ -254,7 +254,7 @@ form: module.record_id""" % (xml_id,)
                 modcnt = self.pool.get('ir.module.module').search_count(self.cr, self.uid, ['&', ('name', '=', module), ('state', 'in', ['installed'])])
                 assert modcnt == 1, """The ID "%s" refers to an uninstalled module""" % (xml_id,)
 
-        if len(id) > 64:
+        if len(id) > 256:
             _logger.warning('id: %s is to long (max: 64)', id)
 
     def _tag_delete(self, cr, rec, data_node=None):
