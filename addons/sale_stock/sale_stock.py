@@ -260,7 +260,7 @@ class sale_order(osv.osv):
     def _pjb_check_same_tax_codes(self, cr, uid, ids, context=None):
         def same_tax(cr, uid, ids):
             codes=self._get_tax_codes(cr, uid, ids)
-            if len(codes)>1:
+            if len(codes)>2:
                 return False
             return True
         for so in self.browse(cr, uid, ids):
