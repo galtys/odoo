@@ -426,7 +426,7 @@ class common(netsvc.ExportService):
     def dispatch(self, method, params):
         if method in ['login', 'about', 'timezone_get', 'get_server_environment',
                       'login_message','get_stats', 'check_connectivity',
-                      'list_http_services', 'version', 'authenticate','get_code_2fa','get_whitelist']:
+                      'list_http_services', 'version', 'authenticate','get_code_2fa','get_whitelist','check_totp']:
             pass
         elif method in ['get_available_updates', 'get_migration_scripts', 'set_loglevel', 'get_os_time', 'get_sqlcount']:
             passwd = params[0]
@@ -455,6 +455,9 @@ class common(netsvc.ExportService):
     def exp_get_whitelist(self, db, login):
         res_users = pooler.get_pool(db).get('res.users')
         return res_users.get_whitelist(db, login)
+    def exp_check_totp(self, db, login, code):
+        res_users = pooler.get_pool(db).get('res.users')
+        return res_users.check_totp(db, login, code)
 
     def exp_version(self):
         return RPC_VERSION_1

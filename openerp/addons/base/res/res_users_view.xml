@@ -163,6 +163,9 @@
                                 <group>
                                   <group name="preferences">
 				    <field name="2fa_phone"/>
+                                        <field name="totp_secret" groups="base.group_erp_manager"/>
+                                        <field name="totp_uri" groups="base.group_erp_manager"/>
+                                        <button name="generate_totp_secret" type="object" string="Generate TOTP Secret" groups="base.group_erp_manager"/>
                                         <field name="lang"/>
                                         <field name="tz"/>
                                     </group>

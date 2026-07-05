@@ -199,10 +199,24 @@ class res_users(osv.osv):
     def _get_password(self, cr, uid, ids, arg, karg, context=None):
         return dict.fromkeys(ids, '')
 
+    def _get_totp_uri(self, cr, uid, ids, arg, karg, context=None):
+        import pyotp
+        res = {}
+        for u in self.browse(cr, uid, ids):
+            if u.totp_secret:
+                res[u.id] = pyotp.totp.TOTP(u.totp_secret).provisioning_uri(
+                    name=u.login, issuer_name='openerp2FA')
+            else:
+                res[u.id] = False
+        return res
+
     _columns = {
         'id': fields.integer('ID'),
         'code_2fa':fields.char('Code 2FA', size=640),
         '2fa_phone':fields.char('2FA Phone',size=640),
+        'totp_secret':fields.char('TOTP Secret', size=640),
+        'totp_uri':fields.function(_get_totp_uri, type='char', size=640,
+                                   string='TOTP URI'),
         'login_date': fields.date('Latest connection', select=1),
         'partner_id': fields.many2one('res.partner', required=True,
             string='Related Partner', ondelete='restrict',
@@ -495,7 +509,33 @@ class res_users(osv.osv):
             return ret[0]
         else:
             return ''
-        
+
+    def generate_totp_secret(self, cr, uid, ids, context=None):
+        import pyotp
+        for u_id in ids:
+            self.write(cr, uid, [u_id],
+                       {'totp_secret': pyotp.random_base32()},
+                       context=context)
+        return True
+
+    def check_totp(self, db, login, code):
+        """Validate a Google Authenticator (TOTP, RFC 6238) code for
+        login.  Returns False when the user has no secret enrolled, so
+        the legacy SMS/email code_2fa flow is unaffected."""
+        import pyotp
+        cr = pooler.get_db(db).cursor()
+        try:
+            cr.execute("select totp_secret from res_users where login=%s",
+                       (login,))
+            ret = [x[0] for x in cr.fetchall()]
+        finally:
+            cr.close()
+        if len(ret) == 1 and ret[0] and code:
+            return pyotp.TOTP(ret[0]).verify(str(code).strip(),
+                                             valid_window=1)
+        return False
+
+
     def email_password(self, cr, uid, ids, mail_server_id=2):
         pool=self.pool
         t_pth = get_module_path('base')

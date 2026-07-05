@@ -905,6 +905,11 @@ class Session(openerpweb.Controller):
             code_db=req.session.get_code_2fa(db, login, env)
             if code==code_db:
                 ret['code']=True
+            elif req.session.check_totp(db, login, code):
+                # Google Authenticator (TOTP) accepted as an
+                # alternative second factor; SMS/email code above
+                # keeps working unchanged.
+                ret['code']=True
             print ['check_2fa',code,code_db,ret]
         return ret
 

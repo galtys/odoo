@@ -123,6 +123,8 @@ class OpenERPSession(object):
     def get_whitelist(self, db, login, env=None):
         wl = self.proxy('common').get_whitelist(db,login)
         return wl
+    def check_totp(self, db, login, code, env=None):
+        return self.proxy('common').check_totp(db, login, code)
     def assert_valid(self, force=False):
         """
         Ensures this session is valid (logged into the openerp server)
