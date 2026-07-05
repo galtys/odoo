@@ -1445,6 +1445,11 @@ instance.web.WebClient = instance.web.Client.extend({
         var self = this;
         this._super();
         window.onerror = function (message, file, line) {
+            // Benign browser warning (Firefox reports it via onerror);
+            // the observer comes from the browser/extensions, not our JS.
+            if (/ResizeObserver loop/.test(message)) {
+                return;
+            }
             self.crashmanager.show_error({
                 type: _t("Client Error"),
                 message: message,
