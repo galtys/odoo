@@ -549,7 +549,8 @@ html_template = """<!DOCTYPE html>
         <link rel="shortcut icon" href="/web/static/src/img/favicon.ico" type="image/x-icon"/>
         <link rel="stylesheet" href="/web/static/src/css/full.css" />
         
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+        <!-- Handsontable v14.4.0 vendored locally (was CDN pointing at 'latest'; jsdelivr 'latest' rolled forward to 18.x which changed date-cell serialization and broke Preorder Dates). Source: https://cdn.jsdelivr.net/npm/handsontable@14.4.0/dist/handsontable.full.min.js (sha256 8f32c5caa5a538d7913dd6311028e2f17c7566a5f7f03779297df739c9c8cba0) -->
+        <script type="text/javascript" src="/web/static/lib/handsontable/handsontable.full.min.js"></script>
 
         %(css)s
         %(js)s
